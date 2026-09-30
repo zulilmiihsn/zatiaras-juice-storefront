@@ -1,0 +1,18 @@
+# Package Managers
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lock
+bun.lockb
+
+# Miscellaneous
+/static/
+
+# Generated (wrangler writes its own format; `pnpm gen` restores it).
+worker-configuration.d.ts
+
+# Non-app sources: skill packs, scratch experiments, frozen planning pack.
+# These are not application code; `pnpm lint` must not fail on them.
+/.opencode/
+/scratch/
+/ZATIARAS_WEB_V1_SOURCE_OF_TRUTH_2026-09-15/

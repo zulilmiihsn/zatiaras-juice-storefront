@@ -1,0 +1,273 @@
+@import 'tailwindcss';
+@import '@fontsource/plus-jakarta-sans/400.css';
+@import '@fontsource/plus-jakarta-sans/600.css';
+@import '@fontsource/plus-jakarta-sans/700.css';
+
+/* Zatiaras Display V1.2-RC4 resmi */
+@font-face {
+	font-family: 'Zatiaras Display';
+	src: url('/fonts/ZatiarasDisplayV1-SemiBold-V1.2-RC4.woff2') format('woff2');
+	font-weight: 600;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Zatiaras Display';
+	src: url('/fonts/ZatiarasDisplayV1-Bold-V1.2-RC4.woff2') format('woff2');
+	font-weight: 700;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Zatiaras Display';
+	src: url('/fonts/ZatiarasDisplayV1-ExtraBold-V1.2-RC4.woff2') format('woff2');
+	font-weight: 800;
+	font-display: swap;
+}
+
+/*
+Brand: Heritage Magenta #FF1081, Fruit Cream #FFF8EC, Fruit Ink #241A20.
+Product colors stay contextual; no page invents a replacement brand palette.
+*/
+@theme {
+	--color-brand: #ff1081;
+	--color-brand-dark: #c90a63;
+	--color-brand-soft: #ffe4f1;
+	--color-cream: #fff8ec;
+	--color-warm-bg: #fff8ec;
+	--color-ink: #241a20;
+	--color-surface: #ffffff;
+	--color-surface-muted: #fffaf2;
+	--color-line: #e8e1d8;
+	--color-copy-muted: #625961;
+	--color-avocado: #4d7c0f;
+	--color-avocado-soft: #ecfccb;
+	--color-mango: #d97706;
+	--color-mango-soft: #fef3c7;
+	--color-dragon: #be185d;
+	--color-dragon-soft: #fce7f3;
+	--font-display: 'Zatiaras Display', 'Plus Jakarta Sans', sans-serif;
+	--font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+html {
+	scroll-behavior: smooth;
+	scroll-padding-top: 5rem;
+	scroll-padding-bottom: 9rem;
+	color-scheme: light;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+	display: none;
+}
+
+body {
+	font-family: var(--font-sans);
+	background: var(--color-cream);
+	color: var(--color-ink);
+	-webkit-font-smoothing: antialiased;
+	overflow-x: clip;
+	margin: 0;
+}
+
+main,
+main > * {
+	min-width: 0;
+}
+
+img,
+svg,
+video {
+	max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4 {
+	text-wrap: balance;
+}
+
+p,
+li {
+	text-wrap: pretty;
+}
+
+input,
+select,
+textarea {
+	max-width: 100%;
+	font: inherit;
+}
+
+input:not([type='checkbox']):not([type='radio']),
+select {
+	min-height: 2.75rem;
+}
+
+textarea {
+	min-height: 7rem;
+	resize: vertical;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+	-webkit-tap-highlight-color: transparent;
+}
+
+.font-display {
+	font-family: var(--font-display);
+	letter-spacing: -0.01em;
+	font-kerning: normal;
+	text-rendering: optimizeLegibility;
+}
+
+::selection {
+	background: var(--color-brand);
+	color: #fff;
+}
+
+:focus-visible {
+	outline: 2px solid var(--color-brand);
+	outline-offset: 2px;
+}
+
+/* Tactile micro-interactions */
+.tap-scale {
+	transition:
+		transform 160ms ease-out,
+		background-color 180ms ease,
+		border-color 180ms ease,
+		box-shadow 180ms ease,
+		color 180ms ease;
+}
+
+.tap-scale:active {
+	transform: scale(0.99);
+}
+
+.page-surface {
+	background-color: var(--color-cream);
+}
+
+.surface-card {
+	border: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
+	border-radius: 1.25rem;
+	background: var(--color-surface);
+	box-shadow: 0 1px 2px rgb(36 26 32 / 4%);
+}
+
+.section-space {
+	padding-block: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.content-measure {
+	width: min(100%, 42rem);
+}
+
+.page-heading {
+	font-family: var(--font-display);
+	font-size: clamp(1.875rem, 4.4vw, 3.25rem);
+	font-weight: 800;
+	line-height: 1.05;
+	letter-spacing: -0.025em;
+}
+
+.eyebrow {
+	color: var(--color-copy-muted);
+	font-size: 0.7rem;
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	line-height: 1.4;
+	text-transform: uppercase;
+}
+
+.form-control {
+	width: 100%;
+	min-height: 2.75rem;
+	border: 1px solid var(--color-line);
+	border-radius: 0.875rem;
+	background-color: var(--color-surface);
+	padding: 0.65rem 0.875rem;
+	color: var(--color-ink);
+	transition:
+		border-color 160ms ease,
+		box-shadow 160ms ease;
+}
+
+.form-control:hover {
+	border-color: color-mix(in srgb, var(--color-ink) 25%, var(--color-line));
+}
+
+.form-control:focus-visible {
+	border-color: var(--color-brand);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand) 16%, transparent);
+	outline: none;
+}
+
+.form-control:disabled {
+	background-color: #f4f1ed;
+	color: #777078;
+	cursor: not-allowed;
+}
+
+/* Brand Graphic Devices */
+.cup-lip-bar {
+	height: 4px;
+	border-radius: 9999px;
+	background-color: var(--color-brand);
+}
+
+.cup-lip-bar-soft {
+	height: 3px;
+	border-radius: 9999px;
+	background-color: var(--color-brand-soft);
+}
+
+.z-crop {
+	clip-path: polygon(0 0, 100% 0, 88% 100%, 0% 100%);
+}
+
+.glass-surface {
+	background: rgba(255, 255, 255, 0.88);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+}
+
+@keyframes float-y {
+	0%,
+	100% {
+		transform: translateY(-4px);
+	}
+	50% {
+		transform: translateY(4px);
+	}
+}
+
+.animate-float {
+	animation: float-y 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		scroll-behavior: auto !important;
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+
+	.animate-float {
+		animation: none;
+	}
+	html {
+		scroll-behavior: auto;
+	}
+}

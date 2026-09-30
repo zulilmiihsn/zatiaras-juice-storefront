@@ -1,0 +1,93 @@
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import { canonical, localBusinessJsonLd, breadcrumbJsonLd, jsonLdTag } from '$lib/seo';
+	import { track } from '$lib/analytics/events';
+	import { cart } from '$lib/stores/cart.svelte';
+	import { goto } from '$app/navigation';
+	import { getOutlet } from '$lib/core/outlets';
+
+	const outlet = getOutlet('merah-delima')!;
+	const url = canonical('/berau/merah-delima');
+
+	const ldBusiness = jsonLdTag(
+		localBusinessJsonLd({
+			name: 'Merah Delima Berau',
+			url,
+			hours: outlet.hours,
+			city: 'Berau',
+			address: outlet.address
+		})
+	);
+	const ldCrumb = jsonLdTag(
+		breadcrumbJsonLd([
+			{ name: 'Home', url: canonical('/') },
+			{ name: 'Berau', url: canonical('/berau') },
+			{ name: 'Merah Delima', url }
+		])
+	);
+	onMount(() => track('outlet_view', { outlet: 'merah-delima', city: 'Berau' }));
+
+	function orderHere() {
+		cart.setOutlet('merah-delima');
+		track('outlet_selected', { outlet: 'merah-delima', city: 'Berau', source: 'outlet-page' });
+		goto('/menu');
+	}
+</script>
+
+<svelte:head>
+	<title>Zatiaras Juice Merah Delima Berau | Order Pickup</title>
+	<meta
+		name="description"
+		content="Zatiaras Juice Outlet Merah Delima Berau. Order pickup praktis tanpa antre."
+	/>
+	<link rel="canonical" href={url} />
+	{@html ldBusiness}
+	{@html ldCrumb}
+</svelte:head>
+
+<div class="bg-cream py-8 sm:py-14">
+	<div class="mx-auto max-w-4xl px-4 sm:px-6">
+		<nav
+			class="mb-6 flex items-center gap-2 text-xs font-semibold text-neutral-500"
+			aria-label="Breadcrumb"
+		>
+			<a href="/" class="transition-colors hover:text-brand">Home</a>
+			<span class="text-neutral-300">/</span>
+			<a href="/berau" class="transition-colors hover:text-brand">Berau</a>
+			<span class="text-neutral-300">/</span>
+			<span class="font-bold text-ink">Merah Delima</span>
+		</nav>
+		<div class="rounded-3xl border border-black/[0.08] bg-white p-6 shadow-xs sm:p-10">
+			<span
+				class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700"
+			>
+				<span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+				JAM OPERASIONAL · {outlet.hours}
+			</span>
+			<h1 class="mt-3 font-display text-3xl font-extrabold text-ink sm:text-4xl">
+				Zatiaras Outlet Merah Delima
+			</h1>
+			<p class="mt-2 text-xs font-bold tracking-wider text-brand uppercase">
+				Berau, Kalimantan Timur
+			</p>
+			<p class="mt-3 text-sm leading-relaxed text-neutral-600">
+				{outlet.address}. Order pickup praktis tanpa antre — satu pesanan untuk satu outlet.
+			</p>
+			<div class="mt-6 flex flex-wrap gap-3">
+				<button
+					type="button"
+					onclick={orderHere}
+					class="tap-scale rounded-full bg-brand px-7 py-3.5 text-xs font-bold text-white shadow-lg shadow-brand/25 transition hover:bg-brand-dark"
+				>
+					Pesan Pickup di Merah Delima →
+				</button>
+				<a
+					href="/locations"
+					class="tap-scale rounded-full border border-black/15 bg-white px-6 py-3 text-xs font-bold text-neutral-700 hover:bg-neutral-50"
+				>
+					Lihat Outlet Lain
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
