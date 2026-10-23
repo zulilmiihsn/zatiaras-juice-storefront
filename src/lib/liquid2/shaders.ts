@@ -1,5 +1,5 @@
-// GLSL for Liquid 2. Every pass shares one projection, so the drink quad, the surface mesh
-// and the spray all write comparable depth and occlude each other per pixel.
+// GLSL for Liquid 2. Every pass shares one projection, so the drink quad and the surface
+// mesh write comparable depth and occlude each other per pixel.
 // The material is copied from Liquid 1 ($lib/liquid1/wave), re-aimed for a camera that
 // looks down on a horizontal pool: its studio panels sit behind the liquid as well as in
 // front, so both the flat surface and the wave faces catch crisp highlights.
@@ -221,52 +221,4 @@ void main() {
 		: dot(vec3(uCylinder.x, uCylinder.w, uCylinder.y) - uCam, uFwd);
 	gl_FragDepth = windowDepth(depth);
 	outColor = vec4(color.rgb, 1.0);
-}`;
-
-// Spray: one impostor sphere per drop, stretched along its screen-plane velocity so fast
-// chains read as ligaments. Depth is written per pixel on the sphere's front surface.
-export const SPRAY_VS = `#version 300 es
-precision highp float;
-layout(location = 0) in vec2 aCorner;
-layout(location = 1) in vec3 aPos;
-layout(location = 2) in vec3 aVel;
-layout(location = 3) in float aRadius;
-out vec2 vLocal;
-out vec3 vCenter, vAxis, vSide;
-out float vRadius, vStretch;
-${COMMON}
-void main() {
-	vec3 center = aPos + vec3(0.0, uLevel, 0.0);
-	vec3 v = aVel - dot(aVel, uFwd) * uFwd;
-	float speed = length(v);
-	vec3 axis = speed > 0.001 ? v / speed : uUp;
-	vec3 side = normalize(cross(uFwd, axis));
-	// Fast drops stretch into ligaments along their path.
-	float stretch = 1.0 + min(speed * 0.35, 3.0);
-	vLocal = aCorner;
-	vCenter = center;
-	vAxis = axis;
-	vSide = side;
-	vRadius = aRadius;
-	vStretch = stretch;
-	gl_Position = project(center + (axis * aCorner.y * stretch + side * aCorner.x) * aRadius);
-}`;
-
-export const SPRAY_FS = `#version 300 es
-precision highp float;
-in vec2 vLocal;
-in vec3 vCenter, vAxis, vSide;
-in float vRadius, vStretch;
-out vec4 outColor;
-${COMMON}
-${SHADE}
-void main() {
-	float r2 = dot(vLocal, vLocal);
-	if (r2 > 1.0) discard;
-	float bulge = sqrt(1.0 - r2);
-	vec3 n = normalize(vSide * vLocal.x + vAxis * vLocal.y - uFwd * bulge);
-	vec3 point = vCenter + (vSide * vLocal.x + vAxis * vLocal.y * vStretch) * vRadius - uFwd * bulge * vRadius;
-	gl_FragDepth = windowDepth(dot(point - uCam, uFwd));
-	float alpha = farFade(point.z);
-	outColor = vec4(shade(point, n, 0.15, 0.0) * alpha, alpha);
 }`;

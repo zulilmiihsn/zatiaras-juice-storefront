@@ -69,7 +69,7 @@ scene (static/images/liquid2, drink included) is shown. -->
 		const motion = matchMedia('(prefers-reduced-motion: reduce)');
 		const tier = qualityTier(coarse);
 		const renderer =
-			connection?.saveData || motion.matches ? null : Liquid2Renderer.create(canvas, tier);
+			connection?.saveData || motion.matches ? null : Liquid2Renderer.create(canvas);
 		if (!renderer) {
 			mode = 'still';
 			return;
@@ -158,9 +158,13 @@ scene (static/images/liquid2, drink included) is shown. -->
 			pointer.speed = 0;
 		};
 
+		// IntersectionObserver still reports a box that only touches the viewport edge as
+		// intersecting; such a box shows nothing, so check the measured rect as well.
+		const onscreen = () => rect.bottom > 0 && rect.top < innerHeight;
+
 		const tick = (now: number) => {
 			raf = 0;
-			if (stopped || !visible || document.hidden) return;
+			if (stopped || !visible || !onscreen() || document.hidden) return;
 			const dtMs = now - last;
 			const frameInterval = 1000 / 60;
 			if (dtMs < frameInterval - 0.75) {
@@ -211,7 +215,7 @@ scene (static/images/liquid2, drink included) is shown. -->
 		};
 
 		const resume = () => {
-			if (!stopped && !raf && visible && !document.hidden) {
+			if (!stopped && !raf && visible && onscreen() && !document.hidden) {
 				last = performance.now();
 				raf = requestAnimationFrame(tick);
 			}
@@ -264,9 +268,6 @@ scene (static/images/liquid2, drink included) is shown. -->
 				},
 				get drive() {
 					return sim.drive;
-				},
-				get spray() {
-					return sim.spray.count;
 				},
 				get covered() {
 					return sim.covered;

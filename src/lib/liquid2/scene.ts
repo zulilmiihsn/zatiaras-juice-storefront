@@ -37,7 +37,6 @@ export interface Domain {
 export interface Tier {
 	cols: number;
 	rows: number;
-	maxParticles: number;
 }
 
 // Matched to the drink photo's own camera: a long lens, level, eye height at the lid.
@@ -150,6 +149,6 @@ export function levelForProgress(p: number, cover: number): number {
 
 export function qualityTier(coarse: boolean): Tier {
 	return coarse
-		? { cols: 96, rows: 64, maxParticles: 768 }
-		: { cols: 160, rows: 112, maxParticles: 1536 };
+		? { cols: 96, rows: 64 }
+		: { cols: 160, rows: 112 };
 }

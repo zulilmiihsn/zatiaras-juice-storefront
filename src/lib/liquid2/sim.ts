@@ -1,6 +1,6 @@
 // Liquid 2 orchestrator: maps scroll to the mean level and swell drive, keeps the drink's
-// obstacle in the field until the liquid closes over it, and feeds breaking crests into
-// the spray. Scrolling back drains: time only runs forward while the level follows
+// obstacle in the field until the liquid closes over it, and stirs the surface around the
+// drink while the page scrolls. There is no spray. Scrolling back drains: time only runs forward while the level follows
 // progress down, so the liquid recedes with new motion instead of replaying in reverse.
 
 import {
@@ -13,8 +13,7 @@ import {
 	type Drink,
 	type Tier
 } from './scene';
-import { MAX_SUBSTEPS, SIM_STEP, ShallowWater, type Breaking } from './shallow-water';
-import { Spray } from './spray';
+import { MAX_SUBSTEPS, SIM_STEP, ShallowWater } from './shallow-water';
 
 export interface SimInput {
 	/** Scroll progress 0..1. */
@@ -23,17 +22,21 @@ export interface SimInput {
 	scrollVelocity: number;
 }
 
-const RISE_RATE = 1.2;
-const DRAIN_RATE = 0.8;
-const DRIVE_TAU = 0.25;
+// Calm and unhurried: the level eases toward its scroll target, and scroll speed only
+// slowly builds the swell, so a light scroll does not stir the liquid up.
+const RISE_RATE = 0.6;
+const DRAIN_RATE = 0.6;
+const DRIVE_TAU = 0.5;
+const DRIVE_FLOOR = 0.1;
+const DRIVE_PER_SPEED = 1.6;
 /** The obstacle lifts once the level clears the rim by this much, and returns below it. */
 const SUBMERGE_MARGIN = 0.05;
 /** Scrolling erupts the liquid around the drink: bursts per second at full drive. */
-const BURST_RATE = 12;
+const BURST_RATE = 6;
 /** Drive below which the liquid only swells, without bursting. */
-const BURST_THRESHOLD = 0.25;
+const BURST_THRESHOLD = 0.35;
 /** Share of each level rise that wells up around the drink before spreading out. */
-const MOUND_GAIN = 6;
+const MOUND_GAIN = 3;
 
 const mulberry32 = (seed: number) => () => {
 	seed = (seed + 0x6d2b79f5) | 0;
@@ -48,7 +51,6 @@ const sameDomain = (a: Domain, b: Domain) =>
 
 export class LiquidSim {
 	field: ShallowWater;
-	readonly spray: Spray;
 	level = 0;
 	drive = 0;
 	time = 0;
@@ -65,7 +67,6 @@ export class LiquidSim {
 		this.seed = seed;
 		this.camera = makeCamera(1.6);
 		this.field = new ShallowWater(tier, groundDomain(this.camera), seed);
-		this.spray = new Spray(tier.maxParticles, seed ^ 0x9e3779b9);
 		this.random = mulberry32((seed ^ 0xb0757) >>> 0 || 1);
 	}
 
@@ -102,7 +103,8 @@ export class LiquidSim {
 		const rise = Math.min(RISE_RATE * step, Math.max(-DRAIN_RATE * step, target - this.level));
 		this.level += rise;
 
-		const wanted = progress > 0.05 && progress < 0.98 ? Math.min(1, 0.15 + 3.5 * speed) : 0;
+		const wanted =
+			progress > 0.05 && progress < 0.98 ? Math.min(1, DRIVE_FLOOR + DRIVE_PER_SPEED * speed) : 0;
 		this.drive += (wanted - this.drive) * (1 - Math.exp(-step / DRIVE_TAU));
 
 		if (this.drink) {
@@ -117,52 +119,33 @@ export class LiquidSim {
 		}
 
 		// The rise starts at the drink: a mound wells up around it and spreads outward, and
-		// while the page scrolls the liquid bursts there, throwing splashes up and out.
+		// while the page scrolls briskly the surface surges up beside it.
 		if (this.drink && rise > 0)
 			this.field.impulse(this.drink.x, this.drink.z, this.drink.radius * 2.5, rise * MOUND_GAIN);
 		if (this.drink && this.drive > BURST_THRESHOLD) {
 			this.burstClock += step * BURST_RATE * this.drive;
-			const bursts: Breaking[] = [];
 			while (this.burstClock >= 1) {
 				this.burstClock -= 1;
-				bursts.push(this.burst(this.drink));
+				this.surge(this.drink);
 			}
-			this.spray.emit(bursts);
 		} else this.burstClock = 0;
 
-		this.spray.emit(this.field.advance(step, this.drive));
-		this.spray.advance(step, this.field, this.localDrink());
+		this.field.advance(step, this.drive);
 		this.time += step;
 	}
 
-	/** One eruption beside the drink: a local surge in the surface plus a thrown splash. */
-	private burst(drink: Drink): Breaking {
+	/** A local surge of the surface beside the drink. */
+	private surge(drink: Drink) {
 		const rnd = this.random;
 		const angle = rnd() * Math.PI * 2;
-		const nx = Math.cos(angle);
-		const nz = Math.sin(angle);
 		const reach = drink.radius + 0.06 + 0.2 * rnd();
-		const x = drink.x + nx * reach;
-		const z = drink.z + nz * reach;
 		const power = this.drive * (0.6 + 0.4 * rnd());
-		// The surge itself is the splash: a sharp, tall lift of the surface beside the drink.
-		this.field.impulse(x, z, 0.07 + 0.06 * rnd(), 0.15 + 0.3 * power);
-		const out = 0.6 + 1.4 * rnd();
-		return {
-			x,
-			z,
-			y: this.field.sample(x, z) + 0.05,
-			vx: nx * out * power,
-			vy: (1.8 + 2.4 * rnd()) * power,
-			vz: nz * out * power,
-			strength: Math.min(1, 0.5 + 0.5 * power)
-		};
-	}
-
-	/** The drink in the field's frame (y measured from the mean level), or null once submerged. */
-	localDrink(): Drink | null {
-		if (!this.drink || this.submerged) return null;
-		return { ...this.drink, baseY: this.drink.baseY - this.level };
+		this.field.impulse(
+			drink.x + Math.cos(angle) * reach,
+			drink.z + Math.sin(angle) * reach,
+			0.08 + 0.06 * rnd(),
+			0.08 + 0.14 * power
+		);
 	}
 
 	disturb(x: number, z: number, strength: number) {

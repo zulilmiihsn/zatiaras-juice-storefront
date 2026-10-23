@@ -5,7 +5,7 @@ vi.setConfig({ testTimeout: 20000 });
 import type { Domain, Drink, Tier } from './scene';
 import { ShallowWater } from './shallow-water';
 
-const TIER: Tier = { cols: 120, rows: 120, maxParticles: 512 };
+const TIER: Tier = { cols: 120, rows: 120 };
 const DOMAIN: Domain = { x0: -3, x1: 3, z0: -3, z1: 3 };
 const DRINK: Drink = { x: 0, z: 0, radius: 0.3, height: 1, baseY: -0.15 };
 
@@ -13,25 +13,21 @@ const peak = (w: ShallowWater) => w.height.reduce((m, v) => Math.max(m, Math.abs
 const sum = (a: Float32Array) => a.reduce((s, v) => s + v, 0);
 
 describe('liquid2 shallow water', () => {
-	it('stays calm and splash-free when only the wind stirs it', () => {
+	it('stays calm when only the wind stirs it', () => {
 		const w = new ShallowWater(TIER, DOMAIN);
-		let events = 0;
-		for (let i = 0; i < 600; i++) events += w.advance(1 / 60, 0).length;
+		for (let i = 0; i < 600; i++) w.advance(1 / 60, 0);
 		expect(peak(w)).toBeGreaterThan(0.002);
 		expect(peak(w)).toBeLessThan(0.08);
-		expect(events).toBe(0);
 	}, 20000);
 
-	it('builds colliding swells that break under full drive', () => {
+	it('builds colliding swells under full drive', () => {
 		const w = new ShallowWater(TIER, DOMAIN);
-		let events = 0;
 		let highest = 0;
 		for (let i = 0; i < 600; i++) {
-			events += w.advance(1 / 60, 1).length;
+			w.advance(1 / 60, 1);
 			highest = Math.max(highest, peak(w));
 		}
-		expect(highest).toBeGreaterThan(0.35);
-		expect(events).toBeGreaterThan(0);
+		expect(highest).toBeGreaterThan(0.3);
 	}, 20000);
 
 	it('shadows the water behind the drink', () => {
@@ -165,8 +161,8 @@ describe('liquid2 shallow water turbulence', () => {
 			calm.advance(1 / 60, 0);
 			driven.advance(1 / 60, 1);
 		}
-		// Visible chop: bumps of a few hundredths over a few cells, everywhere.
-		expect(roughness(driven)).toBeGreaterThan(0.01);
+		// Visible but modest chop over the whole pool.
+		expect(roughness(driven)).toBeGreaterThan(0.004);
 		expect(roughness(calm)).toBeLessThan(0.001);
 	}, 20000);
 });

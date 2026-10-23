@@ -2,24 +2,13 @@
 // plane. Heights sit at cell centres, x velocities on x faces, z velocities on z faces.
 // The drink is a solid cylinder: its cells hold no water and faces touching it carry no
 // flow, so waves reflect, run up against it and close behind it. Edges are absorbing.
-// Scroll drive feeds swells from the left and right edges in opposite phase; at rest only
-// a seeded wind stirs the surface. Steps are fixed and seeded, like Liquid 1.
+// Scroll drive feeds swells from the left and right edges in opposite phase and churns the
+// surface; at rest only a seeded wind stirs it. Steps are fixed and seeded, like Liquid 1.
 
 import type { Domain, Drink, Tier } from './scene';
 
 export const SIM_STEP = 1 / 120;
 export const MAX_SUBSTEPS = 8;
-
-/** A breaking crest: where it is, its surface offset y, its velocity and strength 0..1. */
-export interface Breaking {
-	x: number;
-	z: number;
-	y: number;
-	vx: number;
-	vy: number;
-	vz: number;
-	strength: number;
-}
 
 const WAVE_SPEED = 1.6;
 const GRAVITY = 9.8;
@@ -27,23 +16,15 @@ const DEPTH = (WAVE_SPEED * WAVE_SPEED) / GRAVITY;
 /** Viscous juice: waves lose energy slowly everywhere, quickly in the edge sponge. */
 const BODY_DAMPING = 0.25;
 const EDGE_DAMPING = 7;
-const SWELL_AMPLITUDE = 0.42;
+const SWELL_AMPLITUDE = 0.25;
 const SWELL_HZ = 0.45;
 /** Surface tension and viscosity: smooths grid-scale noise, leaves long swells alone. */
 const DIFFUSION = 0.003;
-const BREAK_SLOPE = 1.0;
-const BREAK_ACCEL = 9;
-const BREAK_MIN_HEIGHT = 0.15;
-const RUNUP_HEIGHT = 0.18;
-const BREAK_COOLDOWN = 0.35;
-const MAX_EVENTS = 2;
-/** Cells around a breaking crest that may not break again during the cooldown. */
-const COOLDOWN_REACH = 5;
 const WIND_BUMPS = 3;
 const WIND_AMPLITUDE = 0.0015;
 /** Under scroll drive the whole surface churns: extra bumps per step and their height. */
-const CHOP_BUMPS = 10;
-const CHOP_AMPLITUDE = 0.045;
+const CHOP_BUMPS = 6;
+const CHOP_AMPLITUDE = 0.02;
 
 const mulberry32 = (seed: number) => () => {
 	seed = (seed + 0x6d2b79f5) | 0;
@@ -70,11 +51,6 @@ export class ShallowWater {
 	private readonly damping: Float32Array;
 	private readonly dampX: Float32Array;
 	private readonly dampZ: Float32Array;
-	/** Heights and rise rates at the previous fixed step, for crest detection. */
-	private readonly prevHeight: Float32Array;
-	private readonly prevRate: Float32Array;
-	/** Simulation time until which each cell may not break again. */
-	private readonly cooldownUntil: Float64Array;
 	private readonly inner: number;
 	private readonly innerDt: number;
 	private readonly sourceLeft: number;
@@ -93,12 +69,9 @@ export class ShallowWater {
 		this.dz = (domain.z1 - domain.z0) / this.rows;
 		const n = this.cols * this.rows;
 		this.height = new Float32Array(n);
-		this.prevHeight = new Float32Array(n);
-		this.prevRate = new Float32Array(n);
 		this.velX = new Float32Array((this.cols + 1) * this.rows);
 		this.velZ = new Float32Array(this.cols * (this.rows + 1));
 		this.solid = new Uint8Array(n);
-		this.cooldownUntil = new Float64Array(n);
 		this.scratch = new Float32Array(n);
 		this.random = mulberry32(seed >>> 0 || 1);
 		this.zPhase = this.random() * Math.PI * 2;
@@ -151,8 +124,6 @@ export class ShallowWater {
 			if (next[k] && !this.solid[k]) {
 				displaced += this.height[k];
 				this.height[k] = 0;
-				this.prevHeight[k] = 0;
-				this.prevRate[k] = 0;
 			}
 		this.solid = next;
 		if (displaced !== 0) {
@@ -192,9 +163,8 @@ export class ShallowWater {
 			}
 	}
 
-	advance(dt: number, drive: number): Breaking[] {
-		const events: Breaking[] = [];
-		if (!Number.isFinite(dt) || dt <= 0) return events;
+	advance(dt: number, drive: number) {
+		if (!Number.isFinite(dt) || dt <= 0) return;
 		const d = Number.isFinite(drive) ? Math.min(1, Math.max(0, drive)) : 0;
 		this.remainder = Math.min(this.remainder + dt, MAX_SUBSTEPS * SIM_STEP);
 		while (this.remainder >= SIM_STEP) {
@@ -203,10 +173,8 @@ export class ShallowWater {
 			for (let s = 0; s < this.inner; s++) this.substep(d);
 			this.diffuse();
 			this.time += SIM_STEP;
-			this.detectBreaking(events);
 			this.version++;
 		}
-		return events;
 	}
 
 	private wind(drive: number) {
@@ -286,55 +254,6 @@ export class ShallowWater {
 			}
 	}
 
-	private detectBreaking(events: Breaking[]) {
-		const { cols, rows, height: h, solid } = this;
-		const { prevHeight, prevRate, cooldownUntil } = this;
-		const time = this.time;
-		for (let j = 1; j < rows - 1; j++)
-			for (let i = 1; i < cols - 1; i++) {
-				const k = j * cols + i;
-				const hk = h[k];
-				const rising = (hk - prevHeight[k]) / SIM_STEP;
-				const accel = (rising - prevRate[k]) / SIM_STEP;
-				prevHeight[k] = hk;
-				prevRate[k] = rising;
-				if (solid[k] || cooldownUntil[k] > time) continue;
-				if (hk < BREAK_MIN_HEIGHT || rising <= 0) continue;
-				const wall = solid[k - 1] || solid[k + 1] || solid[k - cols] || solid[k + cols];
-				let trigger = 0;
-				if (wall && hk > RUNUP_HEIGHT) trigger = (hk - RUNUP_HEIGHT) / RUNUP_HEIGHT + 0.4;
-				else if (!wall) {
-					const sx = (h[k + 1] - h[k - 1]) / (2 * this.dx);
-					const sz = (h[k + cols] - h[k - cols]) / (2 * this.dz);
-					const slope = Math.hypot(sx, sz);
-					// Crest: higher than all four neighbours, so one wave front emits one line of spray.
-					const crest = hk >= h[k - 1] && hk >= h[k + 1] && hk >= h[k - cols] && hk >= h[k + cols];
-					if (crest && (slope > BREAK_SLOPE || accel > BREAK_ACCEL))
-						trigger = Math.max((slope - BREAK_SLOPE) / 0.5, (accel - BREAK_ACCEL) / BREAK_ACCEL) + 0.3;
-				}
-				if (trigger <= 0 || events.length >= MAX_EVENTS) continue;
-				const strength = Math.min(1, Math.max(0.2, trigger));
-				const vx = 0.5 * (this.velX[j * (cols + 1) + i] + this.velX[j * (cols + 1) + i + 1]);
-				const vz = 0.5 * (this.velZ[k] + this.velZ[k + cols]);
-				events.push({
-					x: this.cellX(i),
-					z: this.cellZ(j),
-					y: hk,
-					vx: vx * 1.4,
-					vy: Math.max(rising, 0) * 1.5 + 1.2 * strength,
-					vz: vz * 1.4,
-					strength
-				});
-				for (let b = -COOLDOWN_REACH; b <= COOLDOWN_REACH; b++)
-					for (let a = -COOLDOWN_REACH; a <= COOLDOWN_REACH; a++) {
-						const ii = i + a;
-						const jj = j + b;
-						if (ii >= 0 && jj >= 0 && ii < cols && jj < rows)
-							cooldownUntil[jj * cols + ii] = time + BREAK_COOLDOWN;
-					}
-			}
-	}
-
 	/** Gaussian bump of peak `strength` (negative pushes down) around (x, z). */
 	impulse(x: number, z: number, radius: number, strength: number) {
 		if (![x, z, radius, strength].every(Number.isFinite) || radius <= 0) return;
@@ -351,32 +270,6 @@ export class ShallowWater {
 				const ddz = this.cellZ(j) - z;
 				this.height[k] += strength * Math.exp(-(ddx * ddx + ddz * ddz) / (radius * radius));
 			}
-	}
-
-	/** A landed particle returns its volume to the surface under it. */
-	deposit(x: number, z: number, volume: number, vy: number) {
-		if (![x, z, volume, vy].every(Number.isFinite) || volume <= 0) return;
-		const fx = (x - this.domain.x0) / this.dx - 0.5;
-		const fz = (z - this.domain.z0) / this.dz - 0.5;
-		const i0 = Math.floor(fx);
-		const j0 = Math.floor(fz);
-		const tx = fx - i0;
-		const tz = fz - j0;
-		const amount = volume / (this.dx * this.dz);
-		const weights: [number, number, number][] = [
-			[i0, j0, (1 - tx) * (1 - tz)],
-			[i0 + 1, j0, tx * (1 - tz)],
-			[i0, j0 + 1, (1 - tx) * tz],
-			[i0 + 1, j0 + 1, tx * tz]
-		];
-		for (const [i, j, weight] of weights) {
-			if (i < 0 || j < 0 || i >= this.cols || j >= this.rows) continue;
-			const k = j * this.cols + i;
-			if (this.solid[k]) continue;
-			this.height[k] += amount * weight;
-		}
-		// A falling drop pushes its landing point down; the dip ripples outward.
-		this.impulse(x, z, 1.5 * Math.max(this.dx, this.dz), -Math.min(0.04, amount * 0.02 * Math.abs(vy)));
 	}
 
 	/**

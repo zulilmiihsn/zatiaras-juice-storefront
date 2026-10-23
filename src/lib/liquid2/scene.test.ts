@@ -54,7 +54,6 @@ describe('liquid2 scene', () => {
 		const touch = qualityTier(true);
 		const desk = qualityTier(false);
 		expect(touch.cols * touch.rows).toBeLessThan(desk.cols * desk.rows);
-		expect(touch.maxParticles).toBeLessThan(desk.maxParticles);
 	});
 
 	it('covers the visible floor with a domain that contains the drink', () => {

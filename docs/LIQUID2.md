@@ -1,10 +1,10 @@
 # Liquid 2
 
 A real-time 3D liquid for the scroll hero. The liquid is a simulated pool, not a drawn
-line. As the page scrolls it erupts around the drink: rough surges burst up beside the
-cup and throw splashes, the whole surface churns, and the rise wells up from the cup
-and spreads outward until the frame is covered. When scrolling stops, the bursts stop
-and the surface settles. Scrolling back drains it. The design and its decisions are in
+line. As the page scrolls the rise wells up from around the drink and spreads outward,
+the surface churns in proportion to scroll speed, and a brisk scroll surges the liquid
+up beside the cup, until the frame is covered. A light scroll stays calm. There are no
+drops or splashes. When scrolling stops, the surface settles. Scrolling back drains it. The design and its decisions are in
 `docs/superpowers/specs/2026-10-23-liquid2-design.md`. Liquid 1 (`docs/LIQUID1.md`) is
 unchanged.
 
@@ -16,25 +16,23 @@ unchanged.
     progress to level, and the device quality tiers.
   - `shallow-water.ts` is the pool, a staggered-grid shallow-water field. The drink is a
     solid obstacle, the side and front edges absorb waves, and swells come in from the
-    left and right. Crests that get steep or run up against the drink break.
-  - `spray.ts` holds drops thrown by breaking crests. Gravity and size-dependent drag act
-    on them, they bounce off the drink, and they return their volume to the pool when
-    they land.
-  - `sim.ts` drives the simulation from scroll. It maps progress to level and drive. While
-    scrolling it bursts the surface beside the drink and throws splashes (up to 12 per
-    second at full drive), and wells each level rise up around the drink. It lifts the
-    obstacle once the drink is submerged and drains on reverse scroll.
+    left and right.
+  - `sim.ts` drives the simulation from scroll. It maps progress to level and drive (the
+    level eases at 0.6 units/s; drive builds slowly from scroll speed). Above a drive of
+    0.35 it surges the surface beside the drink (up to 6 per second), and it wells each
+    level rise up around the drink. It lifts the obstacle once the drink is submerged and
+    drains on reverse scroll.
   - `renderer.ts` and `shaders.ts` hold the WebGL2 renderer. It draws the drink quad at
-    the cylinder's front-face depth, then the pool mesh, then the spray as depth-writing
-    impostor spheres, so the depth test decides per pixel which liquid is in front of the
-    drink. The material is copied from Liquid 1.
+    the cylinder's front-face depth, then the pool mesh, so the depth test decides per
+    pixel which liquid is in front of the drink. The far edge of the pool fades into the
+    page. The material is copied from Liquid 1.
 - Static fallbacks: `static/images/liquid2/wave-{desktop,mobile}.png`, rendered from the
   live scene at progress 0.28 with the drink included.
 - Preview route: `/qa/liquid2`.
 
 The simulation runs on the CPU in typed arrays with fixed 1/120 s steps and seeded
-randomness. Its state is uploaded to the GPU each frame. Tiers are 160x112 cells with
-1,536 drops on desktop, and 96x64 cells with 768 drops on touch devices. The drawing
+randomness. Its state is uploaded to the GPU each frame. Tiers are 160x112 cells on desktop and
+96x64 cells on touch devices. The drawing
 buffer budget, the 60 FPS cap, adaptive resolution, offscreen suspension, context-loss
 handling, and the overload fallback are the same as in Liquid 1.
 

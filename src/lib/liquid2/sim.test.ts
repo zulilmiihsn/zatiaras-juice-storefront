@@ -95,15 +95,8 @@ describe('liquid2 simulation scroll eruption', () => {
 		sim.layout(cam, drink);
 		const near = (x: number, z: number, reach: number) =>
 			Math.hypot(x - drink.x, z - drink.z) < drink.radius + reach;
-		let nearDrops = 0;
 		let nearPeak = 0;
 		ramp(sim, 0, 0.3, 1, () => {
-			let drops = 0;
-			for (let p = 0; p < sim.spray.count; p++) {
-				const o = p * 8;
-				if (near(sim.spray.data[o], sim.spray.data[o + 2], 1)) drops++;
-			}
-			nearDrops = Math.max(nearDrops, drops);
 			const f = sim.field;
 			for (let j = 0; j < f.rows; j++)
 				for (let i = 0; i < f.cols; i++) {
@@ -112,8 +105,7 @@ describe('liquid2 simulation scroll eruption', () => {
 						nearPeak = Math.max(nearPeak, Math.abs(f.height[k]));
 				}
 		});
-		expect(nearDrops).toBeGreaterThan(20);
-		expect(nearPeak).toBeGreaterThan(0.15);
+		expect(nearPeak).toBeGreaterThan(0.1);
 	}, 20000);
 });
 
@@ -132,5 +124,32 @@ describe('liquid2 simulation volume', () => {
 				n++;
 			}
 		expect(Math.abs(sum / n)).toBeLessThan(0.01);
+	});
+});
+
+describe('liquid2 simulation sensitivity', () => {
+	it('stays gentle under a slow scroll', () => {
+		const sim = new LiquidSim(qualityTier(true));
+		sim.layout(cam, drink);
+		let maxDrive = 0;
+		let nearPeak = 0;
+		ramp(sim, 0, 0.1, 1.5, () => {
+			maxDrive = Math.max(maxDrive, sim.drive);
+			const f = sim.field;
+			for (let j = 0; j < f.rows; j++)
+				for (let i = 0; i < f.cols; i++) {
+					const k = j * f.cols + i;
+					const x = f.domain.x0 + (i + 0.5) * f.dx;
+					const z = f.domain.z0 + (j + 0.5) * f.dz;
+					if (!f.solid[k] && Math.hypot(x - drink.x, z - drink.z) < drink.radius + 0.6)
+						nearPeak = Math.max(nearPeak, Math.abs(f.height[k]));
+				}
+		});
+		expect(maxDrive).toBeLessThan(0.3);
+		expect(nearPeak).toBeLessThan(0.08);
+	});
+
+	it('throws no drops: Liquid 2 has no spray', () => {
+		expect('spray' in new LiquidSim(qualityTier(true))).toBe(false);
 	});
 });

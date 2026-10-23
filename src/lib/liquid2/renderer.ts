@@ -1,18 +1,10 @@
-// Liquid 2 WebGL2 renderer. Order: drink quad (depth = cylinder front face), pool surface,
-// spray impostors; one depth buffer resolves which liquid passes in front of the drink.
+// Liquid 2 WebGL2 renderer. Order: drink quad (depth = cylinder front face), then the pool
+// surface; one depth buffer resolves which liquid passes in front of the drink.
 // Simulation state lives on the CPU (LiquidSim) and is uploaded when it changes.
 
-import { project, type Camera, type Drink, type Tier } from './scene';
+import { project, type Camera, type Drink } from './scene';
 import type { LiquidSim } from './sim';
-import { PARTICLE_STRIDE } from './spray';
-import {
-	DRINK_FS,
-	DRINK_VS,
-	SPRAY_FS,
-	SPRAY_VS,
-	SURFACE_FS,
-	SURFACE_VS
-} from './shaders';
+import { DRINK_FS, DRINK_VS, SURFACE_FS, SURFACE_VS } from './shaders';
 
 const PINK = [1, 0.0627451, 0.5058824] as const;
 const COMMON_UNIFORMS = [
@@ -90,12 +82,8 @@ function axis(start: number, step: number, count: number, before: number[], afte
 export class Liquid2Renderer {
 	private readonly surfaceU;
 	private readonly drinkU;
-	private readonly sprayU;
 	private readonly quad: WebGLBuffer;
-	private readonly corners: WebGLBuffer;
 	private readonly drinkVao: WebGLVertexArrayObject;
-	private readonly sprayVao: WebGLVertexArrayObject;
-	private readonly sprayBuffer: WebGLBuffer;
 	private readonly fieldTexture: WebGLTexture;
 	private readonly imageTexture: WebGLTexture;
 	private surface: {
@@ -110,31 +98,23 @@ export class Liquid2Renderer {
 	private mask = new Float32Array(0);
 	private fieldOwner: unknown = null;
 	private uploadedField = -1;
-	private uploadedSpray = -1;
 	private imageAspect = 0;
 
 	private constructor(
 		private readonly gl: WebGL2RenderingContext,
 		private readonly surfaceProg: WebGLProgram,
-		private readonly drinkProg: WebGLProgram,
-		private readonly sprayProg: WebGLProgram,
-		private readonly maxParticles: number
+		private readonly drinkProg: WebGLProgram
 	) {
 		this.surfaceU = locations(gl, surfaceProg, [...COMMON_UNIFORMS, 'uField', 'uDomain', 'uCells'] as const);
 		this.drinkU = locations(gl, drinkProg, [...COMMON_UNIFORMS, 'uImage', 'uRect', 'uCylinder'] as const);
-		this.sprayU = locations(gl, sprayProg, COMMON_UNIFORMS);
 		const quad = gl.createBuffer(),
 			drinkVao = gl.createVertexArray(),
-			sprayVao = gl.createVertexArray(),
-			sprayBuffer = gl.createBuffer(),
 			fieldTexture = gl.createTexture(),
 			imageTexture = gl.createTexture();
-		if (!quad || !drinkVao || !sprayVao || !sprayBuffer || !fieldTexture || !imageTexture)
+		if (!quad || !drinkVao || !fieldTexture || !imageTexture)
 			throw new Error('liquid2 allocation failed');
 		this.quad = quad;
 		this.drinkVao = drinkVao;
-		this.sprayVao = sprayVao;
-		this.sprayBuffer = sprayBuffer;
 		this.fieldTexture = fieldTexture;
 		this.imageTexture = imageTexture;
 
@@ -143,28 +123,6 @@ export class Liquid2Renderer {
 		gl.bindVertexArray(drinkVao);
 		gl.enableVertexAttribArray(0);
 		gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-
-		// Spray impostors use signed corners (-1..1); the drink quad uses 0..1.
-		const corners = gl.createBuffer();
-		if (!corners) throw new Error('liquid2 allocation failed');
-		this.corners = corners;
-		gl.bindVertexArray(sprayVao);
-		gl.enableVertexAttribArray(0);
-		gl.bindBuffer(gl.ARRAY_BUFFER, corners);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-		gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-		gl.bindBuffer(gl.ARRAY_BUFFER, sprayBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, this.maxParticles * PARTICLE_STRIDE * 4, gl.DYNAMIC_DRAW);
-		const stride = PARTICLE_STRIDE * 4;
-		gl.enableVertexAttribArray(1);
-		gl.vertexAttribPointer(1, 3, gl.FLOAT, false, stride, 0);
-		gl.vertexAttribDivisor(1, 1);
-		gl.enableVertexAttribArray(2);
-		gl.vertexAttribPointer(2, 3, gl.FLOAT, false, stride, 12);
-		gl.vertexAttribDivisor(2, 1);
-		gl.enableVertexAttribArray(3);
-		gl.vertexAttribPointer(3, 1, gl.FLOAT, false, stride, 24);
-		gl.vertexAttribDivisor(3, 1);
 		gl.bindVertexArray(null);
 
 		for (const texture of [fieldTexture, imageTexture]) {
@@ -179,7 +137,7 @@ export class Liquid2Renderer {
 	}
 
 	/** Null when WebGL2 or a shader is unavailable; callers show the static fallback. */
-	static create(canvas: HTMLCanvasElement, tier: Tier): Liquid2Renderer | null {
+	static create(canvas: HTMLCanvasElement): Liquid2Renderer | null {
 		let gl: WebGL2RenderingContext | null = null;
 		const programs: WebGLProgram[] = [];
 		try {
@@ -194,8 +152,7 @@ export class Liquid2Renderer {
 			if (!gl) return null;
 			programs.push(program(gl, SURFACE_VS, SURFACE_FS));
 			programs.push(program(gl, DRINK_VS, DRINK_FS));
-			programs.push(program(gl, SPRAY_VS, SPRAY_FS));
-			return new Liquid2Renderer(gl, programs[0], programs[1], programs[2], tier.maxParticles);
+			return new Liquid2Renderer(gl, programs[0], programs[1]);
 		} catch (error) {
 			for (const prog of programs) gl?.deleteProgram(prog);
 			gl?.getExtension('WEBGL_lose_context')?.loseContext();
@@ -385,19 +342,6 @@ export class Liquid2Renderer {
 		gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 		gl.bindVertexArray(this.surface!.vao);
 		gl.drawElements(gl.TRIANGLES, this.surface!.count, gl.UNSIGNED_INT, 0);
-
-		const count = full ? 0 : Math.min(sim.spray.count, this.maxParticles);
-		if (count > 0) {
-			gl.useProgram(this.sprayProg);
-			this.common(this.sprayU, cam, sim, time, cover);
-			gl.bindVertexArray(this.sprayVao);
-			if (this.uploadedSpray !== sim.spray.version) {
-				gl.bindBuffer(gl.ARRAY_BUFFER, this.sprayBuffer);
-				gl.bufferSubData(gl.ARRAY_BUFFER, 0, sim.spray.data.subarray(0, count * PARTICLE_STRIDE));
-				this.uploadedSpray = sim.spray.version;
-			}
-			gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, count);
-		}
 		gl.disable(gl.BLEND);
 		gl.bindVertexArray(null);
 	}
@@ -415,15 +359,11 @@ export class Liquid2Renderer {
 		const { gl } = this;
 		this.disposeSurface();
 		gl.deleteBuffer(this.quad);
-		gl.deleteBuffer(this.corners);
-		gl.deleteBuffer(this.sprayBuffer);
 		gl.deleteVertexArray(this.drinkVao);
-		gl.deleteVertexArray(this.sprayVao);
 		gl.deleteTexture(this.fieldTexture);
 		gl.deleteTexture(this.imageTexture);
 		gl.deleteProgram(this.surfaceProg);
 		gl.deleteProgram(this.drinkProg);
-		gl.deleteProgram(this.sprayProg);
 		gl.getExtension('WEBGL_lose_context')?.loseContext();
 	}
 }
