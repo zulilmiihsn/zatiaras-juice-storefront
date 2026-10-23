@@ -40,18 +40,20 @@ export interface Tier {
 	maxParticles: number;
 }
 
-// Product-shot camera: a little above the rim, nearly level, with the principal point
-// lowered so the calm pool is a band along the bottom and the page shows above it.
-const PITCH = (10 * Math.PI) / 180;
-const CAM_POS: Vec3 = [0, 0.9, 4.2];
-const FOCAL = 1.7;
-const SHIFT = 0.12;
+// Matched to the drink photo's own camera: a long lens, level, eye height at the lid.
+// A wide, tilted camera made the pool read as seen from above while the photo is seen
+// from the front. The principal point sits high (horizon at ~1/3 of the frame, the lid
+// line), and the long lens compresses the pool into a band along the bottom.
+const PITCH = 0;
+const CAM_POS: Vec3 = [0, 1.0, 7];
+const FOCAL = 3.4;
+const SHIFT = -0.17;
 /** Drink base below the calm surface: it starts partly submerged. */
 export const DRINK_BASE_Y = -0.15;
 /** Cylinder radius as a fraction of the image's drawn width (cut-outs have side margins). */
 export const CUP_FILL = 0.42;
 /** How far the grid reaches back from its front edge, in world units. */
-const DOMAIN_DEPTH = 3;
+const DOMAIN_DEPTH = 6;
 
 const finite = (v: number, fallback: number) => (Number.isFinite(v) ? v : fallback);
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));

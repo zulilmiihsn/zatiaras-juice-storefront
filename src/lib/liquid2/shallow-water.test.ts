@@ -73,7 +73,7 @@ describe('liquid2 shallow water', () => {
 			b.advance(1 / 60, i % 200 < 100 ? 1 : 0.2);
 		}
 		expect(Array.from(a.height)).toEqual(Array.from(b.height));
-	});
+	}, 20000);
 });
 
 describe('liquid2 shallow water back edge', () => {

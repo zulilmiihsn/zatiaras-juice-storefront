@@ -78,3 +78,17 @@ describe('liquid2 framing', () => {
 		expect(backEdge).toBeLessThan(0.75);
 	});
 });
+
+describe('liquid2 point of view', () => {
+	it('sees the pool from the same nearly level, long-lens view as the drink photo', () => {
+		const cam = makeCamera(1.6);
+		const drink = placeDrink(cam, 0.72, 0.85, 0.5, 0.81);
+		// Eye height at the lid, as in the photo.
+		expect(cam.pos[1]).toBeGreaterThan(drink.baseY + drink.height * 0.85);
+		expect(cam.pos[1]).toBeLessThan(drink.baseY + drink.height * 1.15);
+		// One unit of floor behind the drink spans little of the frame (compressed perspective).
+		const at = project(cam, [drink.x, 0, drink.z]).y;
+		const behind = project(cam, [drink.x, 0, drink.z - 1]).y;
+		expect(at - behind).toBeLessThan(0.06);
+	});
+});

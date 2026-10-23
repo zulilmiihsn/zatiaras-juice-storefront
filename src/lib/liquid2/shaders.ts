@@ -60,6 +60,9 @@ vec3 studio(vec3 ray) {
 	// Behind the pool: what its flat, gently tilted surface mirrors toward the camera.
 	light += 11.0 * panel(ray, normalize(vec3(-0.45, 0.55, -0.7)), vec2(0.3, 0.12));
 	light += 7.0 * panel(ray, normalize(vec3(0.5, 0.35, -0.8)), vec2(0.16, 0.08));
+	// A long, low softbox just above the horizon: the level camera's grazing reflections
+	// land here, drawing long highlight streaks along the swells.
+	light += 1.6 * panel(ray, normalize(vec3(-0.25, 0.1, -1.0)), vec2(0.5, 0.035));
 	// In front, as in Liquid 1: what the wave faces turned toward the camera mirror.
 	light += 9.0 * panel(ray, normalize(vec3(-0.45, 0.7, 0.55)), vec2(0.26, 0.2));
 	light += 5.0 * panel(ray, normalize(vec3(0.8, 0.25, 0.55)), vec2(0.11, 0.1));
@@ -76,11 +79,16 @@ vec3 shade(vec3 world, vec3 n, float bodyDepth, float occluded) {
 	flow += 0.18 * sin(flow.yx * vec2(2.3, 1.7) + uTime * vec2(0.9, 0.7));
 	float w1 = sin(dot(flow, vec2(7.0, 11.0)) + uTime * 4.6);
 	float w2 = sin(dot(flow, vec2(-10.0, 8.0)) + uTime * 3.7);
-	n = normalize(n + vec3(0.024 * w1 - 0.016 * w2, 0.0, 0.018 * w2 + 0.014 * w1));
+	// Far away these ripples are finer than a pixel and alias into stripes; fade them out.
+	float distance = length(uCam - world);
+	float ripple = 1.0 / (1.0 + 0.12 * distance * distance);
+	n = normalize(n + ripple * vec3(0.024 * w1 - 0.016 * w2, 0.0, 0.018 * w2 + 0.014 * w1));
 	vec3 view = normalize(uCam - world);
 	vec3 light = normalize(vec3(-0.45, 0.7, 0.55));
 	float facing = max(dot(n, view), 0.0);
-	float fresnel = 0.0204 + 0.9796 * pow(1.0 - facing, 5.0);
+	// The level camera sees the pool at grazing angles, where full Fresnel would mirror the
+	// pale sky over the whole surface; cap it so the dye stays magenta and highlights stay crisp.
+	float fresnel = min(0.5, 0.0204 + 0.9796 * pow(1.0 - facing, 5.0));
 	vec3 reflection = reflect(-view, n);
 	// Opaque dyed liquid, lit in linear space; light scattered inside re-emerges as a glow
 	// in the dye hue, strongest on thin crests and at grazing angles.
@@ -93,7 +101,9 @@ vec3 shade(vec3 world, vec3 n, float bodyDepth, float occluded) {
 	vec3 body = dye * ((0.3 - 0.12 * dim) + 0.8 * diffuse + 0.2 * rim + 0.06 * thin);
 	vec3 lit = body * (1.0 - fresnel) + studio(reflection) * fresnel * (1.0 - 0.55 * occluded);
 	// At the silhouette, grazing reflections pick up the page's cream backdrop.
-	lit += (vec3(0.75, 0.68, 0.58) - sky(reflection)) * fresnel * smoothstep(0.8, 0.98, 1.0 - facing);
+	// Only on steep faces (crest silhouettes), not on the flat pool seen edge-on.
+	lit += (vec3(0.75, 0.68, 0.58) - sky(reflection)) * fresnel * smoothstep(0.8, 0.98, 1.0 - facing)
+		* (1.0 - abs(n.y));
 	vec3 color = pow(tonemap(lit * 1.4), vec3(1.0 / 2.2));
 	color = max(color, mix(vec3(0.74, 0.015, 0.33), vec3(0.5, 0.0, 0.2), dim));
 	return mix(color, PINK, uCover);
