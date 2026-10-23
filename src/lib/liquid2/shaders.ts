@@ -241,7 +241,8 @@ void main() {
 	float speed = length(v);
 	vec3 axis = speed > 0.001 ? v / speed : uUp;
 	vec3 side = normalize(cross(uFwd, axis));
-	float stretch = 1.0 + min(speed * 0.12, 1.5);
+	// Fast drops stretch into ligaments along their path.
+	float stretch = 1.0 + min(speed * 0.35, 3.0);
 	vLocal = aCorner;
 	vCenter = center;
 	vAxis = axis;

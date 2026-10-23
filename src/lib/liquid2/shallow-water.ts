@@ -33,14 +33,17 @@ const SWELL_HZ = 0.45;
 const DIFFUSION = 0.003;
 const BREAK_SLOPE = 1.0;
 const BREAK_ACCEL = 9;
-const BREAK_MIN_HEIGHT = 0.08;
+const BREAK_MIN_HEIGHT = 0.15;
 const RUNUP_HEIGHT = 0.18;
 const BREAK_COOLDOWN = 0.35;
-const MAX_EVENTS = 6;
+const MAX_EVENTS = 2;
 /** Cells around a breaking crest that may not break again during the cooldown. */
 const COOLDOWN_REACH = 5;
 const WIND_BUMPS = 3;
 const WIND_AMPLITUDE = 0.0015;
+/** Under scroll drive the whole surface churns: extra bumps per step and their height. */
+const CHOP_BUMPS = 10;
+const CHOP_AMPLITUDE = 0.045;
 
 const mulberry32 = (seed: number) => () => {
 	seed = (seed + 0x6d2b79f5) | 0;
@@ -196,7 +199,7 @@ export class ShallowWater {
 		this.remainder = Math.min(this.remainder + dt, MAX_SUBSTEPS * SIM_STEP);
 		while (this.remainder >= SIM_STEP) {
 			this.remainder -= SIM_STEP;
-			this.wind();
+			this.wind(d);
 			for (let s = 0; s < this.inner; s++) this.substep(d);
 			this.diffuse();
 			this.time += SIM_STEP;
@@ -206,12 +209,14 @@ export class ShallowWater {
 		return events;
 	}
 
-	private wind() {
-		for (let n = 0; n < WIND_BUMPS; n++) {
+	private wind(drive: number) {
+		const bumps = WIND_BUMPS + Math.round(CHOP_BUMPS * drive);
+		const amplitude = WIND_AMPLITUDE + CHOP_AMPLITUDE * drive;
+		for (let n = 0; n < bumps; n++) {
 			const x = this.domain.x0 + this.random() * (this.domain.x1 - this.domain.x0);
 			const z = this.domain.z0 + this.random() * (this.domain.z1 - this.domain.z0);
 			const sign = this.random() < 0.5 ? -1 : 1;
-			this.impulse(x, z, 2.5 * Math.max(this.dx, this.dz), sign * WIND_AMPLITUDE);
+			this.impulse(x, z, 2.5 * Math.max(this.dx, this.dz), sign * amplitude);
 		}
 	}
 

@@ -1,4 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+// Long fixed-step simulations; give them room when test files run in parallel.
+vi.setConfig({ testTimeout: 20000 });
 import type { Domain, Drink, Tier } from './scene';
 import { ShallowWater, type Breaking } from './shallow-water';
 import { PARTICLE_STRIDE, Spray } from './spray';

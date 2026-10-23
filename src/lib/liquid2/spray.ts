@@ -59,7 +59,8 @@ export class Spray {
 			const ux = e.vx / speed;
 			const uy = e.vy / speed;
 			const uz = e.vz / speed;
-			let r = 0.022 + 0.013 * rnd();
+			// Strong crests and bursts throw bigger drops, readable from the product camera.
+			let r = (0.008 + 0.016 * s) * (0.8 + 0.4 * rnd());
 			this.add(e.x, e.y + r, e.z, e.vx, e.vy, e.vz, r);
 			// The trail hangs behind the lead drop along its path, each drop smaller and slower.
 			const trail = 2 + Math.round(4 * s * rnd());

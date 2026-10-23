@@ -1,4 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+// Long fixed-step simulations; give them room when test files run in parallel.
+vi.setConfig({ testTimeout: 20000 });
 import type { Domain, Drink, Tier } from './scene';
 import { ShallowWater } from './shallow-water';
 
@@ -138,4 +141,32 @@ describe('liquid2 shallow water wall mask', () => {
 		expect(at(2, 2)).toBe(1);
 		for (const v of mask) expect(v >= 0 && v <= 1).toBe(true);
 	});
+});
+
+describe('liquid2 shallow water turbulence', () => {
+	it('roughens the whole surface under drive, not only the swells', () => {
+		// RMS curvature per cell over the middle of the pool.
+		const roughness = (w: ShallowWater) => {
+			let sum = 0;
+			let n = 0;
+			for (let j = 30; j < 90; j++)
+				for (let i = 30; i < 90; i++) {
+					const k = j * w.cols + i;
+					// Curvature, not slope: long swells barely register, chop does.
+					const h = w.height;
+					sum += (4 * h[k] - h[k - 1] - h[k + 1] - h[k - w.cols] - h[k + w.cols]) ** 2;
+					n++;
+				}
+			return Math.sqrt(sum / n);
+		};
+		const calm = new ShallowWater(TIER, DOMAIN);
+		const driven = new ShallowWater(TIER, DOMAIN);
+		for (let i = 0; i < 60; i++) {
+			calm.advance(1 / 60, 0);
+			driven.advance(1 / 60, 1);
+		}
+		// Visible chop: bumps of a few hundredths over a few cells, everywhere.
+		expect(roughness(driven)).toBeGreaterThan(0.01);
+		expect(roughness(calm)).toBeLessThan(0.001);
+	}, 20000);
 });

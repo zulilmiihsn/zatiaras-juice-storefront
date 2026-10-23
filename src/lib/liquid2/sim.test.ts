@@ -1,4 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+// Long fixed-step simulations; give them room when test files run in parallel.
+vi.setConfig({ testTimeout: 20000 });
 import { coverLevel, groundDomain, makeCamera, placeDrink, qualityTier } from './scene';
 import { LiquidSim } from './sim';
 
@@ -83,5 +86,51 @@ describe('liquid2 simulation layout changes', () => {
 		expect(drink.x + drink.radius).toBeLessThan(domain.x1);
 		expect(sim.field.solid.some((s) => s === 1)).toBe(true);
 		expect(peak(sim)).toBeGreaterThan(before * 0.3);
+	});
+});
+
+describe('liquid2 simulation scroll eruption', () => {
+	it('erupts around the drink as soon as scrolling starts', () => {
+		const sim = new LiquidSim(qualityTier(true));
+		sim.layout(cam, drink);
+		const near = (x: number, z: number, reach: number) =>
+			Math.hypot(x - drink.x, z - drink.z) < drink.radius + reach;
+		let nearDrops = 0;
+		let nearPeak = 0;
+		ramp(sim, 0, 0.3, 1, () => {
+			let drops = 0;
+			for (let p = 0; p < sim.spray.count; p++) {
+				const o = p * 8;
+				if (near(sim.spray.data[o], sim.spray.data[o + 2], 1)) drops++;
+			}
+			nearDrops = Math.max(nearDrops, drops);
+			const f = sim.field;
+			for (let j = 0; j < f.rows; j++)
+				for (let i = 0; i < f.cols; i++) {
+					const k = j * f.cols + i;
+					if (!f.solid[k] && near(f.domain.x0 + (i + 0.5) * f.dx, f.domain.z0 + (j + 0.5) * f.dz, 0.6))
+						nearPeak = Math.max(nearPeak, Math.abs(f.height[k]));
+				}
+		});
+		expect(nearDrops).toBeGreaterThan(20);
+		expect(nearPeak).toBeGreaterThan(0.15);
+	}, 20000);
+});
+
+describe('liquid2 simulation volume', () => {
+	it('keeps the mean surface at the level while it bursts around the drink', () => {
+		const sim = new LiquidSim(qualityTier(true));
+		sim.layout(cam, drink);
+		ramp(sim, 0, 0.3, 1);
+		hold(sim, 0.3, 2);
+		const f = sim.field;
+		let sum = 0;
+		let n = 0;
+		for (let k = 0; k < f.height.length; k++)
+			if (!f.solid[k]) {
+				sum += f.height[k];
+				n++;
+			}
+		expect(Math.abs(sum / n)).toBeLessThan(0.01);
 	});
 });
