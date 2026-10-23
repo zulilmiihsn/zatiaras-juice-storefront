@@ -104,6 +104,8 @@ scene (static/images/liquid2, drink included) is shown. -->
 
 		const layout = () => {
 			rect = el.getBoundingClientRect();
+			// A collapsed box has no aspect to frame; wait for the next resize.
+			if (!(rect.width > 0 && rect.height > 0)) return;
 			const backing = liquidBackingSize(rect.width, rect.height, devicePixelRatio, scale, coarse);
 			renderer.resize(backing.width, backing.height);
 			const aspect = rect.width / Math.max(1, rect.height);

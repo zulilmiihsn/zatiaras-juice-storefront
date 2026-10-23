@@ -104,6 +104,7 @@ export class Liquid2Renderer {
 	private meshKey = '';
 	private fieldData = new Float32Array(0);
 	private heights = new Float32Array(0);
+	private mask = new Float32Array(0);
 	private fieldOwner: unknown = null;
 	private uploadedField = -1;
 	private uploadedSpray = -1;
@@ -294,6 +295,9 @@ export class Liquid2Renderer {
 		if (this.heights.length !== n) this.heights = new Float32Array(n);
 		const height = this.heights;
 		field.renderHeights(height);
+		if (this.mask.length !== n) this.mask = new Float32Array(n);
+		const mask = this.mask;
+		field.wallMask(mask);
 		const { velX, velZ, cols, rows } = field;
 		for (let j = 0; j < rows; j++)
 			for (let i = 0; i < cols; i++) {
@@ -302,6 +306,7 @@ export class Liquid2Renderer {
 				data[o] = height[k];
 				data[o + 1] = 0.5 * (velX[j * (cols + 1) + i] + velX[j * (cols + 1) + i + 1]);
 				data[o + 2] = 0.5 * (velZ[k] + velZ[k + cols]);
+				data[o + 3] = mask[k];
 			}
 		if (fresh)
 			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, cols, rows, 0, gl.RGBA, gl.FLOAT, data);
@@ -334,10 +339,10 @@ export class Liquid2Renderer {
 		const fade = Math.min(1, Math.max(0, (sim.level - (cam.pos[1] - 0.25)) / 0.25));
 		const full = fade >= 1 || sim.covered;
 		const cover = full ? 1 : fade;
-		// Full cover clears to the liquid colour; the surface is still drawn (all pink) so
-		// every frame takes the same path through the pipeline.
-		if (full) gl.clearColor(PINK[0], PINK[1], PINK[2], 1);
-		else gl.clearColor(0, 0, 0, 0);
+		// As the lens nears the surface the page behind the pool fades to the liquid colour
+		// (premultiplied), so cover arrives as a blend, not a cut. Full cover still draws the
+		// surface (all pink) so every frame takes the same path through the pipeline.
+		gl.clearColor(PINK[0] * cover, PINK[1] * cover, PINK[2] * cover, cover);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 		if (!full && drink && this.imageAspect > 0) {

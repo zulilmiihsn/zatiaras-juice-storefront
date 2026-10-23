@@ -411,6 +411,32 @@ export class ShallowWater {
 		}
 	}
 
+	/**
+	 * Per cell: 0 in and within two cells of the obstacle, 0.5 at three, 1 beyond. The
+	 * renderer uses it to keep crest shaping and lean off the run-up face, where one side of
+	 * a cell is wall and folded quads would show as shards.
+	 */
+	wallMask(out: Float32Array) {
+		const { cols, rows, solid } = this;
+		out.fill(1);
+		const reach = 3;
+		for (let k = 0; k < solid.length; k++) {
+			if (!solid[k]) continue;
+			const i = k % cols;
+			const j = (k - i) / cols;
+			for (let b = -reach; b <= reach; b++)
+				for (let a = -reach; a <= reach; a++) {
+					const ii = i + a;
+					const jj = j + b;
+					if (ii < 0 || jj < 0 || ii >= cols || jj >= rows) continue;
+					const d = Math.max(Math.abs(a), Math.abs(b));
+					const v = d <= 2 ? 0 : 0.5;
+					const n = jj * cols + ii;
+					if (v < out[n]) out[n] = v;
+				}
+		}
+	}
+
 	/** Bilinear surface offset at (x, z); 0 outside the grid. */
 	sample(x: number, z: number): number {
 		const fx = (x - this.domain.x0) / this.dx - 0.5;

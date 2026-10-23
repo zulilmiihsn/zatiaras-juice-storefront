@@ -101,7 +101,7 @@ vec3 shade(vec3 world, vec3 n, float bodyDepth, float occluded) {
 `;
 
 // The pool: one vertex per simulation cell plus a flat skirt reaching under the camera.
-// The field texture holds height offset and cell-centred velocity (r, g, b).
+// The field texture holds height offset, cell-centred velocity and a wall mask (r, g, b, a).
 export const SURFACE_VS = `#version 300 es
 precision highp float;
 layout(location = 0) in vec2 aXZ;
@@ -112,10 +112,10 @@ out vec3 vWorld, vNormal;
 out float vHeight;
 ${COMMON}
 
-vec3 cell(vec2 xz) {
+vec4 cell(vec2 xz) {
 	ivec2 k = ivec2(floor((xz - uDomain.xy) / uDomain.zw));
-	if (any(lessThan(k, ivec2(0))) || any(greaterThanEqual(k, uCells))) return vec3(0.0);
-	return texelFetch(uField, k, 0).rgb;
+	if (any(lessThan(k, ivec2(0))) || any(greaterThanEqual(k, uCells))) return vec4(0.0, 0.0, 0.0, 1.0);
+	return texelFetch(uField, k, 0);
 }
 
 float shapeCrest(float e) {
@@ -123,7 +123,7 @@ float shapeCrest(float e) {
 }
 
 vec3 place(vec2 xz) {
-	vec3 c = cell(xz);
+	vec4 c = cell(xz);
 	vec2 step = uDomain.zw;
 	vec2 slope = vec2(
 		cell(xz + vec2(step.x, 0.0)).r - cell(xz - vec2(step.x, 0.0)).r,
@@ -131,12 +131,14 @@ vec3 place(vec2 xz) {
 	) / (2.0 * step);
 	// Points slide toward crests (sharper peaks, broader troughs) and crests lean along
 	// the flow, so a travelling swell curls forward instead of rising as a sine bump.
-	vec2 offset = 0.05 * slope + 0.22 * max(c.r, 0.0) * c.gb;
+	// Beside the drink (mask 0) the surface stays unshaped: one side of those cells is
+	// wall, and leaning or peaking them folds the run-up face into shards.
+	vec2 offset = c.a * (0.05 * slope + 0.22 * max(c.r, 0.0) * c.gb);
 	// Never move a vertex past its neighbours: folded triangles render as shards.
 	float reach = 0.45 * min(step.x, step.y);
 	float len = length(offset);
 	if (len > reach) offset *= reach / len;
-	return vec3(xz.x + offset.x, uLevel + shapeCrest(c.r), xz.y + offset.y);
+	return vec3(xz.x + offset.x, uLevel + mix(c.r, shapeCrest(c.r), c.a), xz.y + offset.y);
 }
 
 void main() {

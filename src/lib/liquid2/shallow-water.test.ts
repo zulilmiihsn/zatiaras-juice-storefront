@@ -124,3 +124,18 @@ describe('liquid2 shallow water render heights', () => {
 		for (let k = 0; k < w.solid.length; k++) expect(out[k]).toBeCloseTo(0.2, 5);
 	});
 });
+
+describe('liquid2 shallow water wall mask', () => {
+	it('is 0 at and beside the obstacle and 1 away from it', () => {
+		const w = new ShallowWater(TIER, DOMAIN);
+		w.setObstacle(DRINK);
+		const mask = new Float32Array(w.height.length);
+		w.wallMask(mask);
+		const at = (x: number, z: number) =>
+			mask[Math.floor((z - DOMAIN.z0) / w.dz) * w.cols + Math.floor((x - DOMAIN.x0) / w.dx)];
+		expect(at(0, 0)).toBe(0);
+		expect(at(DRINK.radius + w.dx, 0)).toBe(0);
+		expect(at(2, 2)).toBe(1);
+		for (const v of mask) expect(v >= 0 && v <= 1).toBe(true);
+	});
+});

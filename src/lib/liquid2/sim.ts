@@ -31,7 +31,7 @@ const SUBMERGE_MARGIN = 0.05;
 
 const sameDomain = (a: Domain, b: Domain) =>
 	Math.abs(a.x0 - b.x0) + Math.abs(a.x1 - b.x1) + Math.abs(a.z0 - b.z0) + Math.abs(a.z1 - b.z1) <
-	1e-6;
+	1e-3;
 
 export class LiquidSim {
 	field: ShallowWater;
@@ -43,7 +43,6 @@ export class LiquidSim {
 	drink: Drink | null = null;
 	private readonly tier: Tier;
 	private readonly seed: number;
-	private laidOut = false;
 	private submerged = false;
 
 	constructor(tier: Tier, seed = 0x11a2) {
@@ -54,15 +53,25 @@ export class LiquidSim {
 		this.spray = new Spray(tier.maxParticles, seed ^ 0x9e3779b9);
 	}
 
-	/** Place the camera and drink. The first call sizes the grid; later calls keep its state. */
+	/**
+	 * Place the camera and drink. When the visible floor changes (first layout, orientation
+	 * change) the grid is rebuilt to cover it and the current surface is resampled into it,
+	 * so the liquid keeps its shape instead of resetting to calm.
+	 */
 	layout(cam: Camera, drink: Drink | null) {
 		this.camera = cam;
 		this.drink = drink;
-		if (!this.laidOut) {
-			const domain = groundDomain(cam);
-			if (!sameDomain(domain, this.field.domain))
-				this.field = new ShallowWater(this.tier, domain, this.seed);
-			this.laidOut = true;
+		const domain = groundDomain(cam);
+		if (!sameDomain(domain, this.field.domain)) {
+			const old = this.field;
+			const next = new ShallowWater(this.tier, domain, this.seed);
+			for (let j = 0; j < next.rows; j++)
+				for (let i = 0; i < next.cols; i++)
+					next.height[j * next.cols + i] = old.sample(
+						domain.x0 + (i + 0.5) * next.dx,
+						domain.z0 + (j + 0.5) * next.dz
+					);
+			this.field = next;
 		}
 		this.field.setObstacle(this.submerged ? null : drink);
 	}
