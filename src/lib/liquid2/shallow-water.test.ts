@@ -75,3 +75,20 @@ describe('liquid2 shallow water', () => {
 		expect(Array.from(a.height)).toEqual(Array.from(b.height));
 	});
 });
+
+describe('liquid2 shallow water back edge', () => {
+	it('keeps waves alive along the back edge, the silhouette against the page', () => {
+		const w = new ShallowWater(TIER, DOMAIN);
+		let back = 0;
+		let mid = 0;
+		for (let i = 0; i < 360; i++) {
+			w.advance(1 / 60, 1);
+			const row = (w.rows >> 1) * w.cols;
+			for (let c = 0; c < w.cols; c++) {
+				back = Math.max(back, Math.abs(w.height[c]));
+				mid = Math.max(mid, Math.abs(w.height[row + c]));
+			}
+		}
+		expect(back).toBeGreaterThan(0.6 * mid);
+	});
+});
