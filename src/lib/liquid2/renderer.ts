@@ -26,8 +26,11 @@ const COMMON_UNIFORMS = [
 	'uTime',
 	'uLevel',
 	'uCover',
-	'uRes'
+	'uRes',
+	'uFade'
 ] as const;
+/** World depth over which the far edge of the pool fades into the page. */
+const FAR_FADE = 1.8;
 type Common = (typeof COMMON_UNIFORMS)[number];
 
 function compile(gl: WebGL2RenderingContext, type: number, source: string) {
@@ -328,6 +331,8 @@ export class Liquid2Renderer {
 		gl.uniform1f(u.uLevel, sim.level);
 		gl.uniform1f(u.uCover, cover);
 		gl.uniform2f(u.uRes, gl.drawingBufferWidth, gl.drawingBufferHeight);
+		const back = sim.field.domain.z0;
+		gl.uniform2f(u.uFade, back, back + FAR_FADE);
 	}
 
 	render(cam: Camera, drink: Drink | null, sim: LiquidSim, time: number) {
@@ -375,6 +380,9 @@ export class Liquid2Renderer {
 		gl.uniform1i(this.surfaceU.uField, 0);
 		gl.uniform4f(this.surfaceU.uDomain, field.domain.x0, field.domain.z0, field.dx, field.dz);
 		gl.uniform2i(this.surfaceU.uCells, field.cols, field.rows);
+		// Premultiplied blending for the faded far edge.
+		gl.enable(gl.BLEND);
+		gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 		gl.bindVertexArray(this.surface!.vao);
 		gl.drawElements(gl.TRIANGLES, this.surface!.count, gl.UNSIGNED_INT, 0);
 
@@ -390,6 +398,7 @@ export class Liquid2Renderer {
 			}
 			gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, count);
 		}
+		gl.disable(gl.BLEND);
 		gl.bindVertexArray(null);
 	}
 

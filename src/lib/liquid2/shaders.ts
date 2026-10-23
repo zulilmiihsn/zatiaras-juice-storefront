@@ -11,6 +11,8 @@ const COMMON = `
 uniform vec3 uCam, uRight, uUp, uFwd;
 uniform float uFocal, uAspect, uShift, uTime, uLevel, uCover;
 uniform vec2 uRes;
+// World z over which the far edge of the pool melts into the page (back edge, fully opaque).
+uniform vec2 uFade;
 const float NEAR = ${NEAR.toFixed(2)}, FAR = ${FAR.toFixed(1)};
 const vec3 PINK = vec3(1.0, 0.0627451, 0.5058824);
 
@@ -23,6 +25,12 @@ vec4 project(vec3 p) {
 		(FAR + NEAR) / (FAR - NEAR) * depth - 2.0 * FAR * NEAR / (FAR - NEAR),
 		depth
 	);
+}
+
+// Opacity by distance: the pool's far edge fades out instead of ending on a hard line.
+// Under full cover everything is opaque.
+float farFade(float z) {
+	return mix(smoothstep(uFade.x, uFade.y, z), 1.0, uCover);
 }
 
 // Window depth for a view depth, matching what project() produces through the rasterizer.
@@ -174,7 +182,8 @@ void main() {
 	if (!gl_FrontFacing) n = -n;
 	float bodyDepth = max(0.05, 0.9 - 1.5 * max(vHeight, 0.0));
 	float occluded = 0.6 * smoothstep(0.02, 0.3, -vHeight);
-	outColor = vec4(shade(vWorld, n, bodyDepth, occluded), 1.0);
+	float alpha = farFade(vWorld.z);
+	outColor = vec4(shade(vWorld, n, bodyDepth, occluded) * alpha, alpha);
 }`;
 
 // The drink photo as a screen-aligned quad. Its depth is the cylinder proxy's front face
@@ -257,5 +266,6 @@ void main() {
 	vec3 n = normalize(vSide * vLocal.x + vAxis * vLocal.y - uFwd * bulge);
 	vec3 point = vCenter + (vSide * vLocal.x + vAxis * vLocal.y * vStretch) * vRadius - uFwd * bulge * vRadius;
 	gl_FragDepth = windowDepth(dot(point - uCam, uFwd));
-	outColor = vec4(shade(point, n, 0.15, 0.0), 1.0);
+	float alpha = farFade(point.z);
+	outColor = vec4(shade(point, n, 0.15, 0.0) * alpha, alpha);
 }`;
