@@ -1,7 +1,8 @@
 <!-- Liquid 2: a 3D simulated magenta pool ($lib/liquid2) that swells as the page scrolls,
 wraps the drink photo front and back, and rises until the frame is covered. The drink is
 drawn inside the WebGL scene, depth-tested against a cylinder proxy. Scrolling back drains
-the liquid. Without WebGL2, with reduced motion or data saver, the static render is shown. -->
+the liquid. Without WebGL2, with reduced motion or data saver, a static render of the same
+scene (static/images/liquid2, drink included) is shown. -->
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { liquidBackingSize } from '$lib/liquid1/wave';
@@ -333,10 +334,10 @@ the liquid. Without WebGL2, with reduced motion or data saver, the static render
 	></canvas>
 	{#if mode !== 'live'}
 		<picture>
-			<source media="(max-aspect-ratio: 9/10)" srcset="/images/liquid1/wave-mobile.png" />
+			<source media="(max-aspect-ratio: 9/10)" srcset="/images/liquid2/wave-mobile.png" />
 			<img
 				class="still"
-				src="/images/liquid1/wave-desktop.png"
+				src="/images/liquid2/wave-desktop.png"
 				alt=""
 				width="1200"
 				height="750"
@@ -360,7 +361,7 @@ the liquid. Without WebGL2, with reduced motion or data saver, the static render
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		object-position: 65% bottom;
+		object-position: 72% bottom;
 	}
 	.fallback-cover {
 		position: absolute;
@@ -369,7 +370,7 @@ the liquid. Without WebGL2, with reduced motion or data saver, the static render
 	}
 	@media (max-aspect-ratio: 9/10) {
 		.still {
-			object-position: 80% bottom;
+			object-position: 50% bottom;
 		}
 	}
 </style>

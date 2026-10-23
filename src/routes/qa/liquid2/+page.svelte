@@ -43,15 +43,14 @@
 			class="wave"
 		/>
 
-		<!-- The live scene draws the drink itself; this image keeps its name for assistive
-		     technology and shows it when the static fallback is in use. -->
+		<!-- The live scene and its static render both draw the drink; this image only keeps
+		     its name for assistive technology. -->
 		<img
-			class="cup absolute"
+			class="sr-only"
 			src="/images/assortment/avocado-960.webp"
 			alt="Jus Alpukat Zatiaras"
 			width="960"
 			height="778"
-			style="opacity: {1 - Math.min(1, progress * 4)}"
 		/>
 
 		<div
@@ -97,26 +96,5 @@
 	}
 	.intro {
 		z-index: 2;
-	}
-	.cup {
-		left: 72%;
-		bottom: 15%;
-		height: min(50svh, 34rem);
-		width: auto;
-		transform: translateX(-50%);
-		z-index: 1;
-		pointer-events: none;
-	}
-	/* Live: the canvas draws the drink inside the liquid; keep this image for its name only. */
-	.liquid-stage:has(:global(.wave[data-liquid-mode='live'])) .cup {
-		opacity: 0 !important;
-	}
-	@media (max-aspect-ratio: 9/10) {
-		.cup {
-			left: 50%;
-			bottom: 15%;
-			height: auto;
-			width: 62vw;
-		}
 	}
 </style>
