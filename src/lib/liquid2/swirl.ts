@@ -64,38 +64,143 @@ export class Swirl {
 }
 
 /**
- * A point on the ribbon. `s` runs along it (0 = outer tail, 1 = inner head), `v` across
- * it (0 = base below the pool surface, 1 = the curled lip). `level` is the pool's level.
+ * One sheet of the whirl. The sheets share the swirl's motion but differ in reach, height,
+ * span and spin, and one turns against the others, so they cross and run into each other.
  */
-export function swirlPoint(swirl: Swirl, drink: Drink, level: number, s: number, v: number): Vec3 {
-	const angle = swirl.phase + s * SWIRL_TURN;
-	// Like a breaking wave carried round: low at the outer tail, building to a crest near
-	// the head, then dropping back into the pool. Zero at both ends.
-	const clamped = Math.min(1, Math.max(0, s));
-	const envelope = Math.pow(clamped, 1.5) * Math.pow(1 - clamped, 0.6) * ENVELOPE_NORM;
-	const wobble = 1 + 0.12 * Math.sin(3 * angle - 2.3 * swirl.time);
-	const h = swirl.height * envelope * wobble;
-	// Cross-section: a tall, narrow arc (a sheet, not a tube) that rises from below the
-	// surface and folds its lip over toward the drink.
+export interface SwirlLayer {
+	/** Radius at the head and extra radius at the tail, in drink radii. */
+	reach: number;
+	spread: number;
+	/** Height relative to the swirl's height. */
+	height: number;
+	/** Angle the sheet spans, in radians. */
+	turn: number;
+	/** Angular offset and spin multiplier (negative turns the other way). */
+	offset: number;
+	spin: number;
+	/** Seed for the sheet's tongues and folds. */
+	seed: number;
+}
+
+export const SWIRL_LAYERS: readonly SwirlLayer[] = [
+	{ reach: 1.25, spread: 1.0, height: 1.0, turn: SWIRL_TURN, offset: 0, spin: 1, seed: 0.0 },
+	{ reach: 1.05, spread: 0.6, height: 0.75, turn: 1.1 * Math.PI, offset: 2.4, spin: 1.35, seed: 1.7 },
+	{ reach: 1.55, spread: 0.8, height: 0.6, turn: 1.25 * Math.PI, offset: Math.PI, spin: -0.8, seed: 3.1 }
+];
+
+/** Where the crest sits across the sheet (v), and how wide the band of tongues is. */
+const CREST_V = 0.62;
+const TONGUE_BAND = 0.14;
+
+interface Column {
+	angle: number;
+	ca: number;
+	sa: number;
+	h: number;
+	ry: number;
+	rx: number;
+	centre: number;
+	lift: number;
+	tongue: number;
+	foldSin: number;
+	foldCos: number;
+	inner: number;
+	/** Direction of travel along the sheet (+1 or -1): tongues lean that way. */
+	lean: number;
+}
+
+function column(swirl: Swirl, drink: Drink, level: number, s: number, layer: SwirlLayer): Column {
+	const t = Math.min(1, Math.max(0, s));
+	const angle = layer.spin * swirl.phase + layer.offset + t * layer.turn * Math.sign(layer.spin);
+	// Like a breaking wave carried round: low at the tail, cresting near the head, then
+	// dropping back into the pool. Zero at both ends.
+	const envelope = Math.pow(t, 1.5) * Math.pow(1 - t, 0.6) * ENVELOPE_NORM;
+	const wobble = 1 + 0.12 * Math.sin(3 * angle - 2.3 * swirl.time + layer.seed);
+	const h = swirl.height * layer.height * envelope * wobble;
+	// A tall, thin arc (a sheet, not a tube) that rises from below the surface and folds
+	// its lip back over toward the drink.
 	const ry = h / 1.75;
-	const rx = 0.45 * ry;
-	const centre = drink.radius * (1.25 + (1 - s)) + 0.3 * rx;
-	const lift = level + 0.75 * ry - 0.02;
+	const rx = 0.3 * ry;
+	// Tongues: irregular, travelling fingers of liquid standing up off the crest.
+	const k = layer.seed;
+	const wave =
+		0.6 * Math.sin(7 * angle - 2.6 * swirl.time + k) +
+		0.4 * Math.sin(13 * angle + 1.7 * swirl.time + 2 * k) +
+		0.3 * Math.sin(19 * angle - 3.4 * swirl.time + 3 * k);
+	// Rounded rather than spiky: a low exponent keeps the fingers soft-topped.
+	const tongue = h * 0.45 * Math.pow(Math.max(0, wave), 1.3);
+	return {
+		angle,
+		ca: Math.cos(angle),
+		sa: Math.sin(angle),
+		h,
+		ry,
+		rx,
+		centre: drink.radius * (layer.reach + layer.spread * (1 - t)) + 0.3 * rx,
+		lift: level + 0.75 * ry - 0.02,
+		tongue,
+		foldSin: Math.sin(5 * angle - 1.9 * swirl.time + k),
+		foldCos: Math.cos(5 * angle - 1.9 * swirl.time + k),
+		inner: drink.radius * 1.02,
+		lean: Math.sign(layer.spin)
+	};
+}
+
+/** Terms that depend only on the position across the sheet. */
+interface Row {
+	cosPhi: number;
+	sinPhi: number;
+	band: number;
+	cosFold: number;
+	sinFold: number;
+}
+
+function row(v: number): Row {
 	const phi = ARC_START + v * (ARC_END - ARC_START);
-	// Crown: the lip breaks into fingers that travel along it.
-	const crown = h * 0.18 * Math.pow(Math.max(0, Math.sin(11 * angle - 3 * swirl.time)), 3) * v ** 4;
-	const radial = Math.max(drink.radius * 1.02, centre + rx * Math.cos(phi));
-	return [
-		drink.x + radial * Math.cos(angle),
-		lift + ry * Math.sin(phi) + crown,
-		drink.z + radial * Math.sin(angle)
-	];
+	const across = (v - CREST_V) / TONGUE_BAND;
+	return {
+		cosPhi: Math.cos(phi),
+		sinPhi: Math.sin(phi),
+		band: Math.exp(-across * across),
+		cosFold: Math.cos(4 * v),
+		sinFold: Math.sin(4 * v)
+	};
+}
+
+function vertex(c: Column, r: Row, drink: Drink, out: Float32Array | number[], o: number) {
+	// Folds run diagonally across the sheet, so it reads as twisted liquid, not a smooth wall.
+	const fold = c.foldSin * r.cosFold + c.foldCos * r.sinFold;
+	const band = r.band;
+	const radial = Math.max(c.inner, c.centre + c.rx * (r.cosPhi + 0.6 * fold) + 0.35 * c.tongue * band);
+	// Tongues lean forward along the direction the sheet travels, like liquid thrown ahead.
+	const ahead = 0.5 * c.lean * c.tongue * band * band;
+	out[o] = drink.x + radial * c.ca - ahead * c.sa;
+	out[o + 1] = c.lift + c.ry * r.sinPhi + 0.06 * c.ry * fold + c.tongue * band;
+	out[o + 2] = drink.z + radial * c.sa + ahead * c.ca;
+}
+
+/**
+ * A point on a sheet of the whirl. `s` runs along it (0 = outer tail, 1 = inner head),
+ * `v` across it (0 = base below the pool surface, 1 = the curled lip). `level` is the
+ * pool's level; `layer` indexes SWIRL_LAYERS.
+ */
+export function swirlPoint(
+	swirl: Swirl,
+	drink: Drink,
+	level: number,
+	s: number,
+	v: number,
+	layer = 0
+): Vec3 {
+	const out = [0, 0, 0];
+	vertex(column(swirl, drink, level, s, SWIRL_LAYERS[layer]), row(v), drink, out, 0);
+	return [out[0], out[1], out[2]];
 }
 
 /**
  * Fill interleaved position and normal arrays (6 floats per vertex) for an `nu` x `nv`
- * grid over the ribbon. Rebuilt every frame, so per-column and per-row terms are computed
- * once, and normals come from neighbouring grid points rather than extra evaluations.
+ * grid over one sheet. Rebuilt every frame: per-column terms are computed once, and normals
+ * come from neighbouring grid points rather than extra evaluations.
  */
 export function buildSwirlMesh(
 	swirl: Swirl,
@@ -103,39 +208,15 @@ export function buildSwirlMesh(
 	level: number,
 	nu: number,
 	nv: number,
-	out: Float32Array
+	out: Float32Array,
+	layer = 0
 ) {
 	const cols = nu + 1;
-	const cosPhi = new Float64Array(nv + 1);
-	const sinPhi = new Float64Array(nv + 1);
-	const lipWeight = new Float64Array(nv + 1);
-	for (let j = 0; j <= nv; j++) {
-		const v = j / nv;
-		const phi = ARC_START + v * (ARC_END - ARC_START);
-		cosPhi[j] = Math.cos(phi);
-		sinPhi[j] = Math.sin(phi);
-		lipWeight[j] = v ** 4;
-	}
+	const sheet = SWIRL_LAYERS[layer];
+	const rows = Array.from({ length: nv + 1 }, (_, j) => row(j / nv));
 	for (let i = 0; i <= nu; i++) {
-		const s = i / nu;
-		const angle = swirl.phase + s * SWIRL_TURN;
-		const envelope = Math.pow(s, 1.5) * Math.pow(1 - s, 0.6) * ENVELOPE_NORM;
-		const h = swirl.height * envelope * (1 + 0.12 * Math.sin(3 * angle - 2.3 * swirl.time));
-		const ry = h / 1.75;
-		const rx = 0.45 * ry;
-		const centre = drink.radius * (1.25 + (1 - s)) + 0.3 * rx;
-		const lift = level + 0.75 * ry - 0.02;
-		const crown = h * 0.18 * Math.pow(Math.max(0, Math.sin(11 * angle - 3 * swirl.time)), 3);
-		const ca = Math.cos(angle);
-		const sa = Math.sin(angle);
-		const inner = drink.radius * 1.02;
-		for (let j = 0; j <= nv; j++) {
-			const radial = Math.max(inner, centre + rx * cosPhi[j]);
-			const o = (j * cols + i) * 6;
-			out[o] = drink.x + radial * ca;
-			out[o + 1] = lift + ry * sinPhi[j] + crown * lipWeight[j];
-			out[o + 2] = drink.z + radial * sa;
-		}
+		const c = column(swirl, drink, level, i / nu, sheet);
+		for (let j = 0; j <= nv; j++) vertex(c, rows[j], drink, out, (j * cols + i) * 6);
 	}
 	for (let j = 0; j <= nv; j++)
 		for (let i = 0; i <= nu; i++) {
@@ -153,7 +234,8 @@ export function buildSwirlMesh(
 			let nx = ey * fz - ez * fy;
 			let ny = ez * fx - ex * fz;
 			let nz = ex * fy - ey * fx;
-			const len = Math.hypot(nx, ny, nz);
+			// Math.hypot is markedly slower than sqrt in V8, and this runs per vertex per frame.
+			const len = Math.sqrt(nx * nx + ny * ny + nz * nz);
 			if (len > 1e-12) {
 				nx /= len;
 				ny /= len;

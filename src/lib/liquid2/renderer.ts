@@ -6,7 +6,7 @@
 import { project, type Camera, type Drink } from './scene';
 import type { LiquidSim } from './sim';
 import { DRINK_FS, DRINK_VS, RIBBON_VS, SURFACE_FS, SURFACE_VS } from './shaders';
-import { buildSwirlMesh } from './swirl';
+import { buildSwirlMesh, SWIRL_LAYERS } from './swirl';
 
 const PINK = [1, 0.0627451, 0.5058824] as const;
 const COMMON_UNIFORMS = [
@@ -24,7 +24,9 @@ const COMMON_UNIFORMS = [
 	'uFade'
 ] as const;
 /** Ribbon grid (segments along the swirl, across its sheet), smaller on touch devices. */
-const RIBBON_GRID = { fine: [120, 28], coarse: [72, 16] } as const;
+const RIBBON_GRID = { fine: [220, 28], coarse: [80, 14] } as const;
+/** Touch devices draw the main sheet and the counter-turning one, which still collide. */
+const COARSE_LAYERS = [0, SWIRL_LAYERS.findIndex((layer) => layer.spin < 0)];
 /** World depth over which the far edge of the pool fades into the page. */
 const FAR_FADE = 1.8;
 type Common = (typeof COMMON_UNIFORMS)[number];
@@ -95,6 +97,7 @@ export class Liquid2Renderer {
 	private readonly ribbonData: Float32Array;
 	private readonly ribbonU: number;
 	private readonly ribbonV: number;
+	private readonly layers: readonly number[];
 	private readonly drinkVao: WebGLVertexArrayObject;
 	private readonly fieldTexture: WebGLTexture;
 	private readonly imageTexture: WebGLTexture;
@@ -120,6 +123,7 @@ export class Liquid2Renderer {
 		coarse: boolean
 	) {
 		[this.ribbonU, this.ribbonV] = coarse ? RIBBON_GRID.coarse : RIBBON_GRID.fine;
+		this.layers = coarse ? COARSE_LAYERS : SWIRL_LAYERS.map((_, i) => i);
 		this.ribbonData = new Float32Array((this.ribbonU + 1) * (this.ribbonV + 1) * 6);
 		this.surfaceU = locations(gl, surfaceProg, [...COMMON_UNIFORMS, 'uField', 'uDomain', 'uCells'] as const);
 		this.drinkU = locations(gl, drinkProg, [...COMMON_UNIFORMS, 'uImage', 'uRect', 'uCylinder'] as const);
@@ -391,13 +395,24 @@ export class Liquid2Renderer {
 
 		const swirlDrink = sim.drink;
 		if (!full && swirlDrink && sim.swirl.height > 0.005) {
-			buildSwirlMesh(sim.swirl, swirlDrink, sim.level, this.ribbonU, this.ribbonV, this.ribbonData);
 			gl.useProgram(this.ribbonProg);
 			this.common(this.ribbonUniforms, cam, sim, time, cover);
 			gl.bindVertexArray(this.ribbonVao);
 			gl.bindBuffer(gl.ARRAY_BUFFER, this.ribbonVertex);
-			gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.ribbonData);
-			gl.drawElements(gl.TRIANGLES, this.ribbonCount, gl.UNSIGNED_SHORT, 0);
+			// Each sheet reuses the one grid buffer and index list.
+			for (const layer of this.layers) {
+				buildSwirlMesh(
+					sim.swirl,
+					swirlDrink,
+					sim.level,
+					this.ribbonU,
+					this.ribbonV,
+					this.ribbonData,
+					layer
+				);
+				gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.ribbonData);
+				gl.drawElements(gl.TRIANGLES, this.ribbonCount, gl.UNSIGNED_SHORT, 0);
+			}
 		}
 		gl.disable(gl.BLEND);
 		gl.bindVertexArray(null);

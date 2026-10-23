@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Drink } from './scene';
-import { buildSwirlMesh, Swirl, swirlPoint, SWIRL_TURN } from './swirl';
+import { buildSwirlMesh, Swirl, swirlPoint, SWIRL_LAYERS, SWIRL_TURN } from './swirl';
 
 const DRINK: Drink = { x: 0.8, z: -0.5, radius: 0.4, height: 1.1, baseY: -0.15 };
 const run = (swirl: Swirl, seconds: number, progress: number, speed: number) => {
@@ -99,9 +99,45 @@ describe('liquid2 swirl mesh', () => {
 	it('is cheap enough to rebuild every frame on a phone', () => {
 		const swirl = new Swirl();
 		run(swirl, 1, 0.3, 0.6);
-		const out = new Float32Array((72 + 1) * (16 + 1) * 6);
+		const out = new Float32Array((120 + 1) * (16 + 1) * 6);
 		const started = performance.now();
-		for (let i = 0; i < 60; i++) buildSwirlMesh(swirl, DRINK, 0.2, 72, 16, out);
+		for (let i = 0; i < 60; i++) buildSwirlMesh(swirl, DRINK, 0.2, 120, 16, out);
 		expect((performance.now() - started) / 60).toBeLessThan(1.5);
+	});
+});
+
+describe('liquid2 swirl complexity', () => {
+	const swirl = new Swirl();
+	run(swirl, 1, 0.3, 0.6);
+	const level = 0.2;
+
+	it('is made of several sheets, one turning against the others', () => {
+		expect(SWIRL_LAYERS.length).toBeGreaterThanOrEqual(3);
+		expect(SWIRL_LAYERS.some((layer) => layer.spin < 0)).toBe(true);
+	});
+
+	it('has sheets that run into each other', () => {
+		const sample = (layer: number) => {
+			const out: number[][] = [];
+			for (let i = 0; i <= 60; i++)
+				for (let j = 0; j <= 12; j++) out.push([...swirlPoint(swirl, DRINK, level, i / 60, j / 12, layer)]);
+			return out;
+		};
+		const main = sample(0);
+		const counter = sample(SWIRL_LAYERS.findIndex((layer) => layer.spin < 0));
+		let closest = Infinity;
+		for (const a of main)
+			for (const b of counter) closest = Math.min(closest, Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]));
+		expect(closest).toBeLessThan(0.05);
+	});
+
+	it('breaks its crest into many tongues of liquid', () => {
+		const crest = Array.from({ length: 241 }, (_, i) => swirlPoint(swirl, DRINK, level, 0.15 + (0.8 * i) / 240, 0.62)[1]);
+		let peaks = 0;
+		for (let i = 3; i < crest.length - 3; i++) {
+			const p = crest[i];
+			if (p > crest[i - 1] && p >= crest[i + 1] && p - Math.min(crest[i - 3], crest[i + 3]) > 0.01) peaks++;
+		}
+		expect(peaks).toBeGreaterThanOrEqual(5);
 	});
 });
