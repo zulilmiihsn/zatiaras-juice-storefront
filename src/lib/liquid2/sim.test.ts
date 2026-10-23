@@ -89,24 +89,15 @@ describe('liquid2 simulation layout changes', () => {
 	});
 });
 
-describe('liquid2 simulation scroll eruption', () => {
-	it('erupts around the drink as soon as scrolling starts', () => {
+describe('liquid2 simulation swirl', () => {
+	it('whirls up around the drink as soon as scrolling starts, and stirs the pool', () => {
 		const sim = new LiquidSim(qualityTier(true));
 		sim.layout(cam, drink);
-		const near = (x: number, z: number, reach: number) =>
-			Math.hypot(x - drink.x, z - drink.z) < drink.radius + reach;
-		let nearPeak = 0;
-		ramp(sim, 0, 0.3, 1, () => {
-			const f = sim.field;
-			for (let j = 0; j < f.rows; j++)
-				for (let i = 0; i < f.cols; i++) {
-					const k = j * f.cols + i;
-					if (!f.solid[k] && near(f.domain.x0 + (i + 0.5) * f.dx, f.domain.z0 + (j + 0.5) * f.dz, 0.6))
-						nearPeak = Math.max(nearPeak, Math.abs(f.height[k]));
-				}
-		});
-		expect(nearPeak).toBeGreaterThan(0.1);
-	}, 20000);
+		ramp(sim, 0, 0.3, 1);
+		expect(sim.swirl.height).toBeGreaterThan(0.3 * drink.height);
+		expect(sim.swirl.omega).toBeGreaterThan(0.5);
+		expect(peak(sim)).toBeGreaterThan(0.05);
+	});
 });
 
 describe('liquid2 simulation volume', () => {

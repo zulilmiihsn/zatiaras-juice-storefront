@@ -1,10 +1,11 @@
 # Liquid 2
 
 A real-time 3D liquid for the scroll hero. The liquid is a simulated pool, not a drawn
-line. As the page scrolls the rise wells up from around the drink and spreads outward,
-the surface churns in proportion to scroll speed, and a brisk scroll surges the liquid
-up beside the cup, until the frame is covered. A light scroll stays calm. There are no
-drops or splashes. When scrolling stops, the surface settles. Scrolling back drains it. The design and its decisions are in
+line. As the page scrolls, a ribbon of liquid rises out of the pool and whirls around
+the drink, its lip curling over toward the cup and passing in front of and behind it;
+the faster the scroll, the higher and faster it spins. When scrolling stops it coasts on
+its momentum and sinks back into the pool. The pool level keeps rising until the frame
+is covered. There are no drops or splashes. Scrolling back drains it. The design and its decisions are in
 `docs/superpowers/specs/2026-10-23-liquid2-design.md`. Liquid 1 (`docs/LIQUID1.md`) is
 unchanged.
 
@@ -17,14 +18,20 @@ unchanged.
   - `shallow-water.ts` is the pool, a staggered-grid shallow-water field. The drink is a
     solid obstacle, the side and front edges absorb waves, and swells come in from the
     left and right.
-  - `sim.ts` drives the simulation from scroll. It maps progress to level and drive (the
-    level eases at 0.6 units/s; drive builds slowly from scroll speed). Above a drive of
-    0.35 it surges the surface beside the drink (up to 6 per second), and it wells each
-    level rise up around the drink. It lifts the obstacle once the drink is submerged and
-    drains on reverse scroll.
+  - `swirl.ts` is the whirl. Its form is a parametric sheet: a spiral centre line around
+    the drink with a tall arc cross-section whose lip folds back over, tapering into the
+    pool at both ends. A height field cannot fold over itself, so the ribbon is its own
+    surface. Its motion comes from a small physical model. Scroll speed excites an
+    underdamped energy spring that lifts the sheet, and that energy spins it up against
+    drag, so it surges, overshoots, coasts, and settles.
+  - `sim.ts` drives the simulation from scroll. It maps progress to level (easing at 0.6
+    units/s) and drive, advances the swirl, and lets the swirl's foot drag the pool so
+    it ripples in the wake. It lifts the obstacle once the drink is submerged and drains
+    on reverse scroll.
   - `renderer.ts` and `shaders.ts` hold the WebGL2 renderer. It draws the drink quad at
-    the cylinder's front-face depth, then the pool mesh, so the depth test decides per
-    pixel which liquid is in front of the drink. The far edge of the pool fades into the
+    the cylinder's front-face depth, then the pool mesh, then the swirl ribbon (rebuilt on
+    the CPU each frame, 120x28 segments on desktop, 72x16 on touch devices), so the depth
+    test decides per pixel which liquid is in front of the drink. The far edge of the pool fades into the
     page. The material is copied from Liquid 1.
 - Static fallbacks: `static/images/liquid2/wave-{desktop,mobile}.png`, rendered from the
   live scene at progress 0.28 with the drink included.
@@ -65,8 +72,8 @@ D3D11, against the dev server. Each figure is the p95 interval between draw call
 
 | Run | Idle | Pointer | Scrolling through the swell |
 | --- | --- | --- | --- |
-| Desktop 1440x900 | 16.2 ms | 16.3 ms | 19.3 ms (gate ≤ 20 ms) |
-| Mobile 390x844, CPU throttled 4x | 22.1 ms | 20.6 ms | 26.5 ms (gate ≤ 33 ms) |
+| Desktop 1440x900 | 16.8 ms | – | 15.7 ms (gate ≤ 20 ms) |
+| Mobile 390x844, CPU throttled 4x | 23.1 ms | – | 18.0 ms (gate ≤ 33 ms) |
 
 The browser proxy does not model a phone GPU's fill rate. A real mid-range phone still
 needs to be checked by hand.

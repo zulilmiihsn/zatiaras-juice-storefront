@@ -1,10 +1,12 @@
-// Liquid 2 WebGL2 renderer. Order: drink quad (depth = cylinder front face), then the pool
-// surface; one depth buffer resolves which liquid passes in front of the drink.
+// Liquid 2 WebGL2 renderer. Order: drink quad (depth = cylinder front face), the pool
+// surface, then the swirl ribbon; one depth buffer resolves which liquid passes in front of
+// the drink.
 // Simulation state lives on the CPU (LiquidSim) and is uploaded when it changes.
 
 import { project, type Camera, type Drink } from './scene';
 import type { LiquidSim } from './sim';
-import { DRINK_FS, DRINK_VS, SURFACE_FS, SURFACE_VS } from './shaders';
+import { DRINK_FS, DRINK_VS, RIBBON_VS, SURFACE_FS, SURFACE_VS } from './shaders';
+import { buildSwirlMesh } from './swirl';
 
 const PINK = [1, 0.0627451, 0.5058824] as const;
 const COMMON_UNIFORMS = [
@@ -21,6 +23,8 @@ const COMMON_UNIFORMS = [
 	'uRes',
 	'uFade'
 ] as const;
+/** Ribbon grid (segments along the swirl, across its sheet), smaller on touch devices. */
+const RIBBON_GRID = { fine: [120, 28], coarse: [72, 16] } as const;
 /** World depth over which the far edge of the pool fades into the page. */
 const FAR_FADE = 1.8;
 type Common = (typeof COMMON_UNIFORMS)[number];
@@ -83,6 +87,14 @@ export class Liquid2Renderer {
 	private readonly surfaceU;
 	private readonly drinkU;
 	private readonly quad: WebGLBuffer;
+	private readonly ribbonUniforms;
+	private readonly ribbonVao: WebGLVertexArrayObject;
+	private readonly ribbonVertex: WebGLBuffer;
+	private readonly ribbonIndex: WebGLBuffer;
+	private readonly ribbonCount: number;
+	private readonly ribbonData: Float32Array;
+	private readonly ribbonU: number;
+	private readonly ribbonV: number;
 	private readonly drinkVao: WebGLVertexArrayObject;
 	private readonly fieldTexture: WebGLTexture;
 	private readonly imageTexture: WebGLTexture;
@@ -103,8 +115,12 @@ export class Liquid2Renderer {
 	private constructor(
 		private readonly gl: WebGL2RenderingContext,
 		private readonly surfaceProg: WebGLProgram,
-		private readonly drinkProg: WebGLProgram
+		private readonly drinkProg: WebGLProgram,
+		private readonly ribbonProg: WebGLProgram,
+		coarse: boolean
 	) {
+		[this.ribbonU, this.ribbonV] = coarse ? RIBBON_GRID.coarse : RIBBON_GRID.fine;
+		this.ribbonData = new Float32Array((this.ribbonU + 1) * (this.ribbonV + 1) * 6);
 		this.surfaceU = locations(gl, surfaceProg, [...COMMON_UNIFORMS, 'uField', 'uDomain', 'uCells'] as const);
 		this.drinkU = locations(gl, drinkProg, [...COMMON_UNIFORMS, 'uImage', 'uRect', 'uCylinder'] as const);
 		const quad = gl.createBuffer(),
@@ -123,6 +139,35 @@ export class Liquid2Renderer {
 		gl.bindVertexArray(drinkVao);
 		gl.enableVertexAttribArray(0);
 		gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+		this.ribbonUniforms = locations(gl, ribbonProg, COMMON_UNIFORMS);
+		const RIBBON_U = this.ribbonU;
+		const RIBBON_V = this.ribbonV;
+		const ribbonVao = gl.createVertexArray(),
+			ribbonVertex = gl.createBuffer(),
+			ribbonIndex = gl.createBuffer();
+		if (!ribbonVao || !ribbonVertex || !ribbonIndex) throw new Error('liquid2 allocation failed');
+		this.ribbonVao = ribbonVao;
+		this.ribbonVertex = ribbonVertex;
+		this.ribbonIndex = ribbonIndex;
+		const indices = new Uint16Array(RIBBON_U * RIBBON_V * 6);
+		let n = 0;
+		for (let j = 0; j < RIBBON_V; j++)
+			for (let i = 0; i < RIBBON_U; i++) {
+				const k = j * (RIBBON_U + 1) + i;
+				indices.set([k, k + 1, k + RIBBON_U + 1, k + 1, k + RIBBON_U + 2, k + RIBBON_U + 1], n);
+				n += 6;
+			}
+		this.ribbonCount = indices.length;
+		gl.bindVertexArray(ribbonVao);
+		gl.bindBuffer(gl.ARRAY_BUFFER, ribbonVertex);
+		gl.bufferData(gl.ARRAY_BUFFER, this.ribbonData.byteLength, gl.DYNAMIC_DRAW);
+		gl.enableVertexAttribArray(0);
+		gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);
+		gl.enableVertexAttribArray(1);
+		gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 24, 12);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ribbonIndex);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 		gl.bindVertexArray(null);
 
 		for (const texture of [fieldTexture, imageTexture]) {
@@ -137,7 +182,7 @@ export class Liquid2Renderer {
 	}
 
 	/** Null when WebGL2 or a shader is unavailable; callers show the static fallback. */
-	static create(canvas: HTMLCanvasElement): Liquid2Renderer | null {
+	static create(canvas: HTMLCanvasElement, coarse: boolean): Liquid2Renderer | null {
 		let gl: WebGL2RenderingContext | null = null;
 		const programs: WebGLProgram[] = [];
 		try {
@@ -152,7 +197,8 @@ export class Liquid2Renderer {
 			if (!gl) return null;
 			programs.push(program(gl, SURFACE_VS, SURFACE_FS));
 			programs.push(program(gl, DRINK_VS, DRINK_FS));
-			return new Liquid2Renderer(gl, programs[0], programs[1]);
+			programs.push(program(gl, RIBBON_VS, SURFACE_FS));
+			return new Liquid2Renderer(gl, programs[0], programs[1], programs[2], coarse);
 		} catch (error) {
 			for (const prog of programs) gl?.deleteProgram(prog);
 			gl?.getExtension('WEBGL_lose_context')?.loseContext();
@@ -342,6 +388,17 @@ export class Liquid2Renderer {
 		gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 		gl.bindVertexArray(this.surface!.vao);
 		gl.drawElements(gl.TRIANGLES, this.surface!.count, gl.UNSIGNED_INT, 0);
+
+		const swirlDrink = sim.drink;
+		if (!full && swirlDrink && sim.swirl.height > 0.005) {
+			buildSwirlMesh(sim.swirl, swirlDrink, sim.level, this.ribbonU, this.ribbonV, this.ribbonData);
+			gl.useProgram(this.ribbonProg);
+			this.common(this.ribbonUniforms, cam, sim, time, cover);
+			gl.bindVertexArray(this.ribbonVao);
+			gl.bindBuffer(gl.ARRAY_BUFFER, this.ribbonVertex);
+			gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.ribbonData);
+			gl.drawElements(gl.TRIANGLES, this.ribbonCount, gl.UNSIGNED_SHORT, 0);
+		}
 		gl.disable(gl.BLEND);
 		gl.bindVertexArray(null);
 	}
@@ -364,6 +421,10 @@ export class Liquid2Renderer {
 		gl.deleteTexture(this.imageTexture);
 		gl.deleteProgram(this.surfaceProg);
 		gl.deleteProgram(this.drinkProg);
+		gl.deleteProgram(this.ribbonProg);
+		gl.deleteVertexArray(this.ribbonVao);
+		gl.deleteBuffer(this.ribbonVertex);
+		gl.deleteBuffer(this.ribbonIndex);
 		gl.getExtension('WEBGL_lose_context')?.loseContext();
 	}
 }

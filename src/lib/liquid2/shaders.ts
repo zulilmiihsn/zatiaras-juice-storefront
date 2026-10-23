@@ -222,3 +222,19 @@ void main() {
 	gl_FragDepth = windowDepth(depth);
 	outColor = vec4(color.rgb, 1.0);
 }`;
+
+// The swirl ribbon: positions and normals are built on the CPU each frame; it shares the
+// pool's material (SURFACE_FS) and depth, so it passes in front of and behind the drink.
+export const RIBBON_VS = `#version 300 es
+precision highp float;
+layout(location = 0) in vec3 aPos;
+layout(location = 1) in vec3 aNormal;
+out vec3 vWorld, vNormal;
+out float vHeight;
+${COMMON}
+void main() {
+	vWorld = aPos;
+	vNormal = aNormal;
+	vHeight = aPos.y - uLevel;
+	gl_Position = project(aPos);
+}`;

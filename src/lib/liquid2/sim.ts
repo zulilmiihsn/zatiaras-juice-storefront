@@ -1,6 +1,6 @@
 // Liquid 2 orchestrator: maps scroll to the mean level and swell drive, keeps the drink's
-// obstacle in the field until the liquid closes over it, and stirs the surface around the
-// drink while the page scrolls. There is no spray. Scrolling back drains: time only runs forward while the level follows
+// obstacle in the field until the liquid closes over it, and drives the swirl that whirls
+// around the drink while the page scrolls. There is no spray. Scrolling back drains: time only runs forward while the level follows
 // progress down, so the liquid recedes with new motion instead of replaying in reverse.
 
 import {
@@ -14,6 +14,7 @@ import {
 	type Tier
 } from './scene';
 import { MAX_SUBSTEPS, SIM_STEP, ShallowWater } from './shallow-water';
+import { Swirl, swirlPoint } from './swirl';
 
 export interface SimInput {
 	/** Scroll progress 0..1. */
@@ -31,19 +32,8 @@ const DRIVE_FLOOR = 0.1;
 const DRIVE_PER_SPEED = 1.6;
 /** The obstacle lifts once the level clears the rim by this much, and returns below it. */
 const SUBMERGE_MARGIN = 0.05;
-/** Scrolling erupts the liquid around the drink: bursts per second at full drive. */
-const BURST_RATE = 6;
-/** Drive below which the liquid only swells, without bursting. */
-const BURST_THRESHOLD = 0.35;
 /** Share of each level rise that wells up around the drink before spreading out. */
-const MOUND_GAIN = 3;
-
-const mulberry32 = (seed: number) => () => {
-	seed = (seed + 0x6d2b79f5) | 0;
-	let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-	t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-	return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-};
+const MOUND_GAIN = 1;
 
 const sameDomain = (a: Domain, b: Domain) =>
 	Math.abs(a.x0 - b.x0) + Math.abs(a.x1 - b.x1) + Math.abs(a.z0 - b.z0) + Math.abs(a.z1 - b.z1) <
@@ -51,6 +41,7 @@ const sameDomain = (a: Domain, b: Domain) =>
 
 export class LiquidSim {
 	field: ShallowWater;
+	readonly swirl = new Swirl();
 	level = 0;
 	drive = 0;
 	time = 0;
@@ -59,15 +50,12 @@ export class LiquidSim {
 	private readonly tier: Tier;
 	private readonly seed: number;
 	private submerged = false;
-	private burstClock = 0;
-	private readonly random: () => number;
 
 	constructor(tier: Tier, seed = 0x11a2) {
 		this.tier = tier;
 		this.seed = seed;
 		this.camera = makeCamera(1.6);
 		this.field = new ShallowWater(tier, groundDomain(this.camera), seed);
-		this.random = mulberry32((seed ^ 0xb0757) >>> 0 || 1);
 	}
 
 	/**
@@ -118,34 +106,19 @@ export class LiquidSim {
 			}
 		}
 
-		// The rise starts at the drink: a mound wells up around it and spreads outward, and
-		// while the page scrolls briskly the surface surges up beside it.
+		// The rise starts at the drink: a mound wells up around it and spreads outward.
 		if (this.drink && rise > 0)
 			this.field.impulse(this.drink.x, this.drink.z, this.drink.radius * 2.5, rise * MOUND_GAIN);
-		if (this.drink && this.drive > BURST_THRESHOLD) {
-			this.burstClock += step * BURST_RATE * this.drive;
-			while (this.burstClock >= 1) {
-				this.burstClock -= 1;
-				this.surge(this.drink);
-			}
-		} else this.burstClock = 0;
+		// The swirl whirls around the drink; where its sheet leaves the pool it drags the
+		// surface along, so the pool ripples in its wake.
+		this.swirl.advance(step, input, this.drink);
+		if (this.drink && this.swirl.height > 0.01) {
+			const foot = swirlPoint(this.swirl, this.drink, 0, 0.5, 0);
+			this.field.impulse(foot[0], foot[2], 0.15, 0.008 * this.swirl.energy * step * 60);
+		}
 
 		this.field.advance(step, this.drive);
 		this.time += step;
-	}
-
-	/** A local surge of the surface beside the drink. */
-	private surge(drink: Drink) {
-		const rnd = this.random;
-		const angle = rnd() * Math.PI * 2;
-		const reach = drink.radius + 0.06 + 0.2 * rnd();
-		const power = this.drive * (0.6 + 0.4 * rnd());
-		this.field.impulse(
-			drink.x + Math.cos(angle) * reach,
-			drink.z + Math.sin(angle) * reach,
-			0.08 + 0.06 * rnd(),
-			0.08 + 0.14 * power
-		);
 	}
 
 	disturb(x: number, z: number, strength: number) {

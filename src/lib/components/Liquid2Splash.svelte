@@ -69,7 +69,7 @@ scene (static/images/liquid2, drink included) is shown. -->
 		const motion = matchMedia('(prefers-reduced-motion: reduce)');
 		const tier = qualityTier(coarse);
 		const renderer =
-			connection?.saveData || motion.matches ? null : Liquid2Renderer.create(canvas);
+			connection?.saveData || motion.matches ? null : Liquid2Renderer.create(canvas, coarse);
 		if (!renderer) {
 			mode = 'still';
 			return;
