@@ -22,6 +22,7 @@ const COMMON_UNIFORMS = [
 	'uFwd',
 	'uFocal',
 	'uAspect',
+	'uShift',
 	'uTime',
 	'uLevel',
 	'uCover',
@@ -102,6 +103,7 @@ export class Liquid2Renderer {
 	} | null = null;
 	private meshKey = '';
 	private fieldData = new Float32Array(0);
+	private heights = new Float32Array(0);
 	private fieldOwner: unknown = null;
 	private uploadedField = -1;
 	private uploadedSpray = -1;
@@ -289,7 +291,10 @@ export class Liquid2Renderer {
 		if (!fresh && this.uploadedField === field.version) return;
 		if (this.fieldData.length !== n * 4) this.fieldData = new Float32Array(n * 4);
 		const data = this.fieldData;
-		const { height, velX, velZ, cols, rows } = field;
+		if (this.heights.length !== n) this.heights = new Float32Array(n);
+		const height = this.heights;
+		field.renderHeights(height);
+		const { velX, velZ, cols, rows } = field;
 		for (let j = 0; j < rows; j++)
 			for (let i = 0; i < cols; i++) {
 				const k = j * cols + i;
@@ -313,6 +318,7 @@ export class Liquid2Renderer {
 		gl.uniform3f(u.uFwd, ...cam.fwd);
 		gl.uniform1f(u.uFocal, cam.focal);
 		gl.uniform1f(u.uAspect, cam.aspect);
+		gl.uniform1f(u.uShift, cam.shift);
 		gl.uniform1f(u.uTime, time);
 		gl.uniform1f(u.uLevel, sim.level);
 		gl.uniform1f(u.uCover, cover);
@@ -325,16 +331,16 @@ export class Liquid2Renderer {
 		const height = gl.drawingBufferHeight;
 		gl.viewport(0, 0, width, height);
 		// Past the camera the lens is under the surface: the frame is the liquid's colour.
-		const cover = Math.min(1, Math.max(0, (sim.level - (cam.pos[1] - 0.25)) / 0.25));
-		if (cover >= 1 || sim.covered) {
-			gl.clearColor(PINK[0], PINK[1], PINK[2], 1);
-			gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-			return;
-		}
-		gl.clearColor(0, 0, 0, 0);
+		const fade = Math.min(1, Math.max(0, (sim.level - (cam.pos[1] - 0.25)) / 0.25));
+		const full = fade >= 1 || sim.covered;
+		const cover = full ? 1 : fade;
+		// Full cover clears to the liquid colour; the surface is still drawn (all pink) so
+		// every frame takes the same path through the pipeline.
+		if (full) gl.clearColor(PINK[0], PINK[1], PINK[2], 1);
+		else gl.clearColor(0, 0, 0, 0);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-		if (drink && this.imageAspect > 0) {
+		if (!full && drink && this.imageAspect > 0) {
 			const base = project(cam, [drink.x, drink.baseY, drink.z]);
 			const top = project(cam, [drink.x, drink.baseY + drink.height, drink.z]);
 			const h = base.y - top.y;
@@ -367,7 +373,7 @@ export class Liquid2Renderer {
 		gl.bindVertexArray(this.surface!.vao);
 		gl.drawElements(gl.TRIANGLES, this.surface!.count, gl.UNSIGNED_INT, 0);
 
-		const count = Math.min(sim.spray.count, this.maxParticles);
+		const count = full ? 0 : Math.min(sim.spray.count, this.maxParticles);
 		if (count > 0) {
 			gl.useProgram(this.sprayProg);
 			this.common(this.sprayU, cam, sim, time, cover);

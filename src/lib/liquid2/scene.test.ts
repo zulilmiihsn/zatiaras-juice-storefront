@@ -22,8 +22,7 @@ describe('liquid2 scene', () => {
 	});
 
 	it('returns null for rays above the horizon', () => {
-		// Pitched 18° down with a 16.4° half field of view, the horizon sits just above the
-		// canvas top; a point well above the canvas looks into the sky.
+		// A point well above the canvas looks into the sky.
 		expect(unprojectToPlane(makeCamera(1.6), 0.5, -0.3, 0)).toBeNull();
 	});
 
@@ -67,5 +66,15 @@ describe('liquid2 scene', () => {
 		expect(domain.z0).toBeLessThan(drink.z - drink.radius);
 		expect(domain.z1).toBeGreaterThan(drink.z + drink.radius);
 		expect(domain.z1).toBeLessThan(cam.pos[2]);
+	});
+});
+
+describe('liquid2 framing', () => {
+	it.each([1.6, 0.46])('keeps the calm pool a band along the bottom at aspect %f', (aspect) => {
+		const cam = makeCamera(aspect);
+		const domain = groundDomain(cam);
+		const backEdge = project(cam, [0, 0, domain.z0]).y;
+		expect(backEdge).toBeGreaterThan(0.55);
+		expect(backEdge).toBeLessThan(0.75);
 	});
 });

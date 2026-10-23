@@ -59,13 +59,13 @@ export class Spray {
 			const ux = e.vx / speed;
 			const uy = e.vy / speed;
 			const uz = e.vz / speed;
-			let r = 0.045 + 0.025 * rnd();
+			let r = 0.022 + 0.013 * rnd();
 			this.add(e.x, e.y + r, e.z, e.vx, e.vy, e.vz, r);
 			// The trail hangs behind the lead drop along its path, each drop smaller and slower.
-			const trail = 3 + Math.round(6 * s * rnd());
+			const trail = 2 + Math.round(4 * s * rnd());
 			for (let n = 1; n <= trail; n++) {
 				r *= 0.8;
-				const back = n * 0.035;
+				const back = n * 0.02;
 				const slow = 1 - 0.06 * n;
 				this.add(
 					e.x - ux * back,
@@ -77,7 +77,7 @@ export class Spray {
 					r
 				);
 			}
-			const mist = Math.round(6 * s);
+			const mist = Math.round(3 * s);
 			for (let n = 0; n < mist; n++) {
 				const jitter = () => 1 + 0.3 * (rnd() - 0.5);
 				this.add(
@@ -87,7 +87,7 @@ export class Spray {
 					e.vx * jitter(),
 					e.vy * jitter(),
 					e.vz * jitter(),
-					0.008 + 0.007 * rnd()
+					0.004 + 0.004 * rnd()
 				);
 			}
 		}

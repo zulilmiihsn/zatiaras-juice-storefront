@@ -92,3 +92,35 @@ describe('liquid2 shallow water back edge', () => {
 		expect(back).toBeGreaterThan(0.6 * mid);
 	});
 });
+
+describe('liquid2 shallow water smoothing', () => {
+	it('damps grid-scale noise while long swells keep travelling', () => {
+		const w = new ShallowWater(TIER, DOMAIN);
+		const roughness = () => {
+			let sum = 0;
+			for (let j = 40; j < 80; j++)
+				for (let i = 40; i < 80; i++) {
+					const k = j * w.cols + i;
+					sum += (w.height[k] - w.height[k + 1]) ** 2;
+				}
+			return sum;
+		};
+		for (let j = 40; j < 81; j++)
+			for (let i = 40; i < 81; i++) w.height[j * w.cols + i] = (i + j) % 2 ? 0.05 : -0.05;
+		const before = roughness();
+		for (let i = 0; i < 30; i++) w.advance(1 / 60, 0);
+		expect(roughness()).toBeLessThan(before * 0.1);
+	});
+});
+
+describe('liquid2 shallow water render heights', () => {
+	it('fills solid cells from their fluid neighbours so the drawn surface has no pit', () => {
+		const w = new ShallowWater(TIER, DOMAIN);
+		w.setObstacle(DRINK);
+		w.height.fill(0.2);
+		for (let k = 0; k < w.solid.length; k++) if (w.solid[k]) w.height[k] = 0;
+		const out = new Float32Array(w.height.length);
+		w.renderHeights(out);
+		for (let k = 0; k < w.solid.length; k++) expect(out[k]).toBeCloseTo(0.2, 5);
+	});
+});

@@ -14,6 +14,8 @@ export interface Camera {
 	focal: number;
 	/** Canvas width / height. */
 	aspect: number;
+	/** Vertical principal-point offset in canvas heights; positive moves the scene down. */
+	shift: number;
 }
 
 export interface Drink {
@@ -38,15 +40,18 @@ export interface Tier {
 	maxParticles: number;
 }
 
-const PITCH = (18 * Math.PI) / 180;
-const CAM_POS: Vec3 = [0, 1.35, 4.2];
+// Product-shot camera: a little above the rim, nearly level, with the principal point
+// lowered so the calm pool is a band along the bottom and the page shows above it.
+const PITCH = (10 * Math.PI) / 180;
+const CAM_POS: Vec3 = [0, 0.9, 4.2];
 const FOCAL = 1.7;
+const SHIFT = 0.12;
 /** Drink base below the calm surface: it starts partly submerged. */
 export const DRINK_BASE_Y = -0.15;
 /** Cylinder radius as a fraction of the image's drawn width (cut-outs have side margins). */
 export const CUP_FILL = 0.42;
 /** How far the grid reaches back from its front edge, in world units. */
-const DOMAIN_DEPTH = 4.5;
+const DOMAIN_DEPTH = 3;
 
 const finite = (v: number, fallback: number) => (Number.isFinite(v) ? v : fallback);
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
@@ -62,7 +67,8 @@ export function makeCamera(aspect: number): Camera {
 		right: [1, 0, 0],
 		up: [0, c, -s],
 		focal: FOCAL,
-		aspect: a
+		aspect: a,
+		shift: SHIFT
 	};
 }
 
@@ -71,7 +77,7 @@ export function project(cam: Camera, p: Vec3): { x: number; y: number; depth: nu
 	const depth = dot(d, cam.fwd);
 	return {
 		x: 0.5 + (cam.focal * dot(d, cam.right)) / depth / cam.aspect,
-		y: 0.5 - (cam.focal * dot(d, cam.up)) / depth,
+		y: 0.5 + cam.shift - (cam.focal * dot(d, cam.up)) / depth,
 		depth
 	};
 }
@@ -79,7 +85,7 @@ export function project(cam: Camera, p: Vec3): { x: number; y: number; depth: nu
 /** World point where the ray through screen (x, y) meets the plane y = planeY, or null. */
 export function unprojectToPlane(cam: Camera, x: number, y: number, planeY: number): Vec3 | null {
 	const sx = ((x - 0.5) * cam.aspect) / cam.focal;
-	const sy = (0.5 - y) / cam.focal;
+	const sy = (0.5 + cam.shift - y) / cam.focal;
 	const dir: Vec3 = [
 		cam.fwd[0] + cam.right[0] * sx + cam.up[0] * sy,
 		cam.fwd[1] + cam.right[1] * sx + cam.up[1] * sy,
@@ -106,9 +112,10 @@ export function placeDrink(
 	const base = unprojectToPlane(cam, ax, ay, DRINK_BASE_Y) ?? [0, DRINK_BASE_Y, 0];
 	const baseScreen = project(cam, base).y;
 	const projected = (h: number) => baseScreen - project(cam, [base[0], DRINK_BASE_Y + h, base[2]]).y;
-	// Projected height grows with world height until the top reaches the camera; bisect.
+	// Projected height grows monotonically with world height while the top stays in front
+	// of the camera; bisect.
 	let lo = 0.01;
-	let hi = Math.max(0.02, cam.pos[1] - DRINK_BASE_Y - 0.01);
+	let hi = 20;
 	for (let i = 0; i < 60; i++) {
 		const mid = (lo + hi) / 2;
 		if (projected(mid) < target) lo = mid;

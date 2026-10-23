@@ -29,12 +29,16 @@ const BODY_DAMPING = 0.25;
 const EDGE_DAMPING = 7;
 const SWELL_AMPLITUDE = 0.42;
 const SWELL_HZ = 0.45;
-const BREAK_SLOPE = 0.55;
+/** Surface tension and viscosity: smooths grid-scale noise, leaves long swells alone. */
+const DIFFUSION = 0.003;
+const BREAK_SLOPE = 1.0;
 const BREAK_ACCEL = 9;
 const BREAK_MIN_HEIGHT = 0.08;
 const RUNUP_HEIGHT = 0.18;
 const BREAK_COOLDOWN = 0.35;
-const MAX_EVENTS = 24;
+const MAX_EVENTS = 6;
+/** Cells around a breaking crest that may not break again during the cooldown. */
+const COOLDOWN_REACH = 5;
 const WIND_BUMPS = 3;
 const WIND_AMPLITUDE = 0.0015;
 
@@ -74,6 +78,7 @@ export class ShallowWater {
 	private readonly sourceRight: number;
 	private readonly zPhase: number;
 	private readonly random: () => number;
+	private readonly scratch: Float32Array;
 	private remainder = 0;
 	private time = 0;
 
@@ -91,6 +96,7 @@ export class ShallowWater {
 		this.velZ = new Float32Array(this.cols * (this.rows + 1));
 		this.solid = new Uint8Array(n);
 		this.cooldownUntil = new Float64Array(n);
+		this.scratch = new Float32Array(n);
 		this.random = mulberry32(seed >>> 0 || 1);
 		this.zPhase = this.random() * Math.PI * 2;
 		// Keep the CFL number at or below 0.5 whatever the domain's cell size.
@@ -192,6 +198,7 @@ export class ShallowWater {
 			this.remainder -= SIM_STEP;
 			this.wind();
 			for (let s = 0; s < this.inner; s++) this.substep(d);
+			this.diffuse();
 			this.time += SIM_STEP;
 			this.detectBreaking(events);
 			this.version++;
@@ -254,6 +261,26 @@ export class ShallowWater {
 		}
 	}
 
+	/** Mass-conserving Laplacian smoothing; no flux into solid cells or across the edges. */
+	private diffuse() {
+		const { cols, rows, height: h, solid, scratch } = this;
+		const cx = Math.min(0.2, (DIFFUSION * SIM_STEP) / (this.dx * this.dx));
+		const cz = Math.min(0.2, (DIFFUSION * SIM_STEP) / (this.dz * this.dz));
+		scratch.set(h);
+		for (let j = 0; j < rows; j++)
+			for (let i = 0; i < cols; i++) {
+				const k = j * cols + i;
+				if (solid[k]) continue;
+				const v = scratch[k];
+				let change = 0;
+				if (i > 0 && !solid[k - 1]) change += cx * (scratch[k - 1] - v);
+				if (i < cols - 1 && !solid[k + 1]) change += cx * (scratch[k + 1] - v);
+				if (j > 0 && !solid[k - cols]) change += cz * (scratch[k - cols] - v);
+				if (j < rows - 1 && !solid[k + cols]) change += cz * (scratch[k + cols] - v);
+				h[k] = v + change;
+			}
+	}
+
 	private detectBreaking(events: Breaking[]) {
 		const { cols, rows, height: h, solid } = this;
 		const { prevHeight, prevRate, cooldownUntil } = this;
@@ -293,8 +320,8 @@ export class ShallowWater {
 					vz: vz * 1.4,
 					strength
 				});
-				for (let b = -3; b <= 3; b++)
-					for (let a = -3; a <= 3; a++) {
+				for (let b = -COOLDOWN_REACH; b <= COOLDOWN_REACH; b++)
+					for (let a = -COOLDOWN_REACH; a <= COOLDOWN_REACH; a++) {
 						const ii = i + a;
 						const jj = j + b;
 						if (ii >= 0 && jj >= 0 && ii < cols && jj < rows)
@@ -345,6 +372,43 @@ export class ShallowWater {
 		}
 		// A falling drop pushes its landing point down; the dip ripples outward.
 		this.impulse(x, z, 1.5 * Math.max(this.dx, this.dz), -Math.min(0.04, amount * 0.02 * Math.abs(vy)));
+	}
+
+	/**
+	 * Heights for drawing: fluid cells as simulated, solid cells filled inward from their
+	 * fluid neighbours, so the mesh passes smoothly through the (hidden) cylinder instead
+	 * of dropping into a stair-stepped pit around it.
+	 */
+	renderHeights(out: Float32Array) {
+		const { cols, rows, solid } = this;
+		out.set(this.height);
+		const pending: number[] = [];
+		for (let k = 0; k < solid.length; k++) if (solid[k]) pending.push(k);
+		const known = new Uint8Array(solid.length);
+		for (let k = 0; k < solid.length; k++) known[k] = solid[k] ? 0 : 1;
+		while (pending.length) {
+			const next: number[] = [];
+			const filled: [number, number][] = [];
+			for (const k of pending) {
+				const i = k % cols;
+				const j = (k - i) / cols;
+				let sum = 0;
+				let n = 0;
+				if (i > 0 && known[k - 1]) (sum += out[k - 1]), n++;
+				if (i < cols - 1 && known[k + 1]) (sum += out[k + 1]), n++;
+				if (j > 0 && known[k - cols]) (sum += out[k - cols]), n++;
+				if (j < rows - 1 && known[k + cols]) (sum += out[k + cols]), n++;
+				if (n) filled.push([k, sum / n]);
+				else next.push(k);
+			}
+			if (!filled.length) break;
+			for (const [k, value] of filled) {
+				out[k] = value;
+				known[k] = 1;
+			}
+			pending.length = 0;
+			pending.push(...next);
+		}
 	}
 
 	/** Bilinear surface offset at (x, z); 0 outside the grid. */

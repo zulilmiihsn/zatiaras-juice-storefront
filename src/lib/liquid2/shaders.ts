@@ -9,7 +9,7 @@ export const FAR = 60;
 
 const COMMON = `
 uniform vec3 uCam, uRight, uUp, uFwd;
-uniform float uFocal, uAspect, uTime, uLevel, uCover;
+uniform float uFocal, uAspect, uShift, uTime, uLevel, uCover;
 uniform vec2 uRes;
 const float NEAR = ${NEAR.toFixed(2)}, FAR = ${FAR.toFixed(1)};
 const vec3 PINK = vec3(1.0, 0.0627451, 0.5058824);
@@ -19,7 +19,7 @@ vec4 project(vec3 p) {
 	float depth = dot(d, uFwd);
 	return vec4(
 		2.0 * uFocal * dot(d, uRight) / uAspect,
-		2.0 * uFocal * dot(d, uUp),
+		2.0 * uFocal * dot(d, uUp) - 2.0 * uShift * depth,
 		(FAR + NEAR) / (FAR - NEAR) * depth - 2.0 * FAR * NEAR / (FAR - NEAR),
 		depth
 	);
@@ -34,7 +34,7 @@ float windowDepth(float depth) {
 // Ray through a pixel, scaled so dot(ray, uFwd) == 1: the ray parameter is the view depth.
 vec3 pixelRay(vec2 frag) {
 	vec2 ndc = frag / uRes * 2.0 - 1.0;
-	return uFwd + uRight * (ndc.x * uAspect / (2.0 * uFocal)) + uUp * (ndc.y / (2.0 * uFocal));
+	return uFwd + uRight * (ndc.x * uAspect / (2.0 * uFocal)) + uUp * ((ndc.y + 2.0 * uShift) / (2.0 * uFocal));
 }
 `;
 
@@ -132,6 +132,10 @@ vec3 place(vec2 xz) {
 	// Points slide toward crests (sharper peaks, broader troughs) and crests lean along
 	// the flow, so a travelling swell curls forward instead of rising as a sine bump.
 	vec2 offset = 0.05 * slope + 0.22 * max(c.r, 0.0) * c.gb;
+	// Never move a vertex past its neighbours: folded triangles render as shards.
+	float reach = 0.45 * min(step.x, step.y);
+	float len = length(offset);
+	if (len > reach) offset *= reach / len;
 	return vec3(xz.x + offset.x, uLevel + shapeCrest(c.r), xz.y + offset.y);
 }
 
