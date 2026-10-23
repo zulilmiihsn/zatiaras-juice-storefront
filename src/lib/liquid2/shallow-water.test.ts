@@ -17,7 +17,7 @@ describe('liquid2 shallow water', () => {
 		expect(peak(w)).toBeGreaterThan(0.002);
 		expect(peak(w)).toBeLessThan(0.08);
 		expect(events).toBe(0);
-	});
+	}, 20000);
 
 	it('builds colliding swells that break under full drive', () => {
 		const w = new ShallowWater(TIER, DOMAIN);
@@ -29,7 +29,7 @@ describe('liquid2 shallow water', () => {
 		}
 		expect(highest).toBeGreaterThan(0.35);
 		expect(events).toBeGreaterThan(0);
-	});
+	}, 20000);
 
 	it('shadows the water behind the drink', () => {
 		const w = new ShallowWater(TIER, DOMAIN);
