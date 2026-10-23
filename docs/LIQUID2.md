@@ -1,9 +1,10 @@
 # Liquid 2
 
 A real-time 3D liquid for the scroll hero. The liquid is a simulated pool, not a drawn
-line. It swells as the page scrolls, collides with the drink and wraps it front and
-back, throws crowns of drops, and keeps rising until the frame is covered. Scrolling
-back drains it. The design and its decisions are in
+line. As the page scrolls it erupts around the drink: rough surges burst up beside the
+cup and throw splashes, the whole surface churns, and the rise wells up from the cup
+and spreads outward until the frame is covered. When scrolling stops, the bursts stop
+and the surface settles. Scrolling back drains it. The design and its decisions are in
 `docs/superpowers/specs/2026-10-23-liquid2-design.md`. Liquid 1 (`docs/LIQUID1.md`) is
 unchanged.
 
@@ -19,8 +20,10 @@ unchanged.
   - `spray.ts` holds drops thrown by breaking crests. Gravity and size-dependent drag act
     on them, they bounce off the drink, and they return their volume to the pool when
     they land.
-  - `sim.ts` drives the simulation from scroll. It maps progress to level and drive, lifts
-    the obstacle once the drink is submerged, and drains on reverse scroll.
+  - `sim.ts` drives the simulation from scroll. It maps progress to level and drive. While
+    scrolling it bursts the surface beside the drink and throws splashes (up to 12 per
+    second at full drive), and wells each level rise up around the drink. It lifts the
+    obstacle once the drink is submerged and drains on reverse scroll.
   - `renderer.ts` and `shaders.ts` hold the WebGL2 renderer. It draws the drink quad at
     the cylinder's front-face depth, then the pool mesh, then the spray as depth-writing
     impostor spheres, so the depth test decides per pixel which liquid is in front of the
@@ -57,15 +60,15 @@ For `/qa/liquid2`, the browser QA runs the shared checks and adds three of its o
 The shared checks that read Liquid 1's shader uniforms read `window.liquid2Debug`
 instead.
 
-## Measured performance (2026-10-23)
+## Measured performance (2026-10-24)
 
 These numbers come from Chromium with the laptop's Intel HD Graphics 620 through ANGLE
 D3D11, against the dev server. Each figure is the p95 interval between draw calls.
 
 | Run | Idle | Pointer | Scrolling through the swell |
 | --- | --- | --- | --- |
-| Desktop 1440x900 | 17.9 ms | 17.9 ms | 18.6 ms (gate ≤ 20 ms) |
-| Mobile 390x844, CPU throttled 4x | 17.9 ms | 17.9 ms | 21.8 ms (gate ≤ 33 ms) |
+| Desktop 1440x900 | 16.2 ms | 16.3 ms | 19.3 ms (gate ≤ 20 ms) |
+| Mobile 390x844, CPU throttled 4x | 22.1 ms | 20.6 ms | 26.5 ms (gate ≤ 33 ms) |
 
 The browser proxy does not model a phone GPU's fill rate. A real mid-range phone still
 needs to be checked by hand.
