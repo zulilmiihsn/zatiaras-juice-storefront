@@ -9,6 +9,10 @@
 	src: url('/fonts/ZatiarasDisplayV1-SemiBold-V1.2-RC4.woff2') format('woff2');
 	font-weight: 600;
 	font-display: swap;
+	/* Balance the 70% cap-height against the line box to lower glyphs optically. */
+	ascent-override: 85%;
+	descent-override: 15%;
+	line-gap-override: 0%;
 }
 
 @font-face {
@@ -16,6 +20,9 @@
 	src: url('/fonts/ZatiarasDisplayV1-Bold-V1.2-RC4.woff2') format('woff2');
 	font-weight: 700;
 	font-display: swap;
+	ascent-override: 85%;
+	descent-override: 15%;
+	line-gap-override: 0%;
 }
 
 @font-face {
@@ -23,6 +30,9 @@
 	src: url('/fonts/ZatiarasDisplayV1-ExtraBold-V1.2-RC4.woff2') format('woff2');
 	font-weight: 800;
 	font-display: swap;
+	ascent-override: 85%;
+	descent-override: 15%;
+	line-gap-override: 0%;
 }
 
 /*
@@ -33,12 +43,12 @@ Product colors stay contextual; no page invents a replacement brand palette.
 	--color-brand: #ff1081;
 	--color-brand-dark: #c90a63;
 	--color-brand-soft: #ffe4f1;
-	--color-cream: #fff8ec;
-	--color-warm-bg: #fff8ec;
+	--color-cream: #fffdf9;
+	--color-warm-bg: #fffdf9;
 	--color-ink: #241a20;
 	--color-surface: #ffffff;
-	--color-surface-muted: #fffaf2;
-	--color-line: #e8e1d8;
+	--color-surface-muted: #fffaf5;
+	--color-line: #eee7df;
 	--color-copy-muted: #625961;
 	--color-avocado: #4d7c0f;
 	--color-avocado-soft: #ecfccb;

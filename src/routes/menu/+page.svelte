@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import {
+		CATEGORIES,
 		MENU,
 		MENU_VERIFIED,
 		AVAILABILITY_VERIFIED,
@@ -32,6 +33,12 @@
 	let toastMessage = $state<string | null>(null);
 	let toastTimeout: ReturnType<typeof setTimeout> | undefined;
 
+	// Filter kategori lewat ?kategori= (tautan dari beranda "Jus Apa Aja Ada"); slug tak dikenal = semua.
+	const category = $derived(
+		CATEGORIES.find((entry) => entry.slug === page.url.searchParams.get('kategori'))
+	);
+	const visibleMenu = $derived(category ? MENU.filter((m) => m.category === category.slug) : MENU);
+
 	const activeOutletInfo = $derived(getOutlet(activeOutlet));
 	const emptyRevalidation: RevalidationResult = {
 		lines: [],
@@ -60,6 +67,8 @@
 	});
 
 	onMount(() => {
+		const requestedOutlet = page.url.searchParams.get('outlet');
+		if (requestedOutlet) handleOutletChange(requestedOutlet);
 		track('menu_view', { outlet: activeOutlet, city: activeOutletInfo?.city ?? '' });
 	});
 
@@ -306,9 +315,31 @@
 			{/if}
 		</div>
 
+		<!-- KATEGORI -->
+		<nav aria-label="Kategori menu" class="mt-6 flex flex-wrap gap-2">
+			<a
+				href="/menu"
+				aria-current={category ? undefined : 'page'}
+				class="inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold transition-colors {category
+					? 'border-black/10 bg-white text-ink hover:border-brand hover:text-brand'
+					: 'border-ink bg-ink text-white'}">Semua</a
+			>
+			{#each CATEGORIES as entry (entry.slug)}
+				<a
+					href={`/menu?kategori=${entry.slug}`}
+					aria-current={category?.slug === entry.slug ? 'page' : undefined}
+					class="inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-semibold transition-colors {category?.slug ===
+					entry.slug
+						? 'border-ink bg-ink text-white'
+						: 'border-black/10 bg-white text-ink hover:border-brand hover:text-brand'}"
+					>{entry.name}</a
+				>
+			{/each}
+		</nav>
+
 		<!-- MENU GRID -->
 		<div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-			{#each MENU as item}
+			{#each visibleMenu as item}
 				{@const status = availabilityFor(item, activeOutlet)}
 				{@const badge = getStatusBadge(status)}
 				{@const isSoldOut = AVAILABILITY_VERIFIED && status === 'SOLD_OUT'}
@@ -412,6 +443,14 @@
 						</div>
 					</div>
 				</div>
+			{:else}
+				<p class="col-span-full rounded-3xl bg-brand-soft p-6 text-sm text-ink sm:text-base">
+					Menu {category?.name ?? 'ini'} sedang disiapkan.
+					<a
+						class="inline-flex min-h-11 items-center font-bold text-brand-dark underline"
+						href="/menu">Lihat semua menu</a
+					>
+				</p>
 			{/each}
 		</div>
 

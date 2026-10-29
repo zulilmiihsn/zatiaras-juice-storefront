@@ -3,10 +3,10 @@ import { AVAILABILITY_VERIFIED, MENU, MENU_VERIFIED, getMenuItem } from './menu'
 import { canonical, productJsonLd, localBusinessJsonLd } from '../seo';
 
 describe('discovery data', () => {
-	it('menu mock bertanda belum verified', () => {
+	it('harga terverifikasi, ketersediaan belum', () => {
 		expect(MENU.length).toBeGreaterThan(0);
 		expect(getMenuItem('hero-signature')?.hero).toBe(true);
-		expect(MENU_VERIFIED).toBe(false);
+		expect(MENU_VERIFIED).toBe(true);
 		expect(AVAILABILITY_VERIFIED).toBe(false);
 	});
 

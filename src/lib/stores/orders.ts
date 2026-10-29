@@ -131,10 +131,10 @@ export function seedDemo(): Order[] {
 			id: 'demo-1',
 			outletId: 'juanda',
 			contact: { name: 'Andi', whatsapp: '+6281230001' },
-			items: [{ menuItemId: 'hero-signature', qty: 2, unitPrice: 25000 }],
+			items: [{ menuItemId: 'hero-signature', qty: 2, unitPrice: 22000 }],
 			pickupSlotId: 'juanda-sekarang',
 			state: 'PAID',
-			total: 50000
+			total: 44000
 		},
 		{
 			id: 'demo-2',
