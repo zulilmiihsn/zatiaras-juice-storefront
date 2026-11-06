@@ -13,8 +13,9 @@ import {
 	type Drink,
 	type Tier
 } from './scene';
-import { MAX_SUBSTEPS, SIM_STEP, ShallowWater } from './shallow-water';
-import { Swirl, swirlPoint } from './swirl';
+import { SIM_STEP, ShallowWater } from './shallow-water';
+import { Fluid } from './fluid';
+import { ThinSheets } from './sheets';
 
 export interface SimInput {
 	/** Scroll progress 0..1. */
@@ -25,15 +26,15 @@ export interface SimInput {
 
 // Calm and unhurried: the level eases toward its scroll target, and scroll speed only
 // slowly builds the swell, so a light scroll does not stir the liquid up.
-const RISE_RATE = 0.6;
+const RISE_RATE = 0.28;
 const DRAIN_RATE = 0.6;
-const DRIVE_TAU = 0.5;
-const DRIVE_FLOOR = 0.1;
-const DRIVE_PER_SPEED = 1.6;
+const DRIVE_TAU = 0.22;
+const DRIVE_FLOOR = 0;
+const DRIVE_PER_SPEED = 4;
 /** The obstacle lifts once the level clears the rim by this much, and returns below it. */
 const SUBMERGE_MARGIN = 0.05;
-/** Share of each level rise that wells up around the drink before spreading out. */
-const MOUND_GAIN = 1;
+/** The former mean-level mound is replaced by local collision flow; distant swells stay small. */
+const POOL_DRIVE = 0.06;
 
 const sameDomain = (a: Domain, b: Domain) =>
 	Math.abs(a.x0 - b.x0) + Math.abs(a.x1 - b.x1) + Math.abs(a.z0 - b.z0) + Math.abs(a.z1 - b.z1) <
@@ -41,7 +42,8 @@ const sameDomain = (a: Domain, b: Domain) =>
 
 export class LiquidSim {
 	field: ShallowWater;
-	readonly swirl = new Swirl();
+	readonly fluid: Fluid;
+	readonly sheets: ThinSheets;
 	level = 0;
 	drive = 0;
 	time = 0;
@@ -50,10 +52,13 @@ export class LiquidSim {
 	private readonly tier: Tier;
 	private readonly seed: number;
 	private submerged = false;
+	private obstacleLevel = 0;
 
 	constructor(tier: Tier, seed = 0x11a2) {
 		this.tier = tier;
 		this.seed = seed;
+		this.fluid = new Fluid(tier.cols <= 64 ? 384 : 1280);
+		this.sheets = new ThinSheets(tier.cols <= 64);
 		this.camera = makeCamera(1.6);
 		this.field = new ShallowWater(tier, groundDomain(this.camera), seed);
 	}
@@ -66,6 +71,8 @@ export class LiquidSim {
 	layout(cam: Camera, drink: Drink | null) {
 		this.camera = cam;
 		this.drink = drink;
+		this.fluid.layout(drink);
+		this.sheets.layout(drink);
 		const domain = groundDomain(cam);
 		if (!sameDomain(domain, this.field.domain)) {
 			const old = this.field;
@@ -78,14 +85,17 @@ export class LiquidSim {
 					);
 			this.field = next;
 		}
-		this.field.setObstacle(this.submerged ? null : drink);
+		this.field.setObstacle(this.submerged ? null : drink, this.level);
+		this.obstacleLevel = this.level;
 	}
 
 	advance(dt: number, input: SimInput) {
 		if (!Number.isFinite(dt) || dt <= 0) return;
-		const step = Math.min(dt, MAX_SUBSTEPS * SIM_STEP);
+		// A slow draw must not trigger an ever-growing backlog of pressure solves.
+		// At most two pool steps and one 60 Hz fluid step are advanced per rendered frame.
+		const step = Math.min(dt, 2 * SIM_STEP);
 		const progress = Number.isFinite(input.progress) ? Math.min(1, Math.max(0, input.progress)) : 0;
-		const speed = Number.isFinite(input.scrollVelocity) ? Math.abs(input.scrollVelocity) : 0;
+		const speed = Number.isFinite(input.scrollVelocity) ? Math.max(0, input.scrollVelocity) : 0;
 
 		const target = levelForProgress(progress, coverLevel(this.camera));
 		const rise = Math.min(RISE_RATE * step, Math.max(-DRAIN_RATE * step, target - this.level));
@@ -102,22 +112,22 @@ export class LiquidSim {
 				: this.level > rim + SUBMERGE_MARGIN;
 			if (submerged !== this.submerged) {
 				this.submerged = submerged;
-				this.field.setObstacle(submerged ? null : this.drink);
+				this.field.setObstacle(submerged ? null : this.drink, this.level);
+				this.obstacleLevel = this.level;
+			}
+			if (!submerged && Math.abs(this.level - this.obstacleLevel) > this.field.dx) {
+				this.field.setObstacle(this.drink, this.level);
+				this.obstacleLevel = this.level;
 			}
 		}
 
-		// The rise starts at the drink: a mound wells up around it and spreads outward.
-		if (this.drink && rise > 0)
-			this.field.impulse(this.drink.x, this.drink.z, this.drink.radius * 2.5, rise * MOUND_GAIN);
-		// The swirl whirls around the drink; where its sheet leaves the pool it drags the
-		// surface along, so the pool ripples in its wake.
-		this.swirl.advance(step, input, this.drink);
-		if (this.drink && this.swirl.height > 0.01) {
-			const foot = swirlPoint(this.swirl, this.drink, 0, 0.5, 0);
-			this.field.impulse(foot[0], foot[2], 0.15, 0.008 * this.swirl.energy * step * 60);
-		}
-
-		this.field.advance(step, this.drive);
+		// The rise no longer starts as a growing mound around the drink. The pool stays
+		// low while incoming momentum reaches the obstacle and lifts the local film.
+		// That wave follows the actual cylinder boundary, carries momentum around its
+		// sides, and falls under gravity instead of dragging the entire pool upward.
+		this.field.advance(step, this.drive * POOL_DRIVE);
+		this.fluid.advance(step, this.drive, this.field, this.level);
+		this.sheets.advance(step, this.fluid, this.field, this.level);
 		this.time += step;
 	}
 

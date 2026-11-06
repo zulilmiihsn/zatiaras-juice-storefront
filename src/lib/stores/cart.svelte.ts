@@ -1,5 +1,6 @@
 // Store cart Svelte 5 runes + persist lokal. SSR-safe.
 // ADR 2026-09-25: satu cart = satu outlet; ingat outlet terakhir; switch via revalidasi.
+import { browser } from '$app/environment';
 import {
 	addLine as addPure,
 	revalidateForOutlet,
@@ -18,7 +19,7 @@ const CART_KEY = 'z-cart';
 const OUTLET_KEY = 'z-cart-outlet';
 
 function loadLines(): Line[] {
-	if (typeof localStorage === 'undefined') return [];
+	if (!browser) return [];
 	try {
 		return JSON.parse(localStorage.getItem(CART_KEY) ?? '[]');
 	} catch {
@@ -27,7 +28,7 @@ function loadLines(): Line[] {
 }
 
 function loadOutlet(): string {
-	if (typeof localStorage === 'undefined') return 'juanda';
+	if (!browser) return 'juanda';
 	try {
 		const v = localStorage.getItem(OUTLET_KEY) ?? localStorage.getItem('z-last-outlet') ?? 'juanda';
 		return isValidOutletId(v) ? v : 'juanda';
@@ -40,7 +41,7 @@ let lines = $state<Line[]>(loadLines());
 let outletId = $state<string>(loadOutlet());
 
 function save(): void {
-	if (typeof localStorage === 'undefined') return;
+	if (!browser) return;
 	localStorage.setItem(CART_KEY, JSON.stringify(lines));
 	localStorage.setItem(OUTLET_KEY, outletId);
 }

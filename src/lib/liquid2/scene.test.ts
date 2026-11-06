@@ -7,10 +7,21 @@ import {
 	placeDrink,
 	project,
 	qualityTier,
+	radiusAt,
 	unprojectToPlane
 } from './scene';
 
 describe('liquid2 scene', () => {
+	it('fits the glass instead of treating the surrounding fruit as solid cup', () => {
+		const drink = placeDrink(makeCamera(1.6), 0.72, 0.85, 0.5, 960 / 778);
+		const imageWidth = (drink.height * 960) / 778;
+		const lidWidth = (2 * radiusAt(drink, drink.baseY + drink.height)) / imageWidth;
+		const footWidth = (2 * radiusAt(drink, drink.baseY)) / imageWidth;
+		expect(lidWidth).toBeGreaterThan(0.42);
+		expect(lidWidth).toBeLessThan(0.5);
+		expect(footWidth).toBeGreaterThan(0.24);
+		expect(footWidth).toBeLessThan(0.31);
+	});
 	it.each([1.6, 0.46])('unprojects and projects back to the same point at aspect %f', (aspect) => {
 		const cam = makeCamera(aspect);
 		const hit = unprojectToPlane(cam, 0.7, 0.8, -0.15);
@@ -49,6 +60,26 @@ describe('liquid2 scene', () => {
 			prev = level;
 		}
 	});
+
+	it.each([1.6, 390 / 844, 320 / 844])(
+		'holds the main pool low while local collision waves develop at aspect %f',
+		(aspect) => {
+			const cam = makeCamera(aspect);
+			const imageAspect = 960 / 778;
+			const size = Math.min(0.5, (0.84 * aspect) / imageAspect);
+			const drink = placeDrink(cam, aspect < 0.9 ? 0.5 : 0.72, 0.85, size, imageAspect);
+			const cover = coverLevel(cam);
+			expect(levelForProgress(0.5, cover)).toBeLessThan(drink.height * 0.02);
+			expect(levelForProgress(0.7, cover)).toBe(0);
+			let previous = 0;
+			for (let p = 0; p <= 1; p += 0.01) {
+				const level = levelForProgress(p, cover);
+				expect(level).toBeGreaterThanOrEqual(previous);
+				previous = level;
+			}
+			expect(levelForProgress(1, cover)).toBe(cover);
+		}
+	);
 
 	it('gives touch devices a smaller simulation', () => {
 		const touch = qualityTier(true);

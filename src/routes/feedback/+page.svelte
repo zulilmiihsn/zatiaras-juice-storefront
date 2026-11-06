@@ -9,11 +9,26 @@
 	let category = $state<SupportCategory>('TASTE');
 	let note = $state('');
 	let done = $state(false);
+	let error = $state('');
 
 	function submit(): void {
-		saveFeedback({ orderId, category, note, at: new Date().toISOString() });
-		track('feedback_submitted', { category });
-		done = true;
+		if (!note.trim()) {
+			error = 'Tulis catatan sebelum menyimpan.';
+			return;
+		}
+		try {
+			saveFeedback({
+				orderId: orderId.trim(),
+				category,
+				note: note.trim(),
+				at: new Date().toISOString()
+			});
+			track('feedback_submitted', { category });
+			done = true;
+			error = '';
+		} catch {
+			error = 'Catatan tidak dapat disimpan di browser. Coba lagi atau hubungi outlet langsung.';
+		}
 	}
 
 	const ldCrumb = jsonLdTag(
@@ -85,8 +100,15 @@
 						{@render kerned('Terima Kasih Banyak')}
 					</h2>
 					<p class="mt-2 text-xs leading-relaxed text-neutral-600">
-						Catatanmu sudah masuk ke radar tim operasional Zatiaras Juice untuk dievaluasi hari ini.
+						Catatan tersimpan di browser ini dan belum dikirim ke tim Zatiaras. Untuk mendapat
+						bantuan, hubungi outlet secara langsung.
 					</p>
+					<a
+						href="/locations"
+						class="mt-4 block text-xs font-bold text-brand underline underline-offset-4"
+					>
+						Lihat lokasi outlet
+					</a>
 					<a
 						href="/menu"
 						class="tap-scale mt-6 inline-block rounded-full bg-brand px-7 py-3 text-xs font-bold text-white shadow-md shadow-brand/25"
@@ -102,6 +124,11 @@
 					}}
 					class="space-y-4"
 				>
+					<p class="text-xs leading-relaxed text-neutral-600">
+						Catatan hanya tersimpan di browser ini dan belum dikirim ke tim Zatiaras. Hubungi
+						<a href="/locations" class="font-semibold text-brand underline">outlet langsung</a>
+						untuk mendapat bantuan.
+					</p>
 					<div>
 						<label
 							for="fb-order-id"
@@ -153,11 +180,14 @@
 						></textarea>
 					</div>
 
+					{#if error}
+						<p role="alert" class="text-xs font-semibold text-rose-700">{error}</p>
+					{/if}
 					<button
 						type="submit"
 						class="tap-scale mt-2 w-full rounded-full bg-brand py-3.5 text-center text-xs font-bold text-white shadow-lg shadow-brand/25 transition hover:bg-brand-dark"
 					>
-						Kirim Catatan Masukan →
+						Simpan Catatan
 					</button>
 				</form>
 			{/if}

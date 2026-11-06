@@ -1,5 +1,6 @@
 // Smart location: remembered > IP suggestion > manual > browser-geo (explicit only).
 // IP tidak pernah lock outlet. Browser geo hanya setelah klik "Gunakan Lokasi Saya".
+import { browser } from '$app/environment';
 import type { CityInfo, LocationSource, Outlet } from '$lib/core/contracts';
 import { CITIES, OUTLETS, getCity, getOutlet, suggestCityFromLabel } from '$lib/core/outlets';
 
@@ -16,7 +17,7 @@ export interface LocationSuggestion {
 }
 
 export function readRememberedOutlet(): { outlet?: Outlet; source?: LocationSource } {
-	if (typeof localStorage === 'undefined') return {};
+	if (!browser) return {};
 	try {
 		const id = localStorage.getItem(LAST_OUTLET_KEY);
 		const source = localStorage.getItem(LAST_SOURCE_KEY) as LocationSource | null;
@@ -30,7 +31,7 @@ export function readRememberedOutlet(): { outlet?: Outlet; source?: LocationSour
 }
 
 export function rememberOutlet(id: string, source: LocationSource = 'manual'): void {
-	if (typeof localStorage === 'undefined') return;
+	if (!browser) return;
 	try {
 		localStorage.setItem(LAST_OUTLET_KEY, id);
 		localStorage.setItem(LAST_SOURCE_KEY, source);
@@ -101,7 +102,8 @@ export function outletsOf(cityId: string): Outlet[] {
 }
 
 // Browser geo: hitung outlet terdekat hanya bila koordinat outlet terverifikasi.
-// V1: koordinat outlet belum terverifikasi -> return null, fallback ke manual/IP.
+// V1: only Juanda has a sourced point; incomplete coverage cannot prove nearest outlet.
+// Keep manual/IP fallback rather than rank one verified branch against missing points.
 export function nearestOutlet(lat: number, lon: number): Outlet | null {
 	void lat;
 	void lon;
@@ -109,12 +111,16 @@ export function nearestOutlet(lat: number, lon: number): Outlet | null {
 }
 
 // Centroid kota kasar (publik, untuk saran kota saja — BUKAN pin outlet).
-// Berau/Samarinda dari repo resmi tim; Balikpapan pusat kota umum.
+// Samarinda dari repo resmi tim; Balikpapan pusat kota umum.
+// Berau corrected 2026-10-12 from Kelurahan Tanjung Redeb's published profile:
+// https://kel-tanjungredeb.beraukab.go.id/profil (117.5186 E, 2.1406 N).
 // Jangan pernah dipakai untuk klaim jarak presisi / lock outlet otomatis.
-const CITY_CENTROIDS: { cityId: string; lat: number; lon: number }[] = [
+export const CITY_CENTROIDS: { cityId: string; lat: number; lon: number }[] = [
 	{ cityId: 'samarinda', lat: -0.5021, lon: 117.1536 },
-	{ cityId: 'berau', lat: -2.1872, lon: 117.3703 },
-	{ cityId: 'balikpapan', lat: -1.2654, lon: 116.8312 }
+	{ cityId: 'berau', lat: 2.1406, lon: 117.5186 },
+	// OSM place=city node 2417847197, checked 2026-10-17. City reference only, never an outlet pin.
+	// https://api.openstreetmap.org/api/0.6/node/2417847197.json
+	{ cityId: 'balikpapan', lat: -1.2398711, lon: 116.8593379 }
 ];
 
 export function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): number {

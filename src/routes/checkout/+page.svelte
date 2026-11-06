@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { dev } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { cart } from '$lib/stores/cart.svelte';
 	import { AVAILABILITY_VERIFIED, MENU_VERIFIED } from '$lib/data/menu';
@@ -21,7 +22,7 @@
 
 	const slots = $derived(slotsFor(cart.outletId));
 	const currentOutlet = $derived(getOutlet(cart.outletId));
-	const checkoutAvailable = MENU_VERIFIED && AVAILABILITY_VERIFIED;
+	const checkoutAvailable = dev && MENU_VERIFIED && AVAILABILITY_VERIFIED;
 
 	onMount(() => {
 		if (!cart.empty && checkoutAvailable) {
@@ -158,6 +159,13 @@
 			<p class="mt-2 text-xs text-neutral-500 sm:text-sm">
 				Guest checkout cepat · Tanpa kewajiban registrasi atau login password
 			</p>
+			<nav
+				class="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold"
+				aria-label="Kebijakan checkout"
+			>
+				<a class="text-brand underline underline-offset-4" href="/privacy">Kebijakan Privasi</a>
+				<a class="text-brand underline underline-offset-4" href="/terms">Syarat & Ketentuan</a>
+			</nav>
 		</div>
 
 		{#if cart.empty}
@@ -188,12 +196,10 @@
 				role="status"
 			>
 				<span class="eyebrow">Checkout sementara belum tersedia</span>
-				<h2 class="mt-2 font-display text-2xl font-bold text-ink">
-					Harga & ketersediaan perlu konfirmasi
-				</h2>
+				<h2 class="mt-2 font-display text-2xl font-bold text-ink">Pemesanan online belum aktif</h2>
 				<p class="mt-2 text-sm leading-relaxed text-neutral-600">
-					Menu tetap bisa dijelajahi. Kami aktifkan checkout setelah harga dan ketersediaan outlet
-					terverifikasi supaya total pembayaranmu akurat.
+					Menu tetap bisa dijelajahi. Checkout memerlukan harga dan ketersediaan terverifikasi serta
+					sistem pembayaran yang siap digunakan.
 				</p>
 				<a
 					href="/menu"

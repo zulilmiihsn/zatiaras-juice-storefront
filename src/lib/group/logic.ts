@@ -1,4 +1,5 @@
 // FR-GROUP. Approval threshold belum dikonfigurasi; setiap request masuk REVIEWING.
+import { browser } from '$app/environment';
 import type { GroupOrderState, OutletId } from '$lib/core/contracts';
 
 export interface GroupLine {
@@ -51,7 +52,7 @@ function uid(all: GroupRequest[] = []): string {
 }
 
 export function listGroups(): GroupRequest[] {
-	if (typeof localStorage === 'undefined') return [];
+	if (!browser) return [];
 	try {
 		return JSON.parse(localStorage.getItem(GKEY) ?? '[]');
 	} catch {
@@ -64,7 +65,7 @@ export function getGroup(id: string): GroupRequest | undefined {
 }
 
 function persist(all: GroupRequest[]): void {
-	if (typeof localStorage !== 'undefined') localStorage.setItem(GKEY, JSON.stringify(all));
+	if (browser) localStorage.setItem(GKEY, JSON.stringify(all));
 }
 
 export function submitGroupPure(

@@ -20,15 +20,17 @@
 	let reason = $state('');
 	let payMsg = $state('');
 	let isProcessing = $state(false);
+	let loaded = $state(false);
 
 	onMount(() => {
 		order = getOrder(data.id);
 		if (order) {
 			reason = failReason(order.id);
-			if (order.state === 'PENDING_PAYMENT' && !getMockMeta(order.id)) {
+			if (dev && order.state === 'PENDING_PAYMENT' && !getMockMeta(order.id)) {
 				createMockPayment(order.id);
 			}
 		}
+		loaded = true;
 	});
 
 	const link = $derived(order ? waLink(order, reason || 'kendala') : null);
@@ -75,7 +77,7 @@
 		moveOrder(order.id, 'PAID');
 		track('payment_success', { outlet: order.outletId, value: order.total });
 		track('order_confirmed', { outlet: order.outletId, value: order.total });
-		payMsg = 'Pembayaran terverifikasi server. Pesanan masuk antrean outlet!';
+		payMsg = 'Simulasi pembayaran berhasil. Tidak ada pembayaran atau pesanan yang dikirim.';
 		refresh();
 		isProcessing = false;
 	}
@@ -111,7 +113,9 @@
 
 <div class="bg-cream py-8 sm:py-14">
 	<div class="mx-auto max-w-3xl px-4 sm:px-6">
-		{#if !order}
+		{#if !loaded}
+			<p role="status" class="text-sm text-neutral-600">Memuat pesanan di browser ini...</p>
+		{:else if !order}
 			<div class="rounded-3xl border border-black/[0.08] bg-white p-12 text-center shadow-xs">
 				<h1 class="font-display text-2xl font-bold text-ink" aria-label="Pesanan Tidak Ditemukan">
 					{@render kerned('Pesanan Tidak Ditemukan')}
@@ -137,6 +141,14 @@
 		{:else}
 			<!-- ORDER HEADER -->
 			<div class="rounded-3xl border border-black/[0.08] bg-white p-6 shadow-xs sm:p-8">
+				<p
+					role="status"
+					class="mb-5 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs leading-relaxed text-amber-900"
+				>
+					Data ini tersimpan di browser dan bukan status langsung dari outlet atau bukti pembayaran.
+					Hubungi outlet untuk memastikan pesanan.
+					<a href="/locations" class="font-semibold underline">Lihat lokasi outlet</a>.
+				</p>
 				<div
 					class="flex flex-wrap items-center justify-between gap-4 border-b border-black/[0.08] pb-6"
 				>

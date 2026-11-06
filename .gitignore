@@ -21,3 +21,12 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# CodeGraph local index
+.codegraph/
+
+# Local offline liquid tooling and Mantaflow caches; reproducible source lives in scripts.
+/scratch/liquid2-offline/
+
+# pnpm store (local cache, per machine)
+/.pnpm-store/

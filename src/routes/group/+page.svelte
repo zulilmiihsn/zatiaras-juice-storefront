@@ -14,6 +14,7 @@
 	let whatsapp = $state('');
 	let schedule = $state('');
 	let qty = $state<Record<string, number>>({});
+	let error = $state('');
 
 	const lines = $derived(
 		Object.entries(qty)
@@ -25,10 +26,22 @@
 	onMount(() => track('group_order_started', { outlet: outletId }));
 
 	function submit(): void {
-		if (!name || !whatsapp || lines.length === 0) return;
-		const g = submitGroup({ outletId, name, whatsapp, schedule, lines });
-		track('group_order_submitted', { outlet: outletId, cups });
-		goto(`/group/${g.id}`);
+		if (!name.trim() || !whatsapp.trim() || !schedule.trim() || lines.length === 0) {
+			error = 'Lengkapi data dan pilih setidaknya satu menu.';
+			return;
+		}
+		try {
+			const g = submitGroup({
+				outletId,
+				name: name.trim(),
+				whatsapp: whatsapp.trim(),
+				schedule: schedule.trim(),
+				lines
+			});
+			void goto(`/group/${g.id}`);
+		} catch {
+			error = 'Draf tidak dapat disimpan di browser. Coba lagi atau hubungi outlet langsung.';
+		}
 	}
 
 	const ldCrumb = jsonLdTag(
@@ -77,8 +90,8 @@
 			</h1>
 			<div class="cup-lip-bar mt-3 w-12 sm:mx-auto"></div>
 			<p class="mt-3 max-w-md text-xs leading-relaxed text-neutral-600 sm:mx-auto sm:text-sm">
-				Pemesanan dalam jumlah besar disiapkan khusus oleh kru outlet dengan slot waktu terjadwal
-				agar kesegaran buah asli tetap terjaga.
+				Susun kebutuhan untuk acara, lalu hubungi outlet untuk memastikan ketersediaan dan waktu
+				pengambilan.
 			</p>
 		</div>
 
@@ -196,9 +209,10 @@
 								<div class="flex items-center gap-2">
 									<input
 										type="number"
+										aria-label={`Jumlah ${m.name} dalam cup`}
 										min="0"
 										value={qty[m.slug] ?? 0}
-										onchange={(e) =>
+										oninput={(e) =>
 											(qty[m.slug] = Math.max(0, Number((e.target as HTMLInputElement).value)))}
 										class="w-16 rounded-xl border border-black/15 bg-white py-1.5 text-center text-xs font-bold text-ink focus:border-brand"
 									/>
@@ -213,18 +227,26 @@
 					<div class="flex items-start gap-2 text-xs leading-relaxed font-semibold">
 						<span class="mt-1 h-2 w-2 shrink-0 rounded-full bg-amber-500"></span>
 						<span>
-							Outlet akan meninjau jumlah dan kapasitas sebelum pembayaran. Waktu dan ketersediaan
-							akan dikonfirmasi oleh kru.
+							Hubungi outlet untuk meninjau jumlah, kapasitas, waktu, dan ketersediaan sebelum
+							melakukan pembayaran.
 						</span>
 					</div>
 				</div>
+				<p class="text-xs leading-relaxed text-neutral-500">
+					Data permintaan saat ini disimpan di browser ini dan belum otomatis diteruskan ke outlet.
+					Baca <a class="font-semibold text-brand underline" href="/privacy">Kebijakan Privasi</a>
+					serta <a class="font-semibold text-brand underline" href="/terms">Syarat & Ketentuan</a>.
+				</p>
 
+				{#if error}
+					<p role="alert" class="text-xs font-semibold text-rose-700">{error}</p>
+				{/if}
 				<button
 					type="submit"
 					disabled={cups === 0 || !name || !whatsapp}
 					class="tap-scale w-full rounded-full bg-brand py-4 text-center text-xs font-bold text-white shadow-lg shadow-brand/25 transition hover:bg-brand-dark disabled:opacity-40"
 				>
-					Kirim Permintaan Group Order ({cups} Cup) →
+					Simpan Draf Group Order ({cups} Cup)
 				</button>
 			</form>
 		</div>

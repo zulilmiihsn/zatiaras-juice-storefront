@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { SvelteSet } from 'svelte/reactivity';
 	import { browser } from '$app/environment';
 	import { canonical, orgJsonLd, breadcrumbJsonLd, jsonLdTag } from '$lib/seo';
@@ -7,11 +7,20 @@
 	import KernedText from '$lib/components/KernedText.svelte';
 	import PickupSteps from '$lib/components/PickupSteps.svelte';
 	import OutletFinder from '$lib/components/OutletFinder.svelte';
+	import HeroScrub from '$lib/components/HeroScrub.svelte';
 	import BestSellers from '$lib/components/BestSellers.svelte';
 	import Categories from '$lib/components/Categories.svelte';
+	import { createHeroExit } from '$lib/motion/hero-exit';
 	import zcup from '$lib/assets/brand/ZJ_CUP_STANDALONE.svg';
 
 	let videoEl = $state<HTMLVideoElement | null>(null);
+	let exitScope = $state<HTMLElement | null>(null);
+	let heroExit: ReturnType<typeof createHeroExit> | undefined;
+	const onProgress = (p: number) => {
+		if (!exitScope) return;
+		(heroExit ??= createHeroExit(exitScope))(p);
+	};
+	onDestroy(() => heroExit?.destroy());
 
 	onMount(() => {
 		if (!browser || !videoEl) return;
@@ -106,6 +115,26 @@
 </svelte:head>
 
 <div class="homepage relative min-h-[100dvh] overflow-x-clip">
+	<!-- Derive the inset reflection from the actual font silhouette, not hand-placed marks.
+	     Relative filter units keep its thickness proportional on mobile and desktop. -->
+	<svg class="pointer-events-none absolute h-0 w-0" aria-hidden="true" focusable="false">
+		<defs>
+			<filter
+				id="hero-letter-shine"
+				primitiveUnits="objectBoundingBox"
+				x="-10%"
+				y="-10%"
+				width="120%"
+				height="120%"
+			>
+				<feMorphology in="SourceAlpha" operator="erode" radius=".065 .025" result="inset" />
+				<feOffset in="inset" dx=".035" dy=".035" result="shifted" />
+				<feComposite in="inset" in2="shifted" operator="out" result="reflection" />
+				<feFlood flood-color="#fffdf9" />
+				<feComposite in2="reflection" operator="in" />
+			</filter>
+		</defs>
+	</svg>
 	<!-- PERSISTENT FIXED CINEMATIC BACKGROUND VIDEO: Stays pinned in place while user scrolls -->
 	<div class="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
 		<video
@@ -125,104 +154,87 @@
 			<source data-src="/videos/hero.mp4" type="video/mp4" />
 		</video>
 		<!-- Atmospheric warm Fruit Cream veil across the entire scroll -->
-		<div
-			class="absolute inset-0 bg-gradient-to-b from-[#FFFDF9]/12 via-[#FFFDF9]/22 to-[#FFFDF9]/34"
-		></div>
+		<div class="absolute inset-0 bg-[#FFFDF9]/22"></div>
 	</div>
 
 	<!-- 01 HERO: JUS ALPUKAT -->
-	<section
-		class="home-hero relative z-10 flex items-center overflow-hidden"
-		aria-label="Jus Alpukat Zatiaras"
-		data-video-background-region
-	>
-		<!-- Editorial warm gradient scrim to ensure text legibility while dissolving like mist at the bottom -->
+	<!-- Video scrubbed by scroll: frames of static/1029.mp4 on a pinned canvas -->
+	<HeroScrub label="Jus Alpukat Zatiaras" {onProgress}>
 		<div
-			class="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#FFFDF9]/30 via-[#FFFDF9]/4 to-transparent [mask-image:linear-gradient(to_bottom,black_65%,transparent_100%)] max-lg:from-[#FFFDF9]/44 max-lg:via-[#FFFDF9]/14 max-lg:to-transparent max-lg:[mask-image:linear-gradient(to_bottom,black_70%,transparent_100%)]"
-			aria-hidden="true"
-		></div>
-		<div
-			class="pointer-events-none absolute inset-x-0 top-0 z-[1] h-20 bg-gradient-to-b from-[#FFFDF9]/35 to-transparent"
-			aria-hidden="true"
-		></div>
-
-		<div class="relative z-10 mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+			class="relative z-10 mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:col-start-1 lg:self-center lg:px-8 lg:pb-20"
+		>
 			<!-- Hero headline & actions -->
-			<div class="relative z-10 max-w-3xl">
-				<h1
-					class="font-display text-[clamp(3.5rem,19vw,9rem)] leading-[0.9] font-extrabold text-brand [-webkit-text-stroke:0.04em_currentColor]"
-					aria-label="Jus Alpukat"
-				>
-					<span class="block"><KernedText text="JUS" /></span>
-					<span class="block"><KernedText text="ALPUKAT" /></span>
-				</h1>
+			<!-- data-s / data-s-base = exit start on scroll: actions leave first, then each headline line. Glyphs enter individually but exit as cached lines. -->
+			<div bind:this={exitScope} class="hero-exit-scope relative z-10 max-w-3xl">
+				<div class="relative w-fit">
+					<h1
+						class="hero-title hl font-display text-[clamp(3.5rem,14vw,9rem)] leading-[0.84] font-extrabold tracking-[-0.035em]"
+						aria-label="Jus Alpukat"
+					>
+						<span class="hl-layer hl-face">
+							<span class="block" data-s-base="0.2"><KernedText text="Jus" reveal="in" /></span>
+							<span class="block" data-s-base="0.16"
+								><KernedText text="Alpukat" reveal="in" base={140} /></span
+							>
+						</span>
+					</h1>
+				</div>
 
-				<p class="mt-6 max-w-lg text-sm leading-relaxed text-ink/80 sm:text-base">
+				<p
+					class="hero-rise hero-exit mt-8 max-w-md text-lg leading-snug font-semibold text-ink sm:text-xl"
+					style="--d: 520ms"
+					data-s="0.08"
+				>
 					Jus buah segar dengan rasa asli buah pilihan.<br />
 					Pesan online, ambil di outlet terdekat.
 				</p>
 
-				<div class="mt-6 flex flex-wrap items-center gap-3">
+				<div class="hero-rise mt-8 flex flex-wrap items-center gap-x-4 gap-y-3" style="--d: 640ms">
 					<a
 						id="hero-order"
 						href="/menu"
 						onclick={() => track('hero_order_clicked', { source: 'hero' })}
-						class="tap-scale inline-flex min-h-13 items-center justify-center gap-2.5 rounded-full bg-brand px-4 py-3 text-[19px] font-bold text-white transition-colors duration-200 hover:bg-brand-dark sm:px-6 sm:text-xl"
+						data-s="0.04"
+						class="hero-exit tap-scale group inline-flex min-h-13 items-center justify-center gap-2.5 rounded-full bg-brand px-5 py-3 text-[19px] font-bold text-white transition-colors duration-200 hover:bg-brand-dark sm:px-7 sm:text-xl"
 					>
 						<span>Pesan Sekarang</span>
 						<svg
-							class="h-5 w-5 shrink-0"
+							class="h-5 w-5 shrink-0 transition-transform duration-200 group-hover:translate-x-1"
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
-							stroke-width="2"
+							stroke-width="2.5"
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							aria-hidden="true"
+							aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg
 						>
-							<path d="M5 12h14M13 6l6 6-6 6" />
-						</svg>
 					</a>
 					<a
 						href="/locations"
-						class="tap-scale inline-flex min-h-13 items-center justify-center gap-2 rounded-full border border-ink/10 bg-white/90 px-4 py-3 text-sm font-bold text-ink transition-colors duration-200 hover:border-brand/40 hover:text-brand sm:px-6 sm:text-base"
+						data-s="0"
+						class="hero-exit tap-scale inline-flex min-h-13 items-center justify-center gap-2 rounded-full border-2 border-ink bg-[#FFFDF9]/70 px-5 font-bold text-ink backdrop-blur-sm transition-colors duration-200 hover:border-brand hover:bg-brand-soft hover:text-brand-dark sm:px-6 sm:text-lg"
 					>
 						<svg
 							class="h-4 w-4 shrink-0 text-brand"
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
-							stroke-width="2"
+							stroke-width="2.5"
 							stroke-linecap="round"
 							stroke-linejoin="round"
 							aria-hidden="true"
+							><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle
+								cx="12"
+								cy="10"
+								r="3"
+							/></svg
 						>
-							<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-							<circle cx="12" cy="10" r="3" />
-						</svg>
 						Pilih Outlet
 					</a>
 				</div>
-
-				<div class="mt-4 inline-flex items-center gap-2 text-xs text-copy-muted sm:text-sm">
-					<svg
-						class="h-4 w-4 shrink-0 text-brand"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true"
-					>
-						<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-						<circle cx="12" cy="10" r="3" />
-					</svg>
-					<span>Samarinda · Berau · Balikpapan</span>
-				</div>
 			</div>
 		</div>
-	</section>
+	</HeroScrub>
 
 	<div class="relative z-10">
 		<!-- CALM CANVAS: near-white cream backdrop for transactional & operational clarity -->
@@ -241,9 +253,7 @@
 
 			<!-- Section Divider Line -->
 			<div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-				<div
-					class="h-px w-full bg-gradient-to-r from-transparent via-ink/[0.08] to-transparent"
-				></div>
+				<div class="hidden"></div>
 			</div>
 
 			<!-- 04 PESAN DULU TINGGAL AMBIL -->
@@ -260,7 +270,7 @@
 				aria-label="Pesan rame-rame"
 			>
 				<div
-					class="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#ff1081] via-[#e50b73] to-[#990448] p-6 text-white shadow-[0_24px_60px_-15px_rgba(255,16,129,0.35)] sm:p-10 lg:p-12"
+					class="relative overflow-hidden rounded-[2.5rem] bg-brand p-6 text-white sm:p-10 lg:p-12"
 				>
 					<!-- Subtle watermark decoration -->
 					<div
@@ -288,7 +298,7 @@
 							<a
 								href="/group"
 								onclick={() => track('group_order_clicked', { source: 'home' })}
-								class="tap-scale inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-bold text-brand shadow-[0_12px_28px_rgba(0,0,0,0.15)] transition-all duration-200 hover:bg-cream hover:shadow-[0_16px_36px_rgba(0,0,0,0.22)] active:scale-[0.98]"
+								class="tap-scale inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-bold text-brand transition-all duration-200 hover:bg-cream active:scale-[0.98]"
 							>
 								<span>Pesan Rame-Rame →</span>
 							</a>
@@ -318,9 +328,7 @@
 
 			<div class="home-section-content grid gap-4 md:grid-cols-3 lg:gap-6">
 				<!-- Proof 1 -->
-				<div
-					class="relative flex flex-col justify-between rounded-[2rem] border border-white/80 bg-white/92 p-8 shadow-[0_20px_45px_rgba(36,26,32,0.06)] transition-all duration-300 hover:border-brand/35 hover:bg-white/95 hover:shadow-md"
-				>
+				<div class="relative flex flex-col justify-between transition-colors duration-300">
 					<div>
 						<div
 							class="flex h-12 w-12 items-center justify-center rounded-2xl bg-lime-100 text-lime-700 shadow-2xs"
@@ -342,16 +350,14 @@
 							</svg>
 						</div>
 						<p class="mt-6 font-display text-xl font-bold text-ink">Buah asli</p>
-						<p class="mt-2 text-xs leading-relaxed text-neutral-600 sm:text-sm">
+						<p class="mt-2 text-base leading-relaxed text-ink">
 							Diblender saat pesanan terverifikasi. Tanpa klaim kesehatan berlebihan.
 						</p>
 					</div>
 				</div>
 
 				<!-- Proof 2 -->
-				<div
-					class="relative flex flex-col justify-between rounded-[2rem] border border-white/80 bg-white/92 p-8 shadow-[0_20px_45px_rgba(36,26,32,0.06)] transition-all duration-300 hover:border-brand/35 hover:bg-white/95 hover:shadow-md"
-				>
+				<div class="relative flex flex-col justify-between transition-colors duration-300">
 					<div>
 						<div
 							class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100 text-amber-700 shadow-2xs"
@@ -374,16 +380,14 @@
 							</svg>
 						</div>
 						<p class="mt-6 font-display text-xl font-bold text-ink">Ukuran produk</p>
-						<p class="mt-2 text-xs leading-relaxed text-neutral-600 sm:text-sm">
+						<p class="mt-2 text-base leading-relaxed text-ink">
 							Ukuran dan detail tiap menu mengikuti informasi outlet terpilih.
 						</p>
 					</div>
 				</div>
 
 				<!-- Proof 3 -->
-				<div
-					class="relative flex flex-col justify-between rounded-[2rem] border border-white/80 bg-white/92 p-8 shadow-[0_20px_45px_rgba(36,26,32,0.06)] transition-all duration-300 hover:border-brand/35 hover:bg-white/95 hover:shadow-md"
-				>
+				<div class="relative flex flex-col justify-between transition-colors duration-300">
 					<div>
 						<div
 							class="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-100 text-rose-700 shadow-2xs"
@@ -403,7 +407,7 @@
 							</svg>
 						</div>
 						<p class="mt-6 font-display text-xl font-bold text-ink">Dibuat di outlet</p>
-						<p class="mt-2 text-xs leading-relaxed text-neutral-600 sm:text-sm">
+						<p class="mt-2 text-base leading-relaxed text-ink">
 							Diracik kru outlet yang memproses pesananmu.
 						</p>
 					</div>
@@ -413,7 +417,7 @@
 
 		<!-- 08 CLOSING COMMERCE CTA: High-impact conversion & human support bridge (inspired by reference) -->
 		<section
-			class="home-closing relative z-10 border-t border-ink/[0.06] bg-cream pb-12 sm:pb-16 lg:pb-20"
+			class="home-closing relative z-10 bg-cream pb-12 sm:pb-16 lg:pb-20"
 			aria-label="Pesan sekarang"
 		>
 			<!-- Top smooth gradient feathering from sensory video into solid cream canvas -->
@@ -428,7 +432,7 @@
 				<h2
 					class="font-display text-4xl font-extrabold tracking-tight text-ink sm:text-5xl lg:text-6xl"
 				>
-					Haus? Pesan Dulu,<br class="hidden sm:inline" /> Tinggal Ambil di Outlet
+					Haus? Pesan Dulu,<br class="hidden sm:inline" /> Tinggal Ambil
 				</h2>
 
 				<p class="mx-auto mt-4 max-w-xl text-base leading-relaxed text-neutral-600 sm:text-lg">
@@ -441,7 +445,7 @@
 					<a
 						href="/menu"
 						onclick={() => track('hero_order_clicked', { source: 'bottom_cta' })}
-						class="tap-scale group inline-flex items-center gap-2.5 rounded-full bg-brand px-9 py-4 text-base font-bold text-white shadow-[0_12px_28px_rgba(255,16,129,0.32)] transition-all duration-200 hover:bg-brand-dark hover:shadow-[0_16px_36px_rgba(255,16,129,0.42)] active:scale-[0.98]"
+						class="tap-scale group inline-flex items-center gap-2.5 rounded-full bg-brand px-9 py-4 text-base font-bold text-white transition-all duration-200 hover:bg-brand-dark active:scale-[0.98]"
 					>
 						<span>PESAN SEKARANG</span>
 						<span class="transition-transform duration-200 group-hover:translate-x-1">→</span>
@@ -450,7 +454,7 @@
 
 				<!-- Location indicator (matching reference "📍 1722 W Belmont Ave, Chicago") -->
 				<div
-					class="mt-6 flex items-center justify-center gap-2 text-xs font-bold tracking-wider text-copy-muted uppercase sm:text-sm"
+					class="mt-6 flex items-center justify-center gap-2 text-sm font-semibold text-ink/85 sm:text-base"
 				>
 					<svg
 						class="h-4 w-4 text-brand"
@@ -470,7 +474,7 @@
 
 				<!-- Secondary Support Concierge Pill (Preserving all support routes & WhatsApp promises) -->
 				<div
-					class="mt-10 inline-flex flex-wrap items-center justify-center gap-3 rounded-2xl border border-ink/8 bg-white/80 px-5 py-3 text-xs text-neutral-600 shadow-2xs backdrop-blur-xs"
+					class="mt-10 inline-flex flex-wrap items-center justify-center gap-3 rounded-2xl bg-cream px-5 py-3 text-sm text-neutral-600"
 				>
 					<span class="flex items-center gap-1.5 font-semibold text-ink">
 						<svg
@@ -504,6 +508,88 @@
 </div>
 
 <style>
+	/* Bubble-sticker lettering: solid magenta, a white rim, small painted glints,
+	   and a hard pink offset shadow, following the supplied reference. */
+	.hl {
+		display: grid;
+	}
+	.hl-layer {
+		grid-area: 1 / 1;
+	}
+	.hl-face :global(.kl) {
+		position: relative;
+		/* Keep ascenders and descenders inside the painted face without changing layout. */
+		padding-block: 0.16em 0.3em;
+		margin-block: -0.16em -0.3em;
+		color: var(--color-brand);
+		-webkit-text-stroke: 0.045em #fffdf9;
+		paint-order: stroke fill;
+		filter: drop-shadow(0.018em 0.035em 0 #c12f80);
+		--shine-y: 39%;
+	}
+	/* The inset rim follows the font itself. This soft light window reveals only
+	   its upper curve, fading out before it reaches the counters or lower stems.
+	   Tall ascenders need a higher light window than x-height letters. */
+	.hl-face :global(.kl[data-letter='J']),
+	.hl-face :global(.kl[data-letter='l']),
+	.hl-face :global(.kl[data-letter='k']) {
+		--shine-y: 24%;
+	}
+	.hl-face :global(.kl[data-letter='A']) {
+		--shine-y: 33%;
+	}
+	.hl-face :global(.kl[data-letter='t']) {
+		--shine-y: 34%;
+	}
+	.hl-face :global(.kl)::after {
+		content: attr(data-letter);
+		position: absolute;
+		inset: 0;
+		padding: inherit;
+		color: #fffdf9;
+		-webkit-text-stroke: 0;
+		filter: url(#hero-letter-shine);
+		mask-image: radial-gradient(ellipse 75% 13% at 38% var(--shine-y), #000 35%, transparent 95%);
+		pointer-events: none;
+	}
+	@media (forced-colors: active) {
+		.hl-face :global(.kl) {
+			color: CanvasText;
+			-webkit-text-stroke: 0;
+			filter: none;
+			text-shadow: none;
+		}
+		.hl-face :global(.kl)::after {
+			content: none;
+		}
+	}
+	/* Hero copy rises in after the headline letters; static under reduced motion. */
+	.hero-rise {
+		/* backwards, not both: a held end state would override the scroll exit's translate/opacity. */
+		animation: hero-rise 640ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+		animation-delay: var(--d, 0ms);
+	}
+	@keyframes hero-rise {
+		from {
+			opacity: 0;
+			translate: 0 0.9rem;
+		}
+		to {
+			opacity: 1;
+			translate: 0 0;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.hero-rise {
+			animation: none;
+		}
+	}
+	/* Cache each complete line, including the static glossy glyphs, for the exit.
+	   Translation/opacity preserve that raster; no per-letter zoom or tumbling. */
+	.hero-exit-scope [data-s-base],
+	.hero-exit {
+		will-change: transform, opacity;
+	}
 	.homepage {
 		--home-section-space: 3rem;
 		--home-section-gap: 2rem;
@@ -531,9 +617,6 @@
 		.homepage {
 			--home-section-space: 6rem;
 		}
-	}
-	.home-hero {
-		min-height: 100dvh;
 	}
 	.home-section {
 		padding-block: var(--home-section-space);

@@ -55,7 +55,7 @@ scene (static/images/liquid2, drink included) is shown. -->
 		return t * t * (3 - 2 * t);
 	};
 	const safeProgress = $derived(Number.isFinite(progress) ? Math.min(1, Math.max(0, progress)) : 0);
-	const fallbackCover = $derived(smooth(0.48, 0.82, safeProgress));
+	const fallbackCover = $derived(smooth(0.78, 1, safeProgress));
 
 	$effect(() => {
 		if (mode !== 'live') oncovered?.(fallbackCover >= 1);
@@ -68,8 +68,7 @@ scene (static/images/liquid2, drink included) is shown. -->
 		const coarse = matchMedia('(pointer: coarse)').matches;
 		const motion = matchMedia('(prefers-reduced-motion: reduce)');
 		const tier = qualityTier(coarse);
-		const renderer =
-			connection?.saveData || motion.matches ? null : Liquid2Renderer.create(canvas, coarse);
+		const renderer = connection?.saveData || motion.matches ? null : Liquid2Renderer.create(canvas);
 		if (!renderer) {
 			mode = 'still';
 			return;
@@ -96,23 +95,33 @@ scene (static/images/liquid2, drink included) is shown. -->
 		let animatedProgress = safeProgress;
 		let scrollVel = 0;
 		let lastDisturbance = 0;
-		let elapsed = 0;
 		let stopped = false;
 		let overloadedFrames = 0;
 		let disturbances = 0;
 		const pointer = { x: -1, y: -1, speed: 0, stamp: 0, active: false };
 
+		const resizeBacking = () => {
+			const backing = liquidBackingSize(rect.width, rect.height, devicePixelRatio, scale, coarse);
+			if (!renderer.resize(backing.width, backing.height)) {
+				fallback();
+				return false;
+			}
+			return true;
+		};
+
 		const layout = () => {
+			if (stopped) return;
 			rect = el.getBoundingClientRect();
 			// A collapsed box has no aspect to frame; wait for the next resize.
 			if (!(rect.width > 0 && rect.height > 0)) return;
-			const backing = liquidBackingSize(rect.width, rect.height, devicePixelRatio, scale, coarse);
-			renderer.resize(backing.width, backing.height);
+			if (!resizeBacking()) return;
 			const aspect = rect.width / Math.max(1, rect.height);
 			cam = makeCamera(aspect);
-			// In portrait, centre the drink and keep it within ~62% of the width.
+			// In portrait, centre the drink and keep the full cut-out within 84% of the width.
+			// The cut-out includes fruit and transparent side margins; 84% gives the actual
+			// cup enough room to remain legible on narrow screens without clipping the image.
 			const portrait = aspect < 0.9;
-			const fit = Math.min(size, (0.62 * aspect) / Math.max(0.1, drinkAspect));
+			const fit = Math.min(size, ((portrait ? 0.84 : 0.62) * aspect) / Math.max(0.1, drinkAspect));
 			drink = placeDrink(cam, portrait ? 0.5 : anchorX, anchorY, fit, drinkAspect);
 			sim.layout(cam, drink);
 		};
@@ -177,7 +186,8 @@ scene (static/images/liquid2, drink included) is shown. -->
 				fallback();
 				return;
 			}
-			const seconds = Math.min(0.05, Math.max(0.001, dtMs / 1000));
+			const inputSeconds = Math.max(0.001, dtMs / 1000);
+			const seconds = Math.min(0.25, inputSeconds);
 			animatedProgress += (safeProgress - animatedProgress) * (1 - Math.exp(-12 * seconds));
 			if (Math.abs(safeProgress - animatedProgress) < 0.0001) animatedProgress = safeProgress;
 			const p = animatedProgress;
@@ -189,22 +199,27 @@ scene (static/images/liquid2, drink included) is shown. -->
 				if (slowFrames > 8 && scale > MIN_SCALE) {
 					ceiling = Math.max(MIN_SCALE, scale * 0.95);
 					scale = Math.max(MIN_SCALE, scale * 0.85);
-					layout();
+					// Resolution changes do not move the camera or remap the live material.
+					if (!resizeBacking()) return;
 				} else if (slowFrames < 3 && scale < ceiling) {
 					scale = Math.min(ceiling, scale * 1.1);
-					layout();
+					if (!resizeBacking()) return;
 				}
 				frames = slowFrames = 0;
 			}
 
-			const dt = Math.min(dtMs, 50) / 1000;
-			elapsed += dt;
-			scrollVel += ((p - prevProgress) / seconds - scrollVel) * (1 - Math.exp(-12 * seconds));
+			// Every capped draw advances one quantum; fractional RAF jitter must not
+			// intermittently skip both solvers. Input speed keeps its real-time clock.
+			const dt = 1 / 60;
+			scrollVel += ((p - prevProgress) / inputSeconds - scrollVel) * (1 - Math.exp(-12 * seconds));
 			prevProgress = p;
 			if (Math.abs(scrollVel) < 1e-4) scrollVel = 0;
 
 			sim.advance(dt, { progress: p, scrollVelocity: scrollVel });
-			renderer.render(cam, drinkShown ? drink : null, sim, elapsed);
+			if (!renderer.render(cam, drinkShown ? drink : null, sim, sim.time)) {
+				fallback();
+				return;
+			}
 
 			const covered = sim.covered;
 			if (covered !== wasCovered) {
@@ -263,11 +278,39 @@ scene (static/images/liquid2, drink included) is shown. -->
 
 		if (debug)
 			(window as Window & { liquid2Debug?: unknown }).liquid2Debug = {
+				get time() {
+					return sim.time;
+				},
+				get particleCount() {
+					return sim.fluid.count;
+				},
+				get visibleCount() {
+					return sim.fluid.renderCount;
+				},
 				get level() {
 					return sim.level;
 				},
 				get drive() {
 					return sim.drive;
+				},
+				get runUpHeight() {
+					return sim.sheets.maxHeight;
+				},
+				get flowSpeed() {
+					return sim.fluid.speed;
+				},
+				get farFieldPeak() {
+					if (!drink) return 0;
+					const field = sim.field;
+					let peak = 0;
+					for (let j = 0; j < field.rows; j++)
+						for (let i = 0; i < field.cols; i++) {
+							const x = field.domain.x0 + (i + 0.5) * field.dx - drink.x;
+							const z = field.domain.z0 + (j + 0.5) * field.dz - drink.z;
+							if (x * x + z * z > 9 * drink.radius * drink.radius)
+								peak = Math.max(peak, Math.abs(field.height[j * field.cols + i]));
+						}
+					return peak;
 				},
 				get covered() {
 					return sim.covered;
@@ -329,7 +372,11 @@ scene (static/images/liquid2, drink included) is shown. -->
 	});
 </script>
 
-<div class="liquid-splash pointer-events-none {className}" data-liquid-mode={mode} aria-hidden="true">
+<div
+	class="liquid-splash pointer-events-none {className}"
+	data-liquid-mode={mode}
+	aria-hidden="true"
+>
 	<canvas
 		bind:this={canvas}
 		class="absolute inset-0 h-full w-full"

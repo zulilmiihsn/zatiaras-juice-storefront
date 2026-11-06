@@ -1,4 +1,6 @@
 // ANALYTICS.md. Traffic bukan north star. Tanpa data sensitif.
+import { browser } from '$app/environment';
+
 export const EVENTS = [
 	'page_view',
 	'outlet_view',
@@ -71,7 +73,7 @@ const AKEY = 'z-analytics';
 
 export function track(name: EventName, params: Record<string, unknown> = {}): void {
 	const evt: BufferedEvent = { name, params: sanitize(params), at: new Date().toISOString() };
-	if (typeof localStorage !== 'undefined') {
+	if (browser) {
 		try {
 			const all = JSON.parse(localStorage.getItem(AKEY) ?? '[]') as BufferedEvent[];
 			all.push(evt);
@@ -83,7 +85,7 @@ export function track(name: EventName, params: Record<string, unknown> = {}): vo
 }
 
 export function listEvents(): BufferedEvent[] {
-	if (typeof localStorage === 'undefined') return [];
+	if (!browser) return [];
 	try {
 		return JSON.parse(localStorage.getItem(AKEY) ?? '[]');
 	} catch {
@@ -92,5 +94,5 @@ export function listEvents(): BufferedEvent[] {
 }
 
 export function clearEvents(): void {
-	if (typeof localStorage !== 'undefined') localStorage.removeItem(AKEY);
+	if (browser) localStorage.removeItem(AKEY);
 }

@@ -27,7 +27,7 @@ describe('liquid2 simulation', () => {
 		const sim = new LiquidSim(qualityTier(true));
 		sim.layout(cam, drink);
 		ramp(sim, 0, 1, 4);
-		hold(sim, 1, 2);
+		hold(sim, 1, 5);
 		expect(sim.covered).toBe(true);
 	});
 
@@ -35,7 +35,7 @@ describe('liquid2 simulation', () => {
 		const sim = new LiquidSim(qualityTier(true));
 		sim.layout(cam, drink);
 		ramp(sim, 0, 1, 4);
-		hold(sim, 1, 2);
+		hold(sim, 1, 5);
 		let prev = sim.level;
 		ramp(sim, 1, 0.3, 3, () => {
 			expect(sim.level).toBeLessThanOrEqual(prev + 1e-3);
@@ -69,6 +69,25 @@ describe('liquid2 simulation', () => {
 });
 
 describe('liquid2 simulation layout changes', () => {
+	it('keeps the portrait drink visible through the middle of the wrap', () => {
+		const portrait = makeCamera(390 / 844);
+		const imageAspect = 960 / 778;
+		const drink = placeDrink(
+			portrait,
+			0.5,
+			0.85,
+			(0.84 * portrait.aspect) / imageAspect,
+			imageAspect
+		);
+		const sim = new LiquidSim(qualityTier(true));
+		sim.layout(portrait, drink);
+		ramp(sim, 0, 0.5, 3);
+		hold(sim, 0.5, 1);
+		expect(sim.level).toBeLessThan(drink.baseY + drink.height * 0.8);
+		expect(sim.level).toBeLessThan(0.02);
+		expect(sim.covered).toBe(false);
+	});
+
 	it('re-sizes the grid on an orientation change and keeps the liquid moving', () => {
 		const portrait = makeCamera(0.5);
 		const sim = new LiquidSim(qualityTier(true));
@@ -89,14 +108,12 @@ describe('liquid2 simulation layout changes', () => {
 	});
 });
 
-describe('liquid2 simulation swirl', () => {
-	it('whirls up around the drink as soon as scrolling starts, and stirs the pool', () => {
+describe('liquid2 collision and pool separation', () => {
+	it('keeps the main level low even during a fast scroll through the interaction', () => {
 		const sim = new LiquidSim(qualityTier(true));
 		sim.layout(cam, drink);
-		ramp(sim, 0, 0.3, 1);
-		expect(sim.swirl.height).toBeGreaterThan(0.3 * drink.height);
-		expect(sim.swirl.omega).toBeGreaterThan(0.5);
-		expect(peak(sim)).toBeGreaterThan(0.05);
+		ramp(sim, 0, 0.65, 1.3);
+		expect(sim.level).toBeLessThan(0.02);
 	});
 });
 

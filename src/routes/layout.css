@@ -3,10 +3,10 @@
 @import '@fontsource/plus-jakarta-sans/600.css';
 @import '@fontsource/plus-jakarta-sans/700.css';
 
-/* Zatiaras Display V1.2-RC4 resmi */
+/* Zatiaras Display V1.2-RC4 resmi, outline dihaluskan (scripts/smooth-font.py); file asli tetap di ZATIARAS_WEB_V1_SOURCE_OF_TRUTH_2026-09-15 */
 @font-face {
 	font-family: 'Zatiaras Display';
-	src: url('/fonts/ZatiarasDisplayV1-SemiBold-V1.2-RC4.woff2') format('woff2');
+	src: url('/fonts/ZatiarasDisplayV1-SemiBold-V1.2-RC4-Smooth.woff2') format('woff2');
 	font-weight: 600;
 	font-display: swap;
 	/* Balance the 70% cap-height against the line box to lower glyphs optically. */
@@ -17,7 +17,7 @@
 
 @font-face {
 	font-family: 'Zatiaras Display';
-	src: url('/fonts/ZatiarasDisplayV1-Bold-V1.2-RC4.woff2') format('woff2');
+	src: url('/fonts/ZatiarasDisplayV1-Bold-V1.2-RC4-Smooth.woff2') format('woff2');
 	font-weight: 700;
 	font-display: swap;
 	ascent-override: 85%;
@@ -27,7 +27,7 @@
 
 @font-face {
 	font-family: 'Zatiaras Display';
-	src: url('/fonts/ZatiarasDisplayV1-ExtraBold-V1.2-RC4.woff2') format('woff2');
+	src: url('/fonts/ZatiarasDisplayV1-ExtraBold-V1.2-RC4-Smooth.woff2') format('woff2');
 	font-weight: 800;
 	font-display: swap;
 	ascent-override: 85%;
@@ -79,6 +79,7 @@ body {
 	background: var(--color-cream);
 	color: var(--color-ink);
 	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 	overflow-x: clip;
 	margin: 0;
 }
@@ -131,11 +132,23 @@ textarea {
 	-webkit-tap-highlight-color: transparent;
 }
 
-.font-display {
-	font-family: var(--font-display);
-	letter-spacing: -0.01em;
-	font-kerning: normal;
-	text-rendering: optimizeLegibility;
+/*
+Zatiaras Display: every glyph carries 0.05em side bearings, so the stock gap is wide.
+Tighten it here once. This sits in @layer base on purpose: an unlayered rule would beat
+every tracking-* utility and silently ignore them. Hero-scale type sets its own tracking.
+Per-glyph baseline and pair kerning live in $lib/kern and KernedText.
+*/
+@layer base {
+	.font-display {
+		font-family: var(--font-display);
+		letter-spacing: -0.03em;
+		font-kerning: normal;
+		font-synthesis: none;
+		/* Unhinted, subpixel-positioned outlines: smooth curves at hero sizes. */
+		text-rendering: geometricPrecision;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
 }
 
 ::selection {

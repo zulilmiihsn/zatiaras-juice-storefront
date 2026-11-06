@@ -1,0 +1,146 @@
+<script lang="ts">
+	import { canonical, breadcrumbJsonLd, jsonLdTag } from '$lib/seo';
+	import { AVAILABILITY_VERIFIED, MENU_VERIFIED } from '$lib/data/menu';
+
+	const title = 'Kebijakan Privasi | Zatiaras Juice';
+	const description =
+		'Informasi tentang data yang disimpan oleh website Zatiaras Juice dan cara mengelolanya.';
+	const ldCrumb = jsonLdTag(
+		breadcrumbJsonLd([
+			{ name: 'Home', url: canonical('/') },
+			{ name: 'Kebijakan Privasi', url: canonical('/privacy') }
+		])
+	);
+	const orderingEnabled = MENU_VERIFIED && AVAILABILITY_VERIFIED;
+</script>
+
+<svelte:head>
+	<title>{title}</title>
+	<meta name="description" content={description} />
+	<link rel="canonical" href={canonical('/privacy')} />
+	{@html ldCrumb}
+</svelte:head>
+
+<div class="bg-cream py-8 sm:py-14">
+	<article class="mx-auto max-w-3xl px-4 sm:px-6">
+		<header class="mb-8 sm:mb-10">
+			<p class="text-xs font-bold tracking-[0.16em] text-brand uppercase">Informasi pelanggan</p>
+			<h1 class="mt-2 font-display text-3xl leading-tight font-extrabold text-ink sm:text-5xl">
+				Kebijakan Privasi
+			</h1>
+			<p class="mt-4 max-w-2xl text-sm leading-relaxed text-neutral-600 sm:text-base">
+				Halaman ini menjelaskan data yang digunakan oleh versi website Zatiaras Juice saat ini.
+			</p>
+		</header>
+
+		<div class="space-y-5">
+			<section
+				class="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm leading-relaxed text-amber-950 sm:p-6"
+				aria-labelledby="current-version"
+			>
+				<h2 id="current-version" class="font-bold">Penyimpanan di versi saat ini</h2>
+				<p class="mt-2">
+					Data yang dimasukkan ke fitur pesanan, group order, dan feedback saat ini disimpan di
+					penyimpanan lokal browser pada perangkat yang digunakan. Versi website ini belum mengirim
+					data formulir tersebut ke sistem pesanan server atau kru outlet secara otomatis.
+				</p>
+				{#if !orderingEnabled}
+					<p class="mt-2">
+						Harga dan ketersediaan menu masih menunggu verifikasi; checkout online belum aktif.
+					</p>
+				{/if}
+				<p class="mt-2">
+					Jangan gunakan perangkat bersama untuk memasukkan data pribadi. Menghapus data situs dari
+					pengaturan browser akan menghapus data lokal website ini dari browser tersebut.
+				</p>
+			</section>
+
+			<section class="rounded-2xl border border-black/8 bg-white p-5 sm:p-6">
+				<h2 class="font-display text-xl font-bold text-ink">Data yang dapat tersimpan</h2>
+				<ul class="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-neutral-700">
+					<li>
+						<strong>Pesanan pickup:</strong> nama, nomor WhatsApp, outlet, item dan jumlah pesanan, perkiraan
+						waktu pickup, serta status pesanan.
+					</li>
+					<li>
+						<strong>Permintaan group order:</strong> nama, nomor WhatsApp, outlet, pilihan menu, jumlah,
+						dan jadwal yang diminta.
+					</li>
+					<li>
+						<strong>Feedback:</strong> kode pesanan (jika diisi), kategori masukan, catatan, dan waktu
+						pengiriman formulir.
+					</li>
+					<li>
+						<strong>Interaksi website:</strong> jenis interaksi dan konteks seperti halaman, menu, atau
+						outlet. Event analytics yang dibuat aplikasi disimpan lokal dan menyaring field kontak seperti
+						nama dan nomor WhatsApp.
+					</li>
+				</ul>
+			</section>
+
+			<section class="rounded-2xl border border-black/8 bg-white p-5 sm:p-6">
+				<h2 class="font-display text-xl font-bold text-ink">Penggunaan dan penyimpanan</h2>
+				<p class="mt-3 text-sm leading-relaxed text-neutral-700">
+					Penyimpanan lokal digunakan agar browser dapat menampilkan kembali data pesanan,
+					permintaan, atau feedback pada perangkat yang sama. Data tersebut bertahan sampai dihapus
+					melalui pengaturan data situs browser. Implementasi website saat ini belum memiliki
+					mekanisme pengiriman formulir ke server atau masa retensi server.
+				</p>
+			</section>
+
+			<section class="rounded-2xl border border-black/8 bg-white p-5 sm:p-6">
+				<h2 class="font-display text-xl font-bold text-ink">Tautan WhatsApp</h2>
+				<p class="mt-3 text-sm leading-relaxed text-neutral-700">
+					Jika kamu memilih membuka WhatsApp dari website, tautan bantuan pesanan dapat menyiapkan
+					draf berisi kode dan status pesanan serta ringkasan kendala. Periksa draf tersebut sebelum
+					mengirim; pesan baru dikirim setelah kamu menekan tombol kirim. Setelah dibuka, data yang
+					kamu kirim ditangani WhatsApp sesuai kebijakan mereka.
+				</p>
+			</section>
+
+			<section class="rounded-2xl border border-black/8 bg-white p-5 sm:p-6">
+				<h2 class="font-display text-xl font-bold text-ink">Peta outlet</h2>
+				<p class="mt-3 text-sm leading-relaxed text-neutral-700">
+					Saat peta dimuat, browser menghubungi OpenFreeMap untuk mengambil data peta area yang
+					ditampilkan. Permintaan ini menyertakan informasi jaringan dan browser yang diperlukan
+					untuk menampilkan peta. Baca <a
+						class="underline underline-offset-4"
+						href="https://openfreemap.org/privacy/"
+						target="_blank"
+						rel="noopener noreferrer">kebijakan privasi OpenFreeMap</a
+					>. Jika kamu membuka petunjuk arah, lokasi outlet diteruskan ke Google Maps.
+				</p>
+				<p class="mt-3 text-sm leading-relaxed text-neutral-700">
+					Tombol “Gunakan Lokasi Saya” pada halaman lokasi meminta izin browser setelah kamu
+					menekannya. Koordinat digunakan sementara pada perangkat untuk menyarankan kota. Website
+					tidak menyimpan koordinat GPS tersebut di analytics atau mengirimkannya ke penyedia peta.
+					Jika izin ditolak, pilihan kota dan outlet manual tetap tersedia.
+				</p>
+			</section>
+
+			<section class="rounded-2xl border border-black/8 bg-white p-5 sm:p-6">
+				<h2 class="font-display text-xl font-bold text-ink">Perubahan kebijakan</h2>
+				<p class="mt-3 text-sm leading-relaxed text-neutral-700">
+					Jika website mulai mengirim data ke server, mengaktifkan pembayaran, atau menggunakan
+					penyedia layanan tambahan, penjelasan ini perlu diperbarui sebelum fitur tersebut
+					digunakan untuk transaksi pelanggan.
+				</p>
+			</section>
+		</div>
+
+		<nav
+			class="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-sm font-semibold"
+			aria-label="Tautan terkait"
+		>
+			<a class="text-brand underline underline-offset-4 hover:text-brand-dark" href="/terms">
+				Syarat & Ketentuan
+			</a>
+			<a class="text-brand underline underline-offset-4 hover:text-brand-dark" href="/feedback">
+				Feedback
+			</a>
+			<a class="text-brand underline underline-offset-4 hover:text-brand-dark" href="/">
+				Kembali ke Beranda
+			</a>
+		</nav>
+	</article>
+</div>

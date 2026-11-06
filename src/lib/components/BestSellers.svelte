@@ -15,7 +15,7 @@
 			height: 778,
 			field: '#cde48d',
 			tone: '#33570c',
-			word: 'ALPUKAT',
+			word: 'Alpukat',
 			alt: 'Jus Alpukat Zatiaras dengan alpukat belah dan potongan alpukat segar',
 			copy: 'Alpukat asli diblender lembut, creamy, buahnya terasa.'
 		},
@@ -44,14 +44,14 @@
 	const items = ranking.flatMap((entry) => {
 		const menu = MENU.find((item) => item.slug === entry.slug);
 		if (!menu) return [];
-		// Kata terakhir nama adalah kata rasa (ALPUKAT, KOCOK, MANGGA); itu yang diberi warna.
+		// Kata terakhir nama adalah kata rasa (Alpukat, Kocok, Mangga); itu yang diberi warna.
 		const cut = menu.name.lastIndexOf(' ');
 		return [
 			{
 				...entry,
 				name: menu.name,
-				lead: menu.name.slice(0, cut).toUpperCase(),
-				flavour: menu.name.slice(cut + 1).toUpperCase()
+				lead: menu.name.slice(0, cut),
+				flavour: menu.name.slice(cut + 1)
 			}
 		];
 	});
@@ -105,10 +105,10 @@
 	<div class="best-head reveal" style="--i: 0">
 		<h2 id="best-title" class="font-display" aria-label="Paling Laris di Zatiaras">
 			<span class="block"
-				><KernedText text="PALING" {reveal} />
-				<span class="mark"><KernedText text="LARIS" {reveal} base={190} /></span></span
+				><KernedText text="Paling" {reveal} />
+				<span class="mark"><KernedText text="Laris" {reveal} base={190} /></span></span
 			>
-			<span class="block"><KernedText text="DI ZATIARAS" {reveal} base={380} /></span>
+			<span class="block"><KernedText text="di Zatiaras" {reveal} base={380} /></span>
 		</h2>
 		<div class="best-aside">
 			<p>Tiga cup yang paling sering dipesan. Pilih satu, ambil di outlet terdekat.</p>
