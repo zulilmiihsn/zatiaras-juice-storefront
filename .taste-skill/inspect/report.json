@@ -1,0 +1,2373 @@
+{
+ "url": "http://localhost:5199/",
+ "at": "2026-10-30T00:21:42.678Z",
+ "allow": [],
+ "viewports": [
+  {
+   "width": 1440,
+   "height": 900,
+   "load": "load",
+   "screens": 12,
+   "filled": [
+    0.15,
+    0.15,
+    0.15,
+    0.15,
+    0.44,
+    0.57,
+    0.38,
+    0.23,
+    0.32,
+    0.13,
+    0.81,
+    0.94
+   ],
+   "motion": {
+    "elements": 69,
+    "css": 58,
+    "transitions": 10,
+    "scripted": 1,
+    "videos": 2,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "page": {
+     "height": 10082,
+     "screens": 11.2,
+     "words": 516,
+     "img": 12,
+     "video": 2,
+     "canvas": 2,
+     "svg": 71,
+     "sections": 8,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 8,
+     "videoCount": 2,
+     "uiPictures": 0,
+     "pictureSamples": [
+      "avocado-960.webp",
+      "avocado-chocolate-480.webp",
+      "mango-480.webp",
+      "strawberry-corner-v1.webp",
+      "strawberry-corner-v1.webp",
+      "decor-leaf-single.webp"
+     ],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "JUS ALPUKAT",
+     "words": 2,
+     "chars": 11,
+     "lines": 2,
+     "size": 144,
+     "vw": 10,
+     "font": "Zatiaras Display",
+     "weight": 800,
+     "tracking": -0.01,
+     "leading": 0.84,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "left",
+     "position": "left",
+     "widthRatio": 0.53,
+     "top": 357,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "JUS ALPUKAT",
+     "words": 2,
+     "lines": 2,
+     "size": 144,
+     "font": "Zatiaras Display"
+    },
+    "headings": [
+     {
+      "text": "JUS ALPUKAT",
+      "words": 2,
+      "chars": 11,
+      "lines": 2,
+      "size": 144,
+      "vw": 10,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 0.84,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.53,
+      "top": 357,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "PALING LARIS DI ZATIARAS",
+      "words": 4,
+      "chars": 24,
+      "lines": 2,
+      "size": 64,
+      "vw": 4.4,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.92,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.42,
+      "top": 4077,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "JUS ALPUKAT",
+      "words": 2,
+      "chars": 11,
+      "lines": 1,
+      "size": 40,
+      "vw": 2.8,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.95,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.19,
+      "top": 4253,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "ALPUKAT",
+      "words": 1,
+      "chars": 7,
+      "lines": 1,
+      "size": 102.2,
+      "vw": 7.1,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 0.8,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "left",
+      "widthRatio": 0.42,
+      "top": 4430,
+      "tag": "span",
+      "kind": "statement"
+     },
+     {
+      "text": "JUS APA AJA ADA",
+      "words": 4,
+      "chars": 15,
+      "lines": 1,
+      "size": 64,
+      "vw": 4.4,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.92,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.51,
+      "top": 4982,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "JUS BUAH & SAYUR",
+      "words": 4,
+      "chars": 16,
+      "lines": 1,
+      "size": 30,
+      "vw": 2.1,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 1,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.41,
+      "top": 5068,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "MIX JUS",
+      "words": 2,
+      "chars": 7,
+      "lines": 1,
+      "size": 30,
+      "vw": 2.1,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 1,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.08,
+      "top": 5068,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "KOCOK",
+      "words": 1,
+      "chars": 5,
+      "lines": 1,
+      "size": 30,
+      "vw": 2.1,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 1,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.08,
+      "top": 5068,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "BABY",
+      "words": 1,
+      "chars": 4,
+      "lines": 1,
+      "size": 30,
+      "vw": 2.1,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 1,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.08,
+      "top": 5068,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "NON JUS",
+      "words": 2,
+      "chars": 7,
+      "lines": 1,
+      "size": 30,
+      "vw": 2.1,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 1,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.08,
+      "top": 5068,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "JUS BUAH & SAYUR",
+      "words": 4,
+      "chars": 16,
+      "lines": 2,
+      "size": 48,
+      "vw": 3.3,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.95,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.18,
+      "top": 5095,
+      "tag": "p",
+      "kind": "statement"
+     },
+     {
+      "text": "MIX JUS",
+      "words": 2,
+      "chars": 7,
+      "lines": 1,
+      "size": 48,
+      "vw": 3.3,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.95,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.13,
+      "top": 5095,
+      "tag": "p",
+      "kind": "statement"
+     },
+     {
+      "text": "KOCOK",
+      "words": 1,
+      "chars": 5,
+      "lines": 1,
+      "size": 48,
+      "vw": 3.3,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.95,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.12,
+      "top": 5095,
+      "tag": "p",
+      "kind": "statement"
+     },
+     {
+      "text": "BABY",
+      "words": 1,
+      "chars": 4,
+      "lines": 1,
+      "size": 48,
+      "vw": 3.3,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.95,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.09,
+      "top": 5095,
+      "tag": "p",
+      "kind": "statement"
+     },
+     {
+      "text": "NON JUS",
+      "words": 2,
+      "chars": 7,
+      "lines": 1,
+      "size": 48,
+      "vw": 3.3,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.95,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.14,
+      "top": 5095,
+      "tag": "p",
+      "kind": "statement"
+     },
+     {
+      "text": "Pesan dulu Tinggal ambil",
+      "words": 4,
+      "chars": 24,
+      "lines": 2,
+      "size": 76,
+      "vw": 5.3,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.035,
+      "leading": 1.04,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.34,
+      "top": 5870,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Pesan Rame-Rame",
+      "words": 2,
+      "chars": 15,
+      "lines": 1,
+      "size": 48,
+      "vw": 3.3,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.47,
+      "top": 7431,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Kentalnya Beneran",
+      "words": 2,
+      "chars": 17,
+      "lines": 1,
+      "size": 48,
+      "vw": 3.3,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.76,
+      "top": 7841,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Haus? Pesan Dulu, Tinggal Ambil",
+      "words": 5,
+      "chars": 31,
+      "lines": 2,
+      "size": 60,
+      "vw": 4.2,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.58,
+      "top": 8289,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Pesan lewat WhatsApp",
+      "words": 3,
+      "chars": 20,
+      "lines": 1,
+      "size": 60,
+      "vw": 4.2,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.49,
+      "top": 9326,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Klik Disini",
+      "words": 2,
+      "chars": 11,
+      "lines": 1,
+      "size": 36,
+      "vw": 2.5,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 1.11,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.2,
+      "top": 9433,
+      "tag": "a",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 21,
+     "maxLines": 2,
+     "over2Lines": 0,
+     "statements": 6,
+     "centered": 4,
+     "medianWords": 2,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Plus Jakarta Sans",
+       "share": 0.89,
+       "mono": false
+      },
+      {
+       "family": "Zatiaras Display",
+       "share": 0.11,
+       "mono": false
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      20,
+      22,
+      24,
+      26,
+      30,
+      36,
+      40,
+      48,
+      60,
+      64,
+      76,
+      102,
+      144
+     ],
+     "sizeCount": 20,
+     "notLoaded": [],
+     "body": {
+      "font": "Plus Jakarta Sans",
+      "size": 16,
+      "leading": 1.5,
+      "weight": 600,
+      "tracking": 0,
+      "contrast": null
+     },
+     "measureChars": 64,
+     "max": {
+      "size": 144,
+      "vw": 10,
+      "font": "Zatiaras Display",
+      "text": "J"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0.03,
+     "centerShare": 0.11,
+     "smallText": 3
+    },
+    "eyebrows": [
+     {
+      "text": "Lihat semua menu",
+      "above": "KOCOK",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 15,
+      "top": 4997
+     },
+     {
+      "text": "Lihat semua menu",
+      "above": "BABY",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 15,
+      "top": 4997
+     },
+     {
+      "text": "Lihat semua menu",
+      "above": "MIX JUS",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 15,
+      "top": 4997
+     },
+     {
+      "text": "Lihat semua menu",
+      "above": "KOCOK",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 15,
+      "top": 4997
+     },
+     {
+      "text": "Lihat semua menu",
+      "above": "BABY",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 15,
+      "top": 4997
+     }
+    ],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#fffdf9",
+     "bodyBgHsl": {
+      "h": 40,
+      "s": 1,
+      "l": 0.99
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#fffdf9",
+       "top": 0,
+       "hsl": {
+        "h": 40,
+        "s": 1,
+        "l": 0.99
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#241a20",
+       "share": 0.5
+      },
+      {
+       "color": "#ffffff",
+       "share": 0.26
+      },
+      {
+       "color": "#625961",
+       "share": 0.09
+      },
+      {
+       "color": "#525252",
+       "share": 0.03
+      },
+      {
+       "color": "#d1c8cd",
+       "share": 0.02
+      }
+     ],
+     "button": {
+      "bg": "#241a20",
+      "hsl": {
+       "h": 324,
+       "s": 0.16,
+       "l": 0.12
+      },
+      "fg": "#ffffff"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 17,
+     "inHero": 2,
+     "radius": "pill",
+     "height": 44,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Pesan Sekarang",
+      "Pesan Sekarang"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 5,
+     "shadowOverlay": 1,
+     "shadowSamples": [
+      "a.tap-scale.inline-flex → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0",
+      "div.maplibregl-ctrl.maplibregl-ctrl-group → rgb(230, 222, 216) 0px 0px 0px 1px, rgba(36, 26, 32, 0.06) 0px 2px 8px 0px",
+      "div.flex.h-12 → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0",
+      "div.flex.h-12 → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0"
+     ],
+     "gradients": 6,
+     "scrims": 0,
+     "gradientSamples": [
+      "div.pointer-events-none.absolute → linear-gradient(to right, oklab(0.994464 0.000584573 0.005687 / 0.3) 0%, oklab(0.994464 0.000584573 0.005687 /",
+      "div.pointer-events-none.absolute → linear-gradient(oklab(0.994464 0.000584573 0.005687 / 0.35) 0%, rgba(0, 0, 0, 0) 100%)",
+      "div.pointer-events-none.absolute → linear-gradient(rgba(0, 0, 0, 0) 0%, oklab(0.994464 0.000584573 0.005687 / 0.94) 100%)",
+      "div.pointer-events-none.absolute → linear-gradient(oklab(0.994464 0.000584573 0.005687 / 0.94) 0%, oklab(0.994464 0.000584573 0.005687 / 0.55) 50"
+     ],
+     "gradientText": 0,
+     "hairlines": 1,
+     "hairlineSamples": [
+      "div.flex.flex-col 1104px"
+     ],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 11,
+     "boxRadius": 32,
+     "squareMedia": 6,
+     "roundedMedia": 4,
+     "mediaRadius": 32,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [
+     {
+      "type": "video",
+      "ratio": 1
+     },
+     {
+      "type": "video",
+      "ratio": 1
+     }
+    ],
+    "nav": {
+     "links": 6,
+     "fixed": true,
+     "height": 73,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "plus jakarta sans",
+     "zatiaras display"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "pageH": 10082,
+    "margins": {
+     "left": 128,
+     "right": 50
+    },
+    "sections": [],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "JUS ALPUKAT",
+      "size": 144,
+      "top": 357,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 176,
+      "n": 5
+     },
+     {
+      "x": 128,
+      "n": 2
+     },
+     {
+      "x": 224,
+      "n": 2
+     },
+     {
+      "x": 248,
+      "n": 1
+     },
+     {
+      "x": 547,
+      "n": 1
+     },
+     {
+      "x": 801,
+      "n": 1
+     },
+     {
+      "x": 944,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 13,
+    "bodySize": 16,
+    "stage": true,
+    "explains": true,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": null,
+   "consoleErrors": []
+  },
+  {
+   "width": 768,
+   "height": 1024,
+   "load": "load",
+   "screens": 11,
+   "filled": [
+    0.18,
+    0.18,
+    0.98,
+    0.98,
+    0.78,
+    0.66,
+    0.34,
+    0.84,
+    0.49,
+    0.58,
+    0.95
+   ],
+   "motion": {
+    "elements": 69,
+    "css": 58,
+    "transitions": 10,
+    "scripted": 1,
+    "videos": 2,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "page": {
+     "height": 10838,
+     "screens": 10.6,
+     "words": 506,
+     "img": 12,
+     "video": 2,
+     "canvas": 2,
+     "svg": 71,
+     "sections": 8,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 7,
+     "videoCount": 2,
+     "uiPictures": 0,
+     "pictureSamples": [
+      "avocado-960.webp",
+      "avocado-chocolate-480.webp",
+      "mango-480.webp",
+      "strawberry-corner-v1.webp",
+      "strawberry-corner-v1.webp"
+     ],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "JUS ALPUKAT",
+     "words": 2,
+     "chars": 11,
+     "lines": 2,
+     "size": 107.5,
+     "vw": 14,
+     "font": "Zatiaras Display",
+     "weight": 800,
+     "tracking": -0.01,
+     "leading": 0.84,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "left",
+     "position": "center",
+     "widthRatio": 0.94,
+     "top": 96,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "JUS ALPUKAT",
+     "words": 2,
+     "lines": 2,
+     "size": 107.5,
+     "font": "Zatiaras Display"
+    },
+    "headings": [
+     {
+      "text": "JUS ALPUKAT",
+      "words": 2,
+      "chars": 11,
+      "lines": 2,
+      "size": 107.5,
+      "vw": 14,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 0.84,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.94,
+      "top": 96,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "PALING LARIS DI ZATIARAS",
+      "words": 4,
+      "chars": 24,
+      "lines": 2,
+      "size": 41.5,
+      "vw": 5.4,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.92,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.51,
+      "top": 4687,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "JUS ALPUKAT",
+      "words": 2,
+      "chars": 11,
+      "lines": 1,
+      "size": 32,
+      "vw": 4.2,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.95,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.28,
+      "top": 4834,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "ALPUKAT KOCOK",
+      "words": 2,
+      "chars": 13,
+      "lines": 2,
+      "size": 26,
+      "vw": 3.4,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.95,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.16,
+      "top": 4834,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "ALPUKAT",
+      "words": 1,
+      "chars": 7,
+      "lines": 1,
+      "size": 66.9,
+      "vw": 8.7,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 0.8,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "left",
+      "widthRatio": 0.51,
+      "top": 5001,
+      "tag": "span",
+      "kind": "statement"
+     },
+     {
+      "text": "JUS MANGGA",
+      "words": 2,
+      "chars": 10,
+      "lines": 2,
+      "size": 26,
+      "vw": 3.4,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.95,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.15,
+      "top": 5134,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "JUS APA AJA ADA",
+      "words": 4,
+      "chars": 15,
+      "lines": 1,
+      "size": 35.3,
+      "vw": 4.6,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.92,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.48,
+      "top": 5571,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Pesan dulu Tinggal ambil",
+      "words": 4,
+      "chars": 24,
+      "lines": 2,
+      "size": 46.1,
+      "vw": 6,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.035,
+      "leading": 1.04,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.94,
+      "top": 6315,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Pesan Rame-Rame",
+      "words": 2,
+      "chars": 15,
+      "lines": 1,
+      "size": 36,
+      "vw": 4.7,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 1.11,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.83,
+      "top": 8318,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Kentalnya Beneran",
+      "words": 2,
+      "chars": 17,
+      "lines": 1,
+      "size": 36,
+      "vw": 4.7,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 1.11,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.94,
+      "top": 8648,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Haus? Pesan Dulu, Tinggal Ambil",
+      "words": 5,
+      "chars": 31,
+      "lines": 2,
+      "size": 48,
+      "vw": 6.3,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.94,
+      "top": 9042,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Pesan lewat WhatsApp",
+      "words": 3,
+      "chars": 20,
+      "lines": 1,
+      "size": 48,
+      "vw": 6.3,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.74,
+      "top": 9849,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Klik Disini",
+      "words": 2,
+      "chars": 11,
+      "lines": 1,
+      "size": 36,
+      "vw": 4.7,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 1.11,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.37,
+      "top": 9941,
+      "tag": "a",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 13,
+     "maxLines": 2,
+     "over2Lines": 0,
+     "statements": 1,
+     "centered": 4,
+     "medianWords": 2,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Plus Jakarta Sans",
+       "share": 0.9,
+       "mono": false
+      },
+      {
+       "family": "Zatiaras Display",
+       "share": 0.1,
+       "mono": false
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      20,
+      22,
+      24,
+      26,
+      32,
+      35,
+      36,
+      42,
+      46,
+      48,
+      67,
+      108
+     ],
+     "sizeCount": 19,
+     "notLoaded": [],
+     "body": {
+      "font": "Plus Jakarta Sans",
+      "size": 16,
+      "leading": 1.55,
+      "weight": 600,
+      "tracking": 0,
+      "contrast": 16.6
+     },
+     "measureChars": 64,
+     "max": {
+      "size": 107.5,
+      "vw": 14,
+      "font": "Zatiaras Display",
+      "text": "J"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0.03,
+     "centerShare": 0.11,
+     "smallText": 3
+    },
+    "eyebrows": [
+     {
+      "text": "dan lainnya",
+      "above": "Pesan dulu Tinggal ambil",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 13,
+      "top": 6257
+     }
+    ],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#fffdf9",
+     "bodyBgHsl": {
+      "h": 40,
+      "s": 1,
+      "l": 0.99
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#fffdf9",
+       "top": 0,
+       "hsl": {
+        "h": 40,
+        "s": 1,
+        "l": 0.99
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#241a20",
+       "share": 0.5
+      },
+      {
+       "color": "#ffffff",
+       "share": 0.27
+      },
+      {
+       "color": "#625961",
+       "share": 0.1
+      },
+      {
+       "color": "#525252",
+       "share": 0.04
+      },
+      {
+       "color": "#d1c8cd",
+       "share": 0.02
+      }
+     ],
+     "button": {
+      "bg": "#241a20",
+      "hsl": {
+       "h": 324,
+       "s": 0.16,
+       "l": 0.12
+      },
+      "fg": "#ffffff"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 17,
+     "inHero": 2,
+     "radius": "pill",
+     "height": 48,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Pesan Sekarang",
+      "Pesan Sekarang"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 5,
+     "shadowOverlay": 1,
+     "shadowSamples": [
+      "a.tap-scale.inline-flex → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0",
+      "div.maplibregl-ctrl.maplibregl-ctrl-group → rgb(230, 222, 216) 0px 0px 0px 1px, rgba(36, 26, 32, 0.06) 0px 2px 8px 0px",
+      "div.flex.h-12 → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0",
+      "div.flex.h-12 → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0"
+     ],
+     "gradients": 6,
+     "scrims": 0,
+     "gradientSamples": [
+      "div.pointer-events-none.absolute → linear-gradient(to right, oklab(0.994464 0.000584573 0.005687 / 0.44) 0%, oklab(0.994464 0.000584573 0.005687 ",
+      "div.pointer-events-none.absolute → linear-gradient(oklab(0.994464 0.000584573 0.005687 / 0.35) 0%, rgba(0, 0, 0, 0) 100%)",
+      "div.pointer-events-none.absolute → linear-gradient(rgba(0, 0, 0, 0) 0%, oklab(0.994464 0.000584573 0.005687 / 0.94) 100%)",
+      "div.pointer-events-none.absolute → linear-gradient(oklab(0.994464 0.000584573 0.005687 / 0.94) 0%, oklab(0.994464 0.000584573 0.005687 / 0.55) 50"
+     ],
+     "gradientText": 0,
+     "hairlines": 1,
+     "hairlineSamples": [
+      "div.flex.flex-col 720px"
+     ],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 11,
+     "boxRadius": 32,
+     "squareMedia": 4,
+     "roundedMedia": 2,
+     "mediaRadius": 32,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [
+     {
+      "type": "video",
+      "ratio": 1
+     },
+     {
+      "type": "video",
+      "ratio": 1
+     }
+    ],
+    "nav": {
+     "links": 6,
+     "fixed": true,
+     "height": 73,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "plus jakarta sans",
+     "zatiaras display"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "pageH": 10838,
+    "margins": {
+     "left": 24,
+     "right": 10
+    },
+    "sections": [],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "JUS ALPUKAT",
+      "size": 108,
+      "top": 96,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 24,
+      "n": 5
+     },
+     {
+      "x": 64,
+      "n": 2
+     },
+     {
+      "x": 120,
+      "n": 2
+     },
+     {
+      "x": 240,
+      "n": 1
+     },
+     {
+      "x": 269,
+      "n": 1
+     },
+     {
+      "x": 424,
+      "n": 1
+     },
+     {
+      "x": 441,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 13,
+    "bodySize": 16,
+    "stage": true,
+    "explains": true,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": null,
+   "consoleErrors": []
+  },
+  {
+   "width": 390,
+   "height": 844,
+   "load": "load",
+   "screens": 12,
+   "filled": [
+    0.15,
+    0.12,
+    1,
+    1,
+    0.84,
+    0.86,
+    0.63,
+    0.41,
+    0.73,
+    0.46,
+    0.27,
+    0.87
+   ],
+   "motion": {
+    "elements": 67,
+    "css": 56,
+    "transitions": 10,
+    "scripted": 1,
+    "videos": 2,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "page": {
+     "height": 11096,
+     "screens": 13.1,
+     "words": 485,
+     "img": 12,
+     "video": 2,
+     "canvas": 2,
+     "svg": 71,
+     "sections": 8,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 5,
+     "videoCount": 2,
+     "uiPictures": 0,
+     "pictureSamples": [
+      "avocado-480.webp",
+      "avocado-chocolate-480.webp",
+      "mango-480.webp"
+     ],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "JUS ALPUKAT",
+     "words": 2,
+     "chars": 11,
+     "lines": 2,
+     "size": 56,
+     "vw": 14.4,
+     "font": "Zatiaras Display",
+     "weight": 800,
+     "tracking": -0.01,
+     "leading": 0.84,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "left",
+     "position": "center",
+     "widthRatio": 0.92,
+     "top": 85,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "JUS ALPUKAT",
+     "words": 2,
+     "lines": 2,
+     "size": 56,
+     "font": "Zatiaras Display"
+    },
+    "headings": [
+     {
+      "text": "JUS ALPUKAT",
+      "words": 2,
+      "chars": 11,
+      "lines": 2,
+      "size": 56,
+      "vw": 14.4,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 0.84,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 85,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "PALING LARIS DI ZATIARAS",
+      "words": 4,
+      "chars": 24,
+      "lines": 2,
+      "size": 37.1,
+      "vw": 9.5,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.92,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 3851,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "JUS ALPUKAT",
+      "words": 2,
+      "chars": 11,
+      "lines": 2,
+      "size": 35.1,
+      "vw": 9,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.95,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.56,
+      "top": 4088,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "ALPUKAT",
+      "words": 1,
+      "chars": 7,
+      "lines": 1,
+      "size": 60.9,
+      "vw": 15.6,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 0.8,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 4210,
+      "tag": "span",
+      "kind": "statement"
+     },
+     {
+      "text": "ALPUKAT KOCOK",
+      "words": 2,
+      "chars": 13,
+      "lines": 2,
+      "size": 23.4,
+      "vw": 6,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.95,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.33,
+      "top": 4540,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "JUS MANGGA",
+      "words": 2,
+      "chars": 10,
+      "lines": 2,
+      "size": 23.4,
+      "vw": 6,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.95,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.33,
+      "top": 4800,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "JUS APA AJA ADA",
+      "words": 4,
+      "chars": 15,
+      "lines": 1,
+      "size": 37.1,
+      "vw": 9.5,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 0.92,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 5111,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "JUS BUAH & SAYUR",
+      "words": 4,
+      "chars": 16,
+      "lines": 1,
+      "size": 24,
+      "vw": 6.2,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 1,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 5287,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "MIX JUS",
+      "words": 2,
+      "chars": 7,
+      "lines": 1,
+      "size": 24,
+      "vw": 6.2,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 1,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 5606,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "KOCOK",
+      "words": 1,
+      "chars": 5,
+      "lines": 1,
+      "size": 24,
+      "vw": 6.2,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 1,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 5688,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "BABY",
+      "words": 1,
+      "chars": 4,
+      "lines": 1,
+      "size": 24,
+      "vw": 6.2,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 1,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 5770,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "NON JUS",
+      "words": 2,
+      "chars": 7,
+      "lines": 1,
+      "size": 24,
+      "vw": 6.2,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.005,
+      "leading": 1,
+      "upper": true,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 5852,
+      "tag": "h3",
+      "kind": "heading"
+     },
+     {
+      "text": "Pesan dulu Tinggal ambil",
+      "words": 4,
+      "chars": 24,
+      "lines": 2,
+      "size": 42,
+      "vw": 10.8,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.035,
+      "leading": 1.04,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 6020,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Pesan Rame-Rame",
+      "words": 2,
+      "chars": 15,
+      "lines": 1,
+      "size": 30,
+      "vw": 7.7,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.79,
+      "top": 7738,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Kentalnya Beneran",
+      "words": 2,
+      "chars": 17,
+      "lines": 1,
+      "size": 30,
+      "vw": 7.7,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 8035,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Haus? Pesan Dulu, Tinggal Ambil",
+      "words": 5,
+      "chars": 31,
+      "lines": 2,
+      "size": 36,
+      "vw": 9.2,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 1.11,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 8711,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Pesan lewat WhatsApp",
+      "words": 3,
+      "chars": 20,
+      "lines": 2,
+      "size": 36,
+      "vw": 9.2,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.92,
+      "top": 9503,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Klik Disini",
+      "words": 2,
+      "chars": 11,
+      "lines": 1,
+      "size": 24,
+      "vw": 6.2,
+      "font": "Zatiaras Display",
+      "weight": 800,
+      "tracking": -0.01,
+      "leading": 1.33,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.52,
+      "top": 9625,
+      "tag": "a",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 18,
+     "maxLines": 2,
+     "over2Lines": 0,
+     "statements": 1,
+     "centered": 4,
+     "medianWords": 2,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Plus Jakarta Sans",
+       "share": 0.89,
+       "mono": false
+      },
+      {
+       "family": "Zatiaras Display",
+       "share": 0.11,
+       "mono": false
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      23,
+      24,
+      30,
+      35,
+      36,
+      37,
+      42,
+      56,
+      61
+     ],
+     "sizeCount": 18,
+     "notLoaded": [],
+     "body": {
+      "font": "Plus Jakarta Sans",
+      "size": 16,
+      "leading": 1.55,
+      "weight": 600,
+      "tracking": 0,
+      "contrast": 16.6
+     },
+     "measureChars": 45,
+     "max": {
+      "size": 60.9,
+      "vw": 15.6,
+      "font": "Zatiaras Display",
+      "text": "ALPUKAT"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0.03,
+     "centerShare": 0.11,
+     "smallText": 4
+    },
+    "eyebrows": [
+     {
+      "text": "Lihat semua menu",
+      "above": "JUS ALPUKAT",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 15,
+      "top": 3987
+     },
+     {
+      "text": "Honey Lemon",
+      "above": "Pesan dulu Tinggal ambil",
+      "upper": false,
+      "tracked": false,
+      "mono": false,
+      "pill": true,
+      "size": 13,
+      "top": 5994
+     }
+    ],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#fffdf9",
+     "bodyBgHsl": {
+      "h": 40,
+      "s": 1,
+      "l": 0.99
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#fffdf9",
+       "top": 0,
+       "hsl": {
+        "h": 40,
+        "s": 1,
+        "l": 0.99
+       }
+      },
+      {
+       "color": "#cde48d",
+       "top": 4063,
+       "hsl": {
+        "h": 76,
+        "s": 0.62,
+        "l": 0.72
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#241a20",
+       "share": 0.51
+      },
+      {
+       "color": "#ffffff",
+       "share": 0.27
+      },
+      {
+       "color": "#625961",
+       "share": 0.09
+      },
+      {
+       "color": "#525252",
+       "share": 0.04
+      },
+      {
+       "color": "#d1c8cd",
+       "share": 0.02
+      }
+     ],
+     "button": {
+      "bg": "#241a20",
+      "hsl": {
+       "h": 324,
+       "s": 0.16,
+       "l": 0.12
+      },
+      "fg": "#ffffff"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 16,
+     "inHero": 1,
+     "radius": "pill",
+     "height": 44,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Pesan Sekarang"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 4,
+     "shadowOverlay": 1,
+     "shadowSamples": [
+      "div.maplibregl-ctrl.maplibregl-ctrl-group → rgb(230, 222, 216) 0px 0px 0px 1px, rgba(36, 26, 32, 0.06) 0px 2px 8px 0px",
+      "div.flex.h-12 → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0",
+      "div.flex.h-12 → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0",
+      "div.flex.h-12 → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0"
+     ],
+     "gradients": 6,
+     "scrims": 0,
+     "gradientSamples": [
+      "div.pointer-events-none.absolute → linear-gradient(to right, oklab(0.994464 0.000584573 0.005687 / 0.44) 0%, oklab(0.994464 0.000584573 0.005687 ",
+      "div.pointer-events-none.absolute → linear-gradient(oklab(0.994464 0.000584573 0.005687 / 0.35) 0%, rgba(0, 0, 0, 0) 100%)",
+      "div.pointer-events-none.absolute → linear-gradient(rgba(0, 0, 0, 0) 0%, oklab(0.994464 0.000584573 0.005687 / 0.94) 100%)",
+      "div.pointer-events-none.absolute → linear-gradient(oklab(0.994464 0.000584573 0.005687 / 0.94) 0%, oklab(0.994464 0.000584573 0.005687 / 0.55) 50"
+     ],
+     "gradientText": 0,
+     "hairlines": 1,
+     "hairlineSamples": [
+      "div.flex.flex-col 358px"
+     ],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 9,
+     "boxRadius": 32,
+     "squareMedia": 4,
+     "roundedMedia": 2,
+     "mediaRadius": 32,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [
+     {
+      "type": "video",
+      "ratio": 1
+     },
+     {
+      "type": "video",
+      "ratio": 0.99
+     }
+    ],
+    "nav": {
+     "links": 2,
+     "fixed": true,
+     "height": 73,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "plus jakarta sans",
+     "zatiaras display"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "pageH": 11096,
+    "margins": {
+     "left": 16,
+     "right": 2
+    },
+    "sections": [],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "JUS ALPUKAT",
+      "size": 56,
+      "top": 85,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 16,
+      "n": 8
+     },
+     {
+      "x": 34,
+      "n": 3
+     },
+     {
+      "x": 124,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 12,
+    "bodySize": 16,
+    "stage": true,
+    "explains": true,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": null,
+   "consoleErrors": []
+  }
+ ],
+ "findings": [
+  {
+   "level": "FAIL",
+   "id": "eyebrow",
+   "width": 1440,
+   "message": "5 eyebrow/kicker label(s) above headings: \"Lihat semua menu\" above \"KOCOK\"; \"Lihat semua menu\" above \"BABY\"; \"Lihat semua menu\" above \"MIX JUS\"; \"Lihat semua menu\" above \"KOCOK\"; \"Lihat semua menu\" above \"BABY\"",
+   "fix": "Delete them. If the label carried real information, fold it into the headline or the supporting sentence.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "gradient",
+   "width": 1440,
+   "message": "6 gradient fill(s): div.pointer-events-none.absolute → linear-gradient(to right, oklab(0.994464 0.000584573 0.005687 / 0.3) 0%, oklab(0.994464 0.000584573 0.005687 / | div.pointer-events-none.absolute → linear-gradient(oklab(0.994464 0.000584573 0.005687 / 0.35) 0%, rgba(0, 0, 0, 0) 100%) | div.pointer-events-none.absolute → linear-gradient(rgba(0, 0, 0, 0) 0%, oklab(0.994464 0.000584573 0.005687 / 0.94) 100%)",
+   "fix": "Use a flat colour or a real image. The only gradient allowed by default is a neutral scrim over a photo for legibility.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "shadow",
+   "width": 1440,
+   "message": "5 box-shadow(s) on elements at rest: a.tap-scale.inline-flex → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0 | div.maplibregl-ctrl.maplibregl-ctrl-group → rgb(230, 222, 216) 0px 0px 0px 1px, rgba(36, 26, 32, 0.06) 0px 2px 8px 0px | div.flex.h-12 → rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0",
+   "fix": "Remove. Separate surfaces with a tone step or space. Shadows are for things that really float (menus, dialogs, sticky bars).",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "hairline",
+   "width": 1440,
+   "message": "1 thin rule(s)/divider line(s): div.flex.flex-col 1104px",
+   "fix": "Delete. Separate with space, a tone change, or scale. Lines are only for real tables and form fields.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "palette-cream",
+   "width": 1440,
+   "message": "Yellow-cream background (page background #fffdf9, section #fffdf9).",
+   "fix": "Use the drawn palette. If you want warmth, take a low-chroma stone or bone, not a yellow cream.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "size-count",
+   "width": 1440,
+   "message": "20 different font sizes (12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 30, 36, 40, 48, 60, 64, 76, 102, 144).",
+   "fix": "A page needs about five: display, heading, lead, body, small.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "small-text",
+   "width": 1440,
+   "message": "3 text block(s) under 13px.",
+   "fix": "Nothing meant to be read goes below 13px.",
+   "alsoAt": [
+    768
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "off-centre",
+   "width": 1440,
+   "message": "The page sits off-centre: its content comes to 128px from the left edge but only to 50px from the right, at 1440px.",
+   "fix": "Give the page one pair of equal margins. Check the wrapper for a max-width without margin-inline: auto, a grid with an empty last column, or padding on one side only. If one side is meant to hold air, it must still be closed by something that reaches the margin (a picture, the navigation's last item, a figure)."
+  },
+  {
+   "level": "FAIL",
+   "id": "covered-text",
+   "width": 1440,
+   "message": "Large text lies under another element at some scroll position: \"ALPUKAT\" (screen 5, 100% hidden)",
+   "fix": "Nothing may sit on top of a headline or statement. Move the picture, shorten the pinned run, or raise the text above it (z-index) and give it a ground.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "long-pin",
+   "width": 1440,
+   "message": "The same large text stays on screen for 5 screens in a row: \"JUS ALPUKAT\"",
+   "fix": "A pinned element earns two screens, and something must change at each. Shorten the run or give every screen its own content."
+  },
+  {
+   "level": "FAIL",
+   "id": "empty-screens",
+   "width": 1440,
+   "message": "5 of 12 desktop screens are almost empty ground (under 20% of the screen holds text, a picture or a colour field): screens 1, 2, 3, 4, 10.",
+   "fix": "An empty screen is a rest only once per page. Elsewhere it means the section is underbuilt: set its content larger, give it the full information, put it on a colour field, or cut it."
+  },
+  {
+   "level": "FAIL",
+   "id": "small-text",
+   "width": 390,
+   "message": "4 text blocks under 13px.",
+   "fix": "Nothing meant to be read goes below 13px."
+  },
+  {
+   "level": "WARN",
+   "id": "off-centre",
+   "width": 390,
+   "message": "The margins differ: 16px on the left, 2px on the right, at 390px.",
+   "fix": "Put the navigation and the content on one pair of margins; check for padding on one side only, a scrollbar gutter, or a header on another inset than the page."
+  }
+ ],
+ "images": [
+  {
+   "viewport": "desktop",
+   "width": 1440,
+   "fold": "D:\\projects\\zatiarasjuice\\.taste-skill\\inspect\\desktop-fold.jpg",
+   "pages": [
+    "D:\\projects\\zatiarasjuice\\.taste-skill\\inspect\\desktop-page-01.jpg",
+    "D:\\projects\\zatiarasjuice\\.taste-skill\\inspect\\desktop-page-02.jpg",
+    "D:\\projects\\zatiarasjuice\\.taste-skill\\inspect\\desktop-page-03.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "tablet",
+   "width": 768,
+   "fold": "D:\\projects\\zatiarasjuice\\.taste-skill\\inspect\\tablet-fold.jpg",
+   "pages": [
+    "D:\\projects\\zatiarasjuice\\.taste-skill\\inspect\\tablet-page-01.jpg",
+    "D:\\projects\\zatiarasjuice\\.taste-skill\\inspect\\tablet-page-02.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "mobile",
+   "width": 390,
+   "fold": "D:\\projects\\zatiarasjuice\\.taste-skill\\inspect\\mobile-fold.jpg",
+   "pages": [
+    "D:\\projects\\zatiarasjuice\\.taste-skill\\inspect\\mobile-page-01.jpg",
+    "D:\\projects\\zatiarasjuice\\.taste-skill\\inspect\\mobile-page-02.jpg"
+   ],
+   "film": []
+  }
+ ]
+}

@@ -1,0 +1,31 @@
+PASS WebGL2 and viewport 320 {"overflow":false,"width":320,"height":844}
+PASS WebGL2 and viewport 360 {"overflow":false,"width":360,"height":844}
+PASS WebGL2 and viewport 375 {"overflow":false,"width":375,"height":844}
+PASS WebGL2 and viewport 390 {"overflow":false,"width":390,"height":844}
+PASS Calm surface throws no droplets 390 {}
+PASS Colliding waves throw droplets 390 {}
+PASS Bright pink surface 390 {}
+PASS Liquid body is one connected surface 390 {"connected":81686,"detached":0}
+PASS Full viewport covered 390: 25 opaque samples {}
+PASS Reverse scroll restores wave 390 {}
+PASS Mobile touch creates a local wave without a whole-body bounce {}
+PASS WebGL2 and viewport 768 {"overflow":false,"width":768,"height":900}
+PASS WebGL2 and viewport 1024 {"overflow":false,"width":1011,"height":889}
+PASS WebGL2 and viewport 1280 {"overflow":false,"width":1131,"height":795}
+PASS WebGL2 and viewport 1440 {"overflow":false,"width":1200,"height":750}
+PASS Calm surface throws no droplets 1440 {}
+PASS Colliding waves throw droplets 1440 {}
+PASS Bright pink surface 1440 {}
+PASS Liquid body is one connected surface 1440 {"connected":240947,"detached":0}
+PASS Full viewport covered 1440: 25 opaque samples {}
+PASS Resizing a settled covered canvas repaints the full surface {}
+PASS Reverse scroll restores wave 1440 {}
+PASS Pointer wake propagates in the surface field without a whole-body spring {}
+PASS Offscreen rendering stops {}
+PASS Context loss falls back and still completes scroll {}
+PASS HiDPI drawing buffer capped at 900000 pixels {"pixels":898704}
+PASS Changing reduced-motion preference stops the live renderer {}
+PASS reduced-motion: loaded still, no render loop, reversible cover {}
+PASS no-webgl: loaded still, no render loop, reversible cover {}
+PASS data-saver: loaded still, no render loop, reversible cover {}
+PASS No JavaScript: static visual and menu navigation {}

@@ -39,12 +39,25 @@ change brand identity or product scope.
 - Homepage hero: retain the video/poster, headline, description, commerce actions,
   and multi-city cue. Product showcase card and decorative Z-Flow overlay are
   removed; keep the copy left-aligned without an empty grid column.
-  Use a two-line solid magenta `JUS / ALPUKAT` headline in the official
+  Use a two-line magenta `JUS / ALPUKAT` headline in the official
   ExtraBold display face, with both lines at the same type scale, sized
   `clamp(3.5rem, 19vw, 9rem)` with .9 line height and the display face's
   native -.01em tracking. Use a .04em same-color stroke for fuller letterforms;
   the headline wrapper spans up to 768px so the 144px desktop type fits.
-  No contrasting text outlines or layered text shadows.
+  Follow the supplied bubble-sticker reference: solid `#FF1081` letters, a .045em
+  cream-white rim painted behind the fill, contour-following white reflections,
+  and a shallow hard pink offset shadow. Derive the inset reflection from the font
+  silhouette using SVG erosion and a directional offset; do not place independent
+  dots, ovals, or hand-drawn marks. A soft upper-left light window follows each
+  glyph's cap/ascender height and fades before the counters and lower stems.
+  Filter units are relative to the glyph box so the effect scales with the text.
+  This supersedes the manually positioned highlight experiments. Reflections must
+  follow the existing reveal/scroll exit. Scrub paused native transform/opacity
+  animations for the exit; do not rewrite translate/rotate/scale inline styles each
+  frame on the filtered letters. Preserve the flight curve, reverse letter order,
+  and font baseline corrections; cancel effects on reverse-to-rest and route teardown.
+  Do not add continuous animation or alter the official glyph geometry. In forced
+  colors, remove the decorative face, stroke, and shadows; use the system text color.
   Do not show `Buahnya Berasa.` as a hero subheading. Supporting copy:
   `Jus buah segar dengan rasa asli buah pilihan.` /
   `Pesan online, ambil di outlet terdekat.`

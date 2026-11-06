@@ -1,0 +1,80 @@
+.finder {
+ position: relative;
+ display: grid;
+ grid-template-columns: minmax(280px, .78fr) minmax(0, 1.22fr);
+ grid-template-areas: 'heading map' 'dock map';
+ grid-template-rows: auto 1fr;
+ column-gap: clamp(36px, 5vw, 80px);
+ row-gap: 36px;
+ min-height: 100dvh;
+ padding: 112px clamp(24px, 5.5vw, 96px) 80px;
+ scroll-margin-top: -5rem;
+ background: transparent;
+}
+.finder-heading { grid-area: heading; min-width: 0; }
+.coverage { color: #71656a; font-size: 10px; font-weight: 600; margin-bottom: 24px; }
+.finder h2 { font-size: clamp(44px, 5.2vw, 76px); line-height: .98; font-weight: 800; letter-spacing: -.025em; }
+.finder h2 span { color: var(--color-brand); }
+.finder-intro { margin-top: 24px; color: #71656a; font-size: 14px; line-height: 1.7; }
+.map-backdrop { grid-area: map; position: relative; min-height: 600px; border-radius: 28px; overflow: hidden; background: #f2eee5; isolation: isolate; }
+.map-caption { position: absolute; z-index: 3; top: 24px; left: 24px; display: flex; flex-direction: column; gap: 5px; padding: 12px 16px; border: 1px solid rgb(36 26 32 / 7%); border-radius: 12px; background: rgb(255 253 249 / 95%); pointer-events: none; }
+.map-caption span:first-child { font-size: 14px; font-weight: 700; }
+.map-caption span:last-child { font-size: 10px; color: #71656a; }
+.finder-dock { grid-area: dock; min-width: 0; align-self: start; }
+.dock-controls { display: grid; grid-template-columns: .85fr 1.15fr; column-gap: 20px; }
+.dock-field { display: grid; gap: 4px; min-width: 0; border-bottom: 1px solid #d8cfd0; }
+.dock-field > span { font-size: 10px; color: #71656a; }
+.dock-field select { width: 100%; min-width: 0; min-height: 48px; padding: 8px 18px 8px 0; border: 0; background: transparent; color: var(--color-ink); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.selected-summary { padding-block: 28px 24px; }
+.outlet-kicker { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #71656a; font-size: 10px; }
+.outlet-kicker span { text-align: right; font-size: 9px; }
+.selected-name { margin-top: 14px; font-size: clamp(28px, 3vw, 40px); line-height: 1.1; letter-spacing: -.045em; font-weight: 600; }
+.selected-address { max-width: 330px; margin-top: 12px; color: #71656a; font-size: 12px; line-height: 1.8; }
+.selected-hours { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 14px; color: #71656a; font-size: 11px; line-height: 1.7; }
+.selected-hours span { font-size: 9px; }
+.finder .selected-hours svg { width: 15px; height: 15px; }
+.outlet-actions { display: flex; align-items: center; gap: 12px; }
+.outlet-cta { display: inline-flex; flex: 1; align-items: center; justify-content: space-between; gap: 24px; min-height: 52px; padding: 14px 22px; border-radius: 999px; background: var(--color-brand); color: #fff; font-size: 13px; font-weight: 700; transition: transform 220ms cubic-bezier(.22, 1, .36, 1), background-color 220ms ease-out; }
+.quick-directions { display: grid; place-items: center; flex: 0 0 52px; width: 52px; height: 52px; border: 1px solid #d8cfd0; border-radius: 50%; transition: transform 220ms cubic-bezier(.22, 1, .36, 1), background-color 220ms ease-out; }
+.finder svg { flex-shrink: 0; width: 18px; height: 18px; }
+.dock-meta { margin-top: 10px; }
+.address-detail summary { display: flex; align-items: center; gap: 8px; width: fit-content; min-height: 44px; color: #71656a; font-size: 11px; font-weight: 600; list-style: none; cursor: pointer; }
+.address-detail summary::-webkit-details-marker { display: none; }
+.detail-toggle-label { display: block; }
+.finder .detail-toggle-icon { display: block; width: 14px; height: 14px; transition: transform 220ms cubic-bezier(.22, 1, .36, 1); }
+.address-detail[open] .detail-toggle-icon { transform: rotate(45deg); }
+.detail-content { padding: 16px 0; border-top: 1px solid #e6ded8; }
+.outlet-facts { display: grid; gap: 18px; }
+.outlet-facts dt { display: flex; align-items: center; gap: 6px; color: #71656a; font-size: 10px; margin-bottom: 6px; }
+.outlet-facts dd { margin: 0; color: var(--color-ink); font-size: 12px; line-height: 1.8; }
+.outlet-facts .detail-hint { color: #71656a; margin-top: 5px; }
+.time-zone { font-size: 9px; }
+.detail-links { display: flex; flex-wrap: wrap; gap: 4px 20px; margin-top: 12px; }
+.detail-links a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 11px; font-weight: 600; }
+.detail-links svg { width: 13px; height: 13px; }
+.directions-link svg { transform: rotate(-40deg); }
+.map-note, .city-suggestion, .empty-outlets { color: #71656a; font-size: 10px; line-height: 1.7; }
+.city-suggestion, .empty-outlets { margin-top: 12px; }
+.finder :is(a, summary):active { transform: scale(.98); }
+.finder :is(a, button, select, summary):focus-visible { outline: 2px solid var(--color-brand-dark); outline-offset: 4px; }
+.no-script-outlets { grid-column: 1 / -1; display: grid; gap: 8px; padding: 20px; border: 1px solid #e6ded8; }
+.no-script-outlets a { display: flex; align-items: center; min-height: 44px; text-decoration: underline; }
+@media (hover: hover) { .outlet-cta:hover { background: var(--color-brand-dark); } .quick-directions:hover { background: #ffe4f1; } .detail-links a:hover, summary:hover { color: var(--color-brand-dark); } }
+@media (max-width: 1023px) and (min-width: 768px) { .finder { grid-template-columns: minmax(260px, .9fr) minmax(0, 1.1fr); gap: 28px; padding-inline: 32px; } .coverage { font-size: 9px; } .finder h2 { font-size: 48px; } .map-caption { left: 16px; top: 16px; } }
+@media (max-width: 767px) {
+ .finder { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'heading' 'dock' 'map'; grid-template-rows: auto; padding: 88px 20px 64px; gap: 28px; }
+ .coverage { margin-bottom: 20px; font-size: 10px; }
+ .finder h2 { font-size: clamp(44px, 11.5vw, 62px); }
+ .finder h2 br { display: none; }
+ .finder h2 span { display: block; }
+ .finder-intro { margin-top: 16px; font-size: 13px; }
+ .finder-intro br { display: none; }
+ .dock-controls { gap: 20px; }
+ .selected-summary { padding-block: 24px; }
+ .selected-name { font-size: 32px; }
+ .selected-address { max-width: 340px; }
+ .map-backdrop { height: 360px; min-height: 0; border-radius: 20px; }
+ .map-caption { top: 16px; left: 16px; padding: 10px 12px; }
+ .outlet-kicker span { font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) { .finder * { transition: none; } }

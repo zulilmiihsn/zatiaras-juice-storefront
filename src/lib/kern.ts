@@ -64,3 +64,6 @@ export const KERN_MAP: Record<string, number> = {
 	'8': -0.004,
 	'9': -0.004
 };
+
+// Kerning optik pasangan huruf (hilang saat tiap huruf jadi inline-block); dibuat oleh scripts/gen-kern-pairs.mjs.
+export { KERN_PAIRS } from './kern-pairs';

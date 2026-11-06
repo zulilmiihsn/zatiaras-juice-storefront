@@ -1,4 +1,5 @@
 // Order draft lokal. FR-ORDER-001 DRAFT->PENDING_PAYMENT.
+import { browser } from '$app/environment';
 import { assertTransition, canTransition } from '$lib/core/order-machine';
 import type { Order, OrderState, OutletId } from '$lib/core/contracts';
 import type { Line } from '$lib/stores/cart-logic';
@@ -60,14 +61,14 @@ export function createDraft(input: DraftInput): Order {
 const KEY = 'z-orders';
 
 export function saveOrder(o: Order): void {
-	if (typeof localStorage === 'undefined') return;
+	if (!browser) return;
 	const all = listOrders();
 	all.push(o);
 	localStorage.setItem(KEY, JSON.stringify(all));
 }
 
 export function listOrders(): Order[] {
-	if (typeof localStorage === 'undefined') return [];
+	if (!browser) return [];
 	try {
 		return JSON.parse(localStorage.getItem(KEY) ?? '[]');
 	} catch {
@@ -80,7 +81,7 @@ export function getOrder(id: string): Order | undefined {
 }
 
 export function moveOrder(id: string, to: OrderState): Order {
-	if (typeof localStorage === 'undefined') throw new Error('ssr_no_store');
+	if (!browser) throw new Error('ssr_no_store');
 	const all = listOrders();
 	const i = all.findIndex((o) => o.id === id);
 	if (i < 0) throw new Error('order_not_found');
@@ -93,7 +94,7 @@ export function moveOrder(id: string, to: OrderState): Order {
 const REASON_KEY = 'z-fail-reasons';
 
 export function failOrder(id: string, reason: string): Order {
-	if (typeof localStorage !== 'undefined') {
+	if (browser) {
 		const m = JSON.parse(localStorage.getItem(REASON_KEY) ?? '{}');
 		m[id] = reason;
 		localStorage.setItem(REASON_KEY, JSON.stringify(m));
@@ -102,7 +103,7 @@ export function failOrder(id: string, reason: string): Order {
 }
 
 export function failReason(id: string): string {
-	if (typeof localStorage === 'undefined') return '';
+	if (!browser) return '';
 	try {
 		return JSON.parse(localStorage.getItem(REASON_KEY) ?? '{}')[id] ?? '';
 	} catch {
@@ -111,7 +112,7 @@ export function failReason(id: string): string {
 }
 
 // import.meta.env.DEV false statis di production build (dead-code-eliminated),
-// true di dev & vitest. Tanpa $app/* agar lib tetap aman di-unit-test.
+// true di dev & vitest.
 function isDemoAllowed(): boolean {
 	try {
 		return (import.meta as unknown as { env?: { DEV?: boolean } }).env?.DEV === true;
@@ -123,7 +124,7 @@ function isDemoAllowed(): boolean {
 // Demo agar crew bisa UAT tanpa payment gateway.
 // DEV-ONLY: no-op di production build agar data palsu tak bocor ke produksi.
 export function seedDemo(): Order[] {
-	if (typeof localStorage === 'undefined') return [];
+	if (!browser) return [];
 	if (!isDemoAllowed()) return listOrders();
 	if (listOrders().length > 0) return listOrders();
 	const demo: Order[] = [

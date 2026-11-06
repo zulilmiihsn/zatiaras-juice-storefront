@@ -1,0 +1,11 @@
+Use your image generation tool to create decorative cutout assets for a juice-brand website. Save everything inside scratch/decor-gen/out/ (create it). Do not touch any other file in the repo.
+
+Style reference: scratch/decor-gen/reference.png (see the green leaves and the whole strawberry with leaves at the page corners) and scratch/decor-gen/existing-style.webp (the existing strawberry asset: glossy photoreal, saturated red strawberry, fresh deep-green serrated leaves, soft studio lighting). Match that photoreal, glossy, fresh look.
+
+Generate these 4 assets, each as a SEPARATE image, single subject centered with generous padding, NO text, NO shadow on the ground, NO splash, NO background scene:
+1. leaf-single.png: one fresh deep-green strawberry leaf (serrated edge, visible veins), slightly curved, tilted about 30 degrees, long dimension ~1024px.
+2. leaf-pair.png: two strawberry leaves growing from one short stem, fanned out, one larger than the other.
+3. strawberry-whole.png: one whole glossy red strawberry with its green calyx and small leaf attached, slightly angled, water droplets on the skin.
+4. strawberry-half-leaf.png: one whole strawberry plus one sliced half (showing red-white flesh) with a leaf behind them.
+
+Background must be TRANSPARENT (real alpha channel). If the generator cannot output alpha, render each subject on a flat pure chroma-key green (#00ff00) or magenta background that does not appear in the subject, then remove the key to real transparency with a script (Python/Pillow or similar, include despill and a clean soft edge, no green/magenta fringe), and verify corners have alpha 0. Also export a WebP version of each (quality ~90, alpha kept) next to the PNG, named the same with .webp. Finally print a table: file, pixel size, size in KB, and confirm alpha at the four corners.

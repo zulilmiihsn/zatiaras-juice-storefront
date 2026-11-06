@@ -1,0 +1,113 @@
+[
+  {
+    "name": "2D city guide, lazy requests, remembered priority, five outlets, marker sync, native keyboard, attribution, cart unchanged"
+  },
+  {
+    "name": "Order CTA carries selected outlet, populated cart requires confirmation, invalid outlet ignored"
+  },
+  {
+    "name": "320x568, contained map, pin/CTA clear, reduced motion",
+    "width": 320,
+    "height": 568,
+    "viewportHeight": 568,
+    "mapWithinSection": true,
+    "contentsFit": true,
+    "scrollWidth": 320,
+    "controlsFit": true,
+    "pinClear": true,
+    "ctaExposed": true
+  },
+  {
+    "name": "360x640, contained map, pin/CTA clear, reduced motion",
+    "width": 360,
+    "height": 640,
+    "viewportHeight": 640,
+    "mapWithinSection": true,
+    "contentsFit": true,
+    "scrollWidth": 360,
+    "controlsFit": true,
+    "pinClear": true,
+    "ctaExposed": true
+  },
+  {
+    "name": "375x812, contained map, pin/CTA clear, reduced motion",
+    "width": 375,
+    "height": 812,
+    "viewportHeight": 812,
+    "mapWithinSection": true,
+    "contentsFit": true,
+    "scrollWidth": 375,
+    "controlsFit": true,
+    "pinClear": true,
+    "ctaExposed": true
+  },
+  {
+    "name": "390x844, contained map, pin/CTA clear, reduced motion",
+    "width": 390,
+    "height": 844,
+    "viewportHeight": 844,
+    "mapWithinSection": true,
+    "contentsFit": true,
+    "scrollWidth": 390,
+    "controlsFit": true,
+    "pinClear": true,
+    "ctaExposed": true
+  },
+  {
+    "name": "768x1024, contained map, pin/CTA clear, reduced motion",
+    "width": 768,
+    "height": 1024,
+    "viewportHeight": 1024,
+    "mapWithinSection": true,
+    "contentsFit": true,
+    "scrollWidth": 768,
+    "controlsFit": true,
+    "pinClear": true,
+    "ctaExposed": true
+  },
+  {
+    "name": "1024x768, contained map, pin/CTA clear, reduced motion",
+    "width": 1024,
+    "height": 768,
+    "viewportHeight": 768,
+    "mapWithinSection": true,
+    "contentsFit": true,
+    "scrollWidth": 1024,
+    "controlsFit": true,
+    "pinClear": true,
+    "ctaExposed": true
+  },
+  {
+    "name": "1280x800, contained map, pin/CTA clear, reduced motion",
+    "width": 1280,
+    "height": 800,
+    "viewportHeight": 800,
+    "mapWithinSection": true,
+    "contentsFit": true,
+    "scrollWidth": 1280,
+    "controlsFit": true,
+    "pinClear": true,
+    "ctaExposed": true
+  },
+  {
+    "name": "1440x900, contained map, pin/CTA clear, reduced motion",
+    "width": 1440,
+    "height": 900,
+    "viewportHeight": 900,
+    "mapWithinSection": true,
+    "contentsFit": true,
+    "scrollWidth": 1440,
+    "controlsFit": true,
+    "pinClear": true,
+    "ctaExposed": true
+  },
+  {
+    "name": "short mobile: failed tiles, usable outlet controls, visible retry"
+  },
+  {
+    "name": "no WebGL: working outlet navigation"
+  },
+  {
+    "name": "no JavaScript: five direct outlet links"
+  }
+]

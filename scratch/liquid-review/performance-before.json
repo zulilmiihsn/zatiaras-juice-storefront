@@ -1,0 +1,15 @@
+{
+  "label": "before",
+  "startupMs": 16019,
+  "renderer": "ANGLE (Intel, Intel(R) HD Graphics 620 (0x00005921) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "backing": [
+    1224,
+    765
+  ],
+  "frames": 47,
+  "frameP50Ms": 102.69999999925494,
+  "frameP95Ms": 335.4000000022352,
+  "gpuWaitP50Ms": 0.10000000149011612,
+  "gpuWaitP95Ms": 0.30000000074505806,
+  "mode": "live"
+}

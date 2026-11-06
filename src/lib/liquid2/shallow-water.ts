@@ -5,13 +5,13 @@
 // Scroll drive feeds swells from the left and right edges in opposite phase and churns the
 // surface; at rest only a seeded wind stirs it. Steps are fixed and seeded, like Liquid 1.
 
-import type { Domain, Drink, Tier } from './scene';
+import { radiusAt, type Domain, type Drink, type Tier } from './scene';
 
 export const SIM_STEP = 1 / 120;
 export const MAX_SUBSTEPS = 8;
 
 const WAVE_SPEED = 1.6;
-const GRAVITY = 9.8;
+export const GRAVITY = 9.8;
 const DEPTH = (WAVE_SPEED * WAVE_SPEED) / GRAVITY;
 /** Viscous juice: waves lose energy slowly everywhere, quickly in the edge sponge. */
 const BODY_DAMPING = 0.25;
@@ -44,6 +44,8 @@ export class ShallowWater {
 	velZ: Float32Array;
 	/** 1 inside the obstacle. */
 	solid: Uint8Array;
+	/** Cylinder currently enforcing the no-penetration boundary, or null after submersion. */
+	obstacle: Drink | null = null;
 	version = 0;
 	readonly dx: number;
 	readonly dz: number;
@@ -58,6 +60,7 @@ export class ShallowWater {
 	private readonly zPhase: number;
 	private readonly random: () => number;
 	private readonly scratch: Float32Array;
+	private readonly impulseX: Float64Array;
 	private remainder = 0;
 	private time = 0;
 
@@ -73,6 +76,7 @@ export class ShallowWater {
 		this.velZ = new Float32Array(this.cols * (this.rows + 1));
 		this.solid = new Uint8Array(n);
 		this.scratch = new Float32Array(n);
+		this.impulseX = new Float64Array(this.cols);
 		this.random = mulberry32(seed >>> 0 || 1);
 		this.zPhase = this.random() * Math.PI * 2;
 		// Keep the CFL number at or below 0.5 whatever the domain's cell size.
@@ -94,7 +98,8 @@ export class ShallowWater {
 		this.dampX = new Float32Array(this.velX.length);
 		for (let j = 0; j < this.rows; j++)
 			for (let i = 0; i <= this.cols; i++)
-				this.dampX[j * (this.cols + 1) + i] = this.damping[j * this.cols + Math.min(i, this.cols - 1)];
+				this.dampX[j * (this.cols + 1) + i] =
+					this.damping[j * this.cols + Math.min(i, this.cols - 1)];
 		this.dampZ = new Float32Array(this.velZ.length);
 		for (let j = 0; j <= this.rows; j++)
 			for (let i = 0; i < this.cols; i++)
@@ -108,15 +113,17 @@ export class ShallowWater {
 		return this.domain.z0 + (j + 0.5) * this.dz;
 	}
 
-	setObstacle(drink: Drink | null) {
+	setObstacle(drink: Drink | null, level = 0) {
+		this.obstacle = drink;
 		const { cols, rows } = this;
 		const next = new Uint8Array(cols * rows);
-		if (drink && drink.radius > 0)
+		const radius = drink ? radiusAt(drink, level) : 0;
+		if (drink && radius > 0)
 			for (let j = 0; j < rows; j++)
 				for (let i = 0; i < cols; i++) {
 					const ddx = this.cellX(i) - drink.x;
 					const ddz = this.cellZ(j) - drink.z;
-					if (ddx * ddx + ddz * ddz <= drink.radius * drink.radius) next[j * cols + i] = 1;
+					if (ddx * ddx + ddz * ddz <= radius * radius) next[j * cols + i] = 1;
 				}
 		// Water displaced by newly solid cells moves to the fluid ring around the obstacle.
 		let displaced = 0;
@@ -262,14 +269,27 @@ export class ShallowWater {
 		const cj = (z - this.domain.z0) / this.dz - 0.5;
 		const ri = Math.ceil((2.5 * radius) / this.dx);
 		const rj = Math.ceil((2.5 * radius) / this.dz);
-		for (let j = Math.max(0, Math.floor(cj - rj)); j <= Math.min(rows - 1, Math.ceil(cj + rj)); j++)
-			for (let i = Math.max(0, Math.floor(ci - ri)); i <= Math.min(cols - 1, Math.ceil(ci + ri)); i++) {
+		const first = Math.max(0, Math.floor(ci - ri)),
+			last = Math.min(cols - 1, Math.ceil(ci + ri)),
+			inverseRadius2 = 1 / (radius * radius);
+		// The Gaussian is separable: evaluate each axis once rather than an exponential per cell.
+		for (let i = first; i <= last; i++) {
+			const ddx = this.cellX(i) - x;
+			this.impulseX[i] = Math.exp(-ddx * ddx * inverseRadius2);
+		}
+		for (
+			let j = Math.max(0, Math.floor(cj - rj));
+			j <= Math.min(rows - 1, Math.ceil(cj + rj));
+			j++
+		) {
+			const ddz = this.cellZ(j) - z,
+				along = strength * Math.exp(-ddz * ddz * inverseRadius2);
+			for (let i = first; i <= last; i++) {
 				const k = j * cols + i;
 				if (this.solid[k]) continue;
-				const ddx = this.cellX(i) - x;
-				const ddz = this.cellZ(j) - z;
-				this.height[k] += strength * Math.exp(-(ddx * ddx + ddz * ddz) / (radius * radius));
+				this.height[k] += along * this.impulseX[i];
 			}
+		}
 	}
 
 	/**
@@ -292,10 +312,22 @@ export class ShallowWater {
 				const j = (k - i) / cols;
 				let sum = 0;
 				let n = 0;
-				if (i > 0 && known[k - 1]) (sum += out[k - 1]), n++;
-				if (i < cols - 1 && known[k + 1]) (sum += out[k + 1]), n++;
-				if (j > 0 && known[k - cols]) (sum += out[k - cols]), n++;
-				if (j < rows - 1 && known[k + cols]) (sum += out[k + cols]), n++;
+				if (i > 0 && known[k - 1]) {
+					sum += out[k - 1];
+					n++;
+				}
+				if (i < cols - 1 && known[k + 1]) {
+					sum += out[k + 1];
+					n++;
+				}
+				if (j > 0 && known[k - cols]) {
+					sum += out[k - cols];
+					n++;
+				}
+				if (j < rows - 1 && known[k + cols]) {
+					sum += out[k + cols];
+					n++;
+				}
 				if (n) filled.push([k, sum / n]);
 				else next.push(k);
 			}

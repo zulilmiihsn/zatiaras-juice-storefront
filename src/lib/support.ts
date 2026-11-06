@@ -1,4 +1,5 @@
 // FR-ORDER-004 + FR-SUPPORT + FR-FEEDBACK. Bahasa polos. Tanpa secret ke WA.
+import { browser } from '$app/environment';
 import type { Order, OrderState, SupportCategory } from '$lib/core/contracts';
 
 // VERIFY nomor WA resmi outlet sebelum rilis.
@@ -66,14 +67,14 @@ export interface Feedback {
 const FKEY = 'z-feedback';
 
 export function saveFeedback(f: Feedback): void {
-	if (typeof localStorage === 'undefined') return;
+	if (!browser) return;
 	const all = listFeedback();
 	all.push(f);
 	localStorage.setItem(FKEY, JSON.stringify(all));
 }
 
 export function listFeedback(): Feedback[] {
-	if (typeof localStorage === 'undefined') return [];
+	if (!browser) return [];
 	try {
 		return JSON.parse(localStorage.getItem(FKEY) ?? '[]');
 	} catch {

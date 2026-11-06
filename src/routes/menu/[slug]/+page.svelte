@@ -212,7 +212,7 @@
 				</div>
 
 				<div
-					class="flex items-center justify-between rounded-2xl border border-black/[0.05] bg-white/90 p-4 backdrop-blur-xs"
+					class="flex items-center justify-between rounded-2xl border border-black/[0.05] bg-white p-4"
 				>
 					<div>
 						<p class="text-[11px] font-bold tracking-wider text-neutral-400 uppercase">

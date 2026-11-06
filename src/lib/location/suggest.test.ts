@@ -64,14 +64,15 @@ describe('multi-city outlets', () => {
 	});
 
 	it('haversine wajar samarinda-berau', () => {
-		const d = haversineKm(-0.5021, 117.1536, -2.1872, 117.3703);
-		expect(d).toBeGreaterThan(100);
-		expect(d).toBeLessThan(400);
+		const d = haversineKm(-0.5021, 117.1536, 2.1406, 117.5186);
+		expect(d).toBeGreaterThan(250);
+		expect(d).toBeLessThan(350);
 	});
 
 	it('koordinat kasar -> saran kota, bukan outlet', () => {
 		expect(nearestCityFromCoords(-0.5, 117.15)?.id).toBe('samarinda');
-		expect(nearestCityFromCoords(-2.19, 117.37)?.id).toBe('berau');
+		expect(nearestCityFromCoords(2.14, 117.52)?.id).toBe('berau');
+		expect(nearestCityFromCoords(-2.19, 117.37)?.id).not.toBe('berau');
 		expect(nearestCityFromCoords(-1.265, 116.83)?.id).toBe('balikpapan');
 	});
 

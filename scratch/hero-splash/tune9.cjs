@@ -1,0 +1,13 @@
+const fs = require('fs');
+let f = 'src/lib/liquid/crown.ts';
+let s = fs.readFileSync(f, 'utf8');
+const rep = (a, b) => { if (!s.includes(a)) throw new Error('missing: ' + a.slice(0, 70)); s = s.replace(a, b); };
+rep('p2: [0.62, 0.32], p3: [0.8, 0.76], base: 0.24,', 'p2: [0.56, 0.34], p3: [0.62, 0.8], base: 0.24,');
+rep('{ p0: [0.38, 0.04], p1: [0.52, 0.1], p2: [0.64, 0.1], p3: [0.76, 0.16],', '{ p0: [0.36, 0.04], p1: [0.48, 0.1], p2: [0.58, 0.1], p3: [0.66, 0.16],');
+rep(`	/** 0..1 overall presence (scroll fades the crown into the wave). */`, `	/** 0..1 overall presence; at 0 the crown has sunk into the rising wave. */`);
+rep(`		const grow = this.presence;`, `		const grow = this.presence;
+		const sink = (1 - grow) * size * 1.2;`);
+rep(`			const tipY = cy - (arm.p3[1] + lift) * size * grow;`, `			const tipY = cy - (arm.p3[1] + lift) * size + sink;`);
+rep(`				y = cy - y * size * grow + this.bend[by] * w;`, `				y = cy - y * size + sink + this.bend[by] * w;`);
+rep(`				this.points[k++] = r * size * grow;`, `				this.points[k++] = r * size;`);
+fs.writeFileSync(f, s);

@@ -1,0 +1,14 @@
+PASS best sellers 320px
+PASS best sellers 360px
+PASS best sellers 375px
+PASS best sellers 390px
+PASS best sellers 768px
+PASS best sellers 1024px
+PASS best sellers 1280px
+PASS best sellers 1440px
+PASS fits one viewport 1024x768
+PASS fits one viewport 1280x720
+PASS fits one viewport 1366x768
+PASS fits one viewport 1440x900
+PASS fits one viewport 1908x827
+PASS no-JavaScript, keyboard, product routes, price gate, normal/reduced motion

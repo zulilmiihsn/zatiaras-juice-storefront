@@ -1,0 +1,12 @@
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+const path = 'src/lib/liquid2/renderer.ts';
+let source = readFileSync(path, 'utf8');
+mkdirSync('scratch/liquid2-review/before-direct-surface', { recursive: true });
+writeFileSync('scratch/liquid2-review/before-direct-surface/renderer.ts', source);
+const a = source.indexOf('\t\t\t// Surface-area quadrature gives a thin lamella');
+const b = source.indexOf('\t\t\tif (this.sampleCount === 0 && !this.volumeWarmed)', a);
+if (a < 0 || b < 0) throw new Error('Missing film reconstruction range');
+source = source.slice(0, a) + source.slice(b);
+source = source.replace('const capacity = fluid.capacity + sim.sheets.vertices.length / 3;', 'const capacity = fluid.capacity;');
+source = source.replace(/this.volumeExtent\[1\] = Math.max\([\s\S]*?\n\t\t\t\);/, 'this.volumeExtent[1] = scale * 0.65;');
+writeFileSync(path, source);

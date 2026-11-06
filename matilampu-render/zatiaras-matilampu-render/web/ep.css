@@ -1,0 +1,12 @@
+@font-face{font-family:"Plus Jakarta Sans";font-weight:600;src:url(fonts/plus-jakarta-sans-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Plus Jakarta Sans";font-weight:800;src:url(fonts/plus-jakarta-sans-latin-800-normal.woff2) format("woff2")}
+.stage{background:#070a14}
+.scrim{inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(5,8,20,.55) 0,rgba(5,8,20,0) 34%,rgba(5,8,20,0) 70%,rgba(5,8,20,.5) 100%)}
+.chip{position:absolute;left:0;top:0;white-space:nowrap;visibility:hidden;font:800 max(10px,4.4cqw)/1 var(--font-display);color:#fff;letter-spacing:.01em;transform:translate(-50%,-100%)}
+.chip.fixed{transform:translate(-50%,-50%)}
+.chip.hl{color:var(--banana)}
+.logo-b{top:8cqw;width:46cqw}
+.fin{top:152cqw}
+.f2{font-size:4.6cqw}
+
+.fade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;z-index:50}

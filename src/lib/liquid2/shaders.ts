@@ -4,15 +4,24 @@
 // looks down on a horizontal pool: its studio panels sit behind the liquid as well as in
 // front, so both the flat surface and the wave faces catch crisp highlights.
 
+import { RIM_SIDES } from './surface';
+
 export const NEAR = 0.05;
 export const FAR = 60;
+export const DENSITY_TILES = 8;
+export const DENSITY_SLICES = 8;
 
 const COMMON = `
-uniform vec3 uCam, uRight, uUp, uFwd;
-uniform float uFocal, uAspect, uShift, uTime, uLevel, uCover;
-uniform vec2 uRes;
 // World z over which the far edge of the pool melts into the page (back edge, fully opaque).
-uniform vec2 uFade;
+// One shared block keeps every projection and material pass on the same scene state.
+layout(std140) uniform Scene {
+	vec3 uCam; float uFocal;
+	vec3 uRight; float uAspect;
+	vec3 uUp; float uShift;
+	vec3 uFwd; float uTime;
+	float uLevel; float uCover; vec2 uFade;
+};
+uniform vec2 uRes;
 const float NEAR = ${NEAR.toFixed(2)}, FAR = ${FAR.toFixed(1)};
 const vec3 PINK = vec3(1.0, 0.0627451, 0.5058824);
 
@@ -56,7 +65,9 @@ float panel(vec3 ray, vec3 direction, vec2 extent) {
 	vec2 scaled = uv / extent;
 	// Flat-topped softboxes with a short falloff: a smooth liquid film mirrors crisp
 	// light shapes, while broad blurred lobes read as gel or plastic.
-	return exp(-pow(dot(scaled, scaled), 1.6) * 2.5);
+	float r2 = dot(scaled, scaled);
+	float lobe = r2 * r2;
+	return 1.0 / (1.0 + 10.0 * lobe * lobe);
 }
 
 vec3 sky(vec3 ray) {
@@ -108,6 +119,8 @@ vec3 shade(vec3 world, vec3 n, float bodyDepth, float occluded) {
 	float rim = pow(1.0 - facing, 2.0);
 	vec3 body = dye * ((0.3 - 0.12 * dim) + 0.8 * diffuse + 0.2 * rim + 0.06 * thin);
 	vec3 lit = body * (1.0 - fresnel) + studio(reflection) * fresnel * (1.0 - 0.55 * occluded);
+	lit += 2.2 * panel(reflection, normalize(vec3(-0.55, 0.12, -0.83)), vec2(0.38, 0.45))
+		* fresnel * (1.0 - abs(n.y)) * smoothstep(0.02, 0.18, world.y - uLevel);
 	// At the silhouette, grazing reflections pick up the page's cream backdrop.
 	// Only on steep faces (crest silhouettes), not on the flat pool seen edge-on.
 	lit += (vec3(0.75, 0.68, 0.58) - sky(reflection)) * fresnel * smoothstep(0.8, 0.98, 1.0 - facing)
@@ -119,71 +132,23 @@ vec3 shade(vec3 world, vec3 n, float bodyDepth, float occluded) {
 `;
 
 // The pool: one vertex per simulation cell plus a flat skirt reaching under the camera.
-// The field texture holds height offset, cell-centred velocity and a wall mask (r, g, b, a).
+// The former field texture is replaced by CPU-built positions and shared vertex normals,
+// including the simulated pool, the broad shoulder and the rolling crest in one surface.
+// The swirl ribbon formerly had its own surface; its position/normal shader is now the
+// pool shader, so the wave passes in front of and behind the drink without a separate join.
 export const SURFACE_VS = `#version 300 es
 precision highp float;
-layout(location = 0) in vec2 aXZ;
-uniform highp sampler2D uField;
-uniform vec4 uDomain; // x0, z0, dx, dz
-uniform ivec2 uCells;
-out vec3 vWorld, vNormal;
-out float vHeight;
+layout(location = 0) in vec3 aPos;
+
+out vec3 vWorld;
+
 ${COMMON}
 
-vec4 cell(vec2 xz) {
-	ivec2 k = ivec2(floor((xz - uDomain.xy) / uDomain.zw));
-	if (any(lessThan(k, ivec2(0))) || any(greaterThanEqual(k, uCells))) return vec4(0.0, 0.0, 0.0, 1.0);
-	return texelFetch(uField, k, 0);
-}
-
-float shapeCrest(float e) {
-	return e + 0.8 * max(e, 0.0) * max(e, 0.0) + 0.3 * min(e, 0.0) * min(e, 0.0);
-}
-
-vec3 place(vec2 xz) {
-	vec4 c = cell(xz);
-	vec2 step = uDomain.zw;
-	vec2 slope = vec2(
-		cell(xz + vec2(step.x, 0.0)).r - cell(xz - vec2(step.x, 0.0)).r,
-		cell(xz + vec2(0.0, step.y)).r - cell(xz - vec2(0.0, step.y)).r
-	) / (2.0 * step);
-	// Points slide toward crests (sharper peaks, broader troughs) and crests lean along
-	// the flow, so a travelling swell curls forward instead of rising as a sine bump.
-	// Beside the drink (mask 0) the surface stays unshaped: one side of those cells is
-	// wall, and leaning or peaking them folds the run-up face into shards.
-	vec2 offset = c.a * (0.05 * slope + 0.22 * max(c.r, 0.0) * c.gb);
-	// Never move a vertex past its neighbours: folded triangles render as shards.
-	float reach = 0.45 * min(step.x, step.y);
-	float len = length(offset);
-	if (len > reach) offset *= reach / len;
-	return vec3(xz.x + offset.x, uLevel + mix(c.r, shapeCrest(c.r), c.a), xz.y + offset.y);
-}
-
 void main() {
-	vec2 step = uDomain.zw;
-	vec3 p = place(aXZ);
-	vec3 ddx = place(aXZ + vec2(step.x, 0.0)) - place(aXZ - vec2(step.x, 0.0));
-	vec3 ddz = place(aXZ + vec2(0.0, step.y)) - place(aXZ - vec2(0.0, step.y));
-	vWorld = p;
-	vNormal = normalize(cross(ddz, ddx));
-	vHeight = p.y - uLevel;
-	gl_Position = project(p);
-}`;
+	vWorld = aPos;
 
-export const SURFACE_FS = `#version 300 es
-precision highp float;
-in vec3 vWorld, vNormal;
-in float vHeight;
-out vec4 outColor;
-${COMMON}
-${SHADE}
-void main() {
-	vec3 n = normalize(vNormal);
-	if (!gl_FrontFacing) n = -n;
-	float bodyDepth = max(0.05, 0.9 - 1.5 * max(vHeight, 0.0));
-	float occluded = 0.6 * smoothstep(0.02, 0.3, -vHeight);
-	float alpha = farFade(vWorld.z);
-	outColor = vec4(shade(vWorld, n, bodyDepth, occluded) * alpha, alpha);
+
+	gl_Position = project(aPos);
 }`;
 
 // The drink photo as a screen-aligned quad. Its depth is the cylinder proxy's front face
@@ -204,6 +169,7 @@ precision highp float;
 in vec2 vUv;
 uniform sampler2D uImage;
 uniform vec4 uCylinder; // x, z, radius, mid-height y
+uniform vec3 uCupProfile; // bottom radius, base y, height
 out vec4 outColor;
 ${COMMON}
 void main() {
@@ -211,9 +177,12 @@ void main() {
 	if (color.a < 0.5) discard;
 	vec3 ray = pixelRay(gl_FragCoord.xy);
 	vec2 oc = uCam.xz - uCylinder.xy;
-	float a = dot(ray.xz, ray.xz);
-	float b = 2.0 * dot(oc, ray.xz);
-	float c = dot(oc, oc) - uCylinder.z * uCylinder.z;
+	float taper = (uCylinder.z - uCupProfile.x) / max(0.001, uCupProfile.z);
+	float cameraRadius = uCupProfile.x + taper * (uCam.y - uCupProfile.y);
+	float radialRay = taper * ray.y;
+	float a = dot(ray.xz, ray.xz) - radialRay * radialRay;
+	float b = 2.0 * (dot(oc, ray.xz) - cameraRadius * radialRay);
+	float c = dot(oc, oc) - cameraRadius * cameraRadius;
 	float disc = b * b - 4.0 * a * c;
 	// Outside the cylinder's silhouette (straw, lid overhang) use the axis plane.
 	float depth = disc > 0.0
@@ -223,18 +192,400 @@ void main() {
 	outColor = vec4(color.rgb, 1.0);
 }`;
 
-// The swirl ribbon: positions and normals are built on the CPU each frame; it shares the
-// pool's material (SURFACE_FS) and depth, so it passes in front of and behind the drink.
-export const RIBBON_VS = `#version 300 es
+const DEPTH_PACK = `
+vec4 encodeDepth(float depth, float alpha) {
+	float value = clamp(depth / FAR, 0.0000001, 0.9999999);
+	vec3 encoded = fract(value * vec3(1.0, 255.0, 65025.0));
+	encoded -= encoded.yzz * vec3(1.0 / 255.0, 1.0 / 255.0, 0.0);
+	return vec4(encoded, alpha);
+}
+float decodeDepth(vec4 value) {
+	return dot(value.rgb, vec3(1.0, 1.0 / 255.0, 1.0 / 65025.0)) * FAR;
+}
+`;
+
+// Pool and particles first write the same linear-depth surface. RGB24 works without
+// floating-point colour attachments, including devices without EXT_color_buffer_float.
+export const DEPTH_FS = `#version 300 es
 precision highp float;
-layout(location = 0) in vec3 aPos;
-layout(location = 1) in vec3 aNormal;
-out vec3 vWorld, vNormal;
-out float vHeight;
+in vec3 vWorld;
+out vec4 outColor;
+${COMMON}
+${DEPTH_PACK}
+void main() {
+	outColor = encodeDepth(dot(vWorld - uCam, uFwd), farFade(vWorld.z));
+}`;
+
+export const SHEET_VS = `#version 300 es
+precision highp float;
+uniform float uFilmScale;
+uniform highp sampler2D uFilm, uHeight;
+uniform vec4 uFilmGrid, uHeightDomain, uCup;
+uniform float uCupBase, uCupBottom;
+out vec3 vWorld;
+out vec3 vNormal;
+${COMMON}
+struct FilmPoint { vec3 p; vec3 n; float thickness; };
+vec4 cubic(float t) {
+	float t2 = t * t, t3 = t2 * t;
+	return vec4(-0.5 * t + t2 - 0.5 * t3, 1.0 - 2.5 * t2 + 1.5 * t3,
+		0.5 * t + 2.0 * t2 - 1.5 * t3, -0.5 * t2 + 0.5 * t3);
+}
+float poolHeight(vec2 world) {
+	ivec2 size = textureSize(uHeight, 0);
+	vec2 cell = (world - uHeightDomain.xy) / uHeightDomain.zw * vec2(size) - 0.5;
+	if (any(lessThan(cell, vec2(0.0))) || any(greaterThan(cell, vec2(size - 1)))) return 0.0;
+	ivec2 base = min(size - 2, ivec2(floor(cell)));
+	vec2 t = cell - vec2(base);
+	float a = mix(texelFetch(uHeight, base, 0).r, texelFetch(uHeight, base + ivec2(1,0), 0).r, t.x);
+	float b = mix(texelFetch(uHeight, base + ivec2(0,1), 0).r, texelFetch(uHeight, base + ivec2(1,1), 0).r, t.x);
+	return mix(a, b, t.y);
+}
+FilmPoint filmPoint(ivec2 grid, int patchId) {
+	ivec2 source = ivec2(uFilmGrid.y, uFilmGrid.x);
+	vec2 cell = vec2(grid) / (uFilmGrid.wz - 1.0) * vec2(source - 1);
+	ivec2 base = ivec2(floor(cell));
+	vec4 wx = cubic(fract(cell.x)), wy = cubic(fract(cell.y));
+	vec4 position = vec4(0.0), normal = vec4(0.0);
+	for (int row = 0; row < 4; row++) for (int col = 0; col < 4; col++) {
+		float weight = wx[col] * wy[row];
+		if (weight == 0.0) continue;
+		ivec2 point = clamp(base + ivec2(col - 1, row - 1), ivec2(0), source - 1);
+		point.y += patchId * source.y;
+		position += weight * texelFetch(uFilm, point, 0);
+		normal += weight * texelFetch(uFilm, point + ivec2(source.x, 0), 0);
+	}
+	FilmPoint result;
+	result.p = position.xyz;
+	float pool = uLevel + poolHeight(result.p.xz);
+	result.p.y = max(pool, result.p.y);
+	float rise = max(0.0, result.p.y - pool) / uFilmScale;
+	float foot = clamp(rise / 0.04, 0.0, 1.0), open = clamp(rise / 0.06, 0.0, 1.0);
+	result.p.y -= 0.01 * uFilmScale * (1.0 - foot * foot * (3.0 - 2.0 * foot));
+	result.thickness = 0.006 * uFilmScale * clamp(normal.w * uFilmScale * uFilmScale / max(1e-10, position.w), 0.5, 2.5)
+		* open * open * (3.0 - 2.0 * open);
+	vec2 delta = result.p.xz - uCup.xy;
+	float r2 = dot(delta, delta);
+	float fraction = clamp((result.p.y - uCupBase) / max(0.001, uCup.w - uCupBase), 0.0, 1.0);
+	float radius = mix(uCupBottom, uCup.z, fraction) + 0.014 * uFilmScale;
+	if (uCup.z > 0.0 && result.p.y < uCup.w && r2 < radius * radius)
+		result.p.xz = uCup.xy + (r2 > 1e-16 ? delta * inversesqrt(r2) : vec2(-1.0, 0.0)) * radius;
+	float lengthSquared = dot(normal.xyz, normal.xyz);
+	result.n = lengthSquared > 1e-18 ? normal.xyz * inversesqrt(lengthSquared) : vec3(0.0, 1.0, 0.0);
+	return result;
+}
+ivec2 boundaryPoint(int index) {
+	int rows = int(uFilmGrid.z), cols = int(uFilmGrid.w);
+	if (index < rows) return ivec2(0, index);
+	index -= rows;
+	if (index < cols - 1) return ivec2(index + 1, rows - 1);
+	return ivec2(cols - 1, rows - 2 - (index - (cols - 1)));
+}
+void main() {
+	int rows = int(uFilmGrid.z), cols = int(uFilmGrid.w);
+	int patches = textureSize(uFilm, 0).y / int(uFilmGrid.x);
+	int faces = patches * rows * cols, vertex = gl_VertexID;
+	if (vertex < faces * 2) {
+		int point = vertex % faces, patchId = point / (rows * cols), localId = point % (rows * cols);
+		FilmPoint pointData = filmPoint(ivec2(localId % cols, localId / cols), patchId);
+		float side = vertex < faces ? 1.0 : -1.0;
+		vWorld = pointData.p + side * pointData.n * pointData.thickness * 0.5;
+		vNormal = side * pointData.n;
+	} else {
+		int boundary = rows * 2 + cols - 2, rim = vertex - faces * 2;
+		int patchId = rim / (boundary * ${RIM_SIDES}), point = (rim / ${RIM_SIDES}) % boundary;
+		FilmPoint pointData = filmPoint(boundaryPoint(point), patchId);
+		FilmPoint before = filmPoint(boundaryPoint(max(0, point - 1)), patchId);
+		FilmPoint after = filmPoint(boundaryPoint(min(boundary - 1, point + 1)), patchId);
+		vec3 tangent = after.p + after.n * after.thickness * 0.5 - before.p - before.n * before.thickness * 0.5;
+		float lengthSquared = dot(tangent, tangent);
+		tangent = lengthSquared > 1e-18 ? tangent * inversesqrt(lengthSquared) : vec3(0.0, 1.0, 0.0);
+		vec3 normal = pointData.n - dot(pointData.n, tangent) * tangent;
+		if (dot(normal, normal) < 1e-18) {
+			normal = abs(tangent.x) < 0.9 ? vec3(1.0, 0.0, 0.0) : vec3(0.0, 0.0, 1.0);
+			normal -= dot(normal, tangent) * tangent;
+		}
+		normal = normalize(normal);
+		float angle = float(rim % ${RIM_SIDES}) * 6.28318530718 / float(${RIM_SIDES});
+		vNormal = cos(angle) * normal + sin(angle) * cross(tangent, normal);
+		vWorld = pointData.p + 0.75 * pointData.thickness * vNormal;
+	}
+	gl_Position = project(vWorld);
+}`;
+
+export const SHEET_FS = `#version 300 es
+precision highp float;
+in vec3 vWorld;
+in vec3 vNormal;
+uniform float uFilmScale;
+uniform vec4 uCup;
+uniform float uCupBase, uCupBottom;
+out vec4 outColor;
+${COMMON}
+${SHADE}
+void main() {
+	float t = clamp((vWorld.y - uCupBase) / max(0.001, uCup.w - uCupBase), 0.0, 1.0);
+	float radius = mix(uCupBottom, uCup.z, t);
+	vec2 d = vWorld.xz - uCup.xy;
+	if (vWorld.y > uCupBase && vWorld.y < uCup.w && dot(d, d) < radius * radius) discard;
+	float normalLength = dot(vNormal, vNormal);
+	vec3 n = normalLength > 1e-10 ? vNormal * inversesqrt(normalLength) : normalize(uCam - vWorld);
+	if (dot(n, uCam - vWorld) < 0.0) n = -n;
+	float height = (vWorld.y - uLevel) / uFilmScale;
+	n = normalize(mix(vec3(0.0, 1.0, 0.0), n, smoothstep(0.0, 0.08, height)));
+	outColor = vec4(shade(vWorld, n, mix(0.9, 0.02, smoothstep(0.0, 0.12, height)), 0.0), 1.0);
+}`;
+
+export const SCREEN_VS = `#version 300 es
+precision highp float;
+out vec2 vUv;
+void main() {
+	vec2 p = vec2(float((gl_VertexID << 1) & 2), float(gl_VertexID & 2));
+	vUv = p;
+	gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+}`;
+
+export const BLUR_FS = `#version 300 es
+precision highp float;
+in vec2 vUv;
+uniform sampler2D uDepth;
+uniform vec2 uDirection, uDepthSize;
+uniform float uFluidScale;
+out vec4 outColor;
+${COMMON}
+${DEPTH_PACK}
+void main() {
+	vec4 centre = texture(uDepth, vUv);
+	float reference = centre.a > 0.01 ? decodeDepth(centre) : FAR;
+	if (centre.a <= 0.01) {
+		for (int r = 1; r <= 2; r++) {
+			vec4 a = texture(uDepth, vUv + float(r) * uDirection / uDepthSize);
+			vec4 b = texture(uDepth, vUv - float(r) * uDirection / uDepthSize);
+			if (a.a > 0.01 || b.a > 0.01) {
+				reference = a.a > b.a ? decodeDepth(a) : decodeDepth(b);
+				break;
+			}
+		}
+	}
+	if (reference >= FAR) { outColor = vec4(0.0); return; }
+	float sum = 0.0, weight = 0.0, coverage = 0.0, spatialSum = 0.0;
+	float sigma = max(0.025, 0.18 * uFluidScale);
+	for (int r = -2; r <= 2; r++) {
+		float spatial = exp(-float(r * r) / 3.0);
+		spatialSum += spatial;
+		vec4 value = texture(uDepth, vUv + float(r) * uDirection / uDepthSize);
+		if (value.a < 0.001) continue;
+		float depth = decodeDepth(value);
+		float delta = (depth - reference) / sigma;
+		float w = spatial * exp(-delta * delta * 0.5) * value.a;
+		sum += w * depth;
+		weight += w;
+		coverage += spatial * value.a;
+	}
+	outColor = weight > 0.00001 ? encodeDepth(sum / weight, coverage / spatialSum) : vec4(0.0);
+}`;
+
+const ATLAS_SAMPLE = `
+uniform highp sampler2D uVolume;
+uniform highp sampler2D uHeight;
+uniform vec3 uVolumeOrigin, uVolumeExtent, uVolumeResolution;
+uniform vec2 uAtlasSize;
+uniform vec4 uHeightDomain;
+uniform float uDensityScale;
+uniform float uSupport;
+float sliceDensity(vec2 uv, float slice) {
+	vec2 tile = vec2(mod(slice, ${DENSITY_TILES.toFixed(1)}), floor(slice / ${DENSITY_TILES.toFixed(1)}));
+	vec2 local = clamp(uv * uVolumeResolution.xy - 0.5, vec2(0.0), uVolumeResolution.xy - 1.0);
+	vec2 atlasUv = (tile * uVolumeResolution.xy + local + 0.5) / uAtlasSize;
+	return textureLod(uVolume, atlasUv, 0.0).r * uDensityScale;
+}
+float volumeDensity(vec3 world) {
+	vec3 uv = (world - uVolumeOrigin) / uVolumeExtent;
+	float fluid = 0.0;
+	if (all(greaterThanEqual(uv, vec3(0.0))) && all(lessThanEqual(uv, vec3(1.0)))) {
+		float z = clamp(uv.z * uVolumeResolution.z - 0.5, 0.0, uVolumeResolution.z - 1.0);
+		float layer = floor(z);
+		fluid = mix(sliceDensity(uv.xy, layer), sliceDensity(uv.xy, min(layer + 1.0, uVolumeResolution.z - 1.0)), fract(z));
+	}
+	vec2 heightUv = (world.xz - uHeightDomain.xy) / uHeightDomain.zw;
+	float height = 0.0;
+	if (all(greaterThanEqual(heightUv, vec2(0.0))) && all(lessThanEqual(heightUv, vec2(1.0)))) height = textureLod(uHeight, heightUv, 0.0).r;
+	float band = uSupport;
+	float pool = clamp(0.5 + (uLevel + height - world.y) / max(0.001, band), 0.0, 1.0);
+	pool = pool * pool * (3.0 - 2.0 * pool);
+	float difference = fluid - pool;
+	return 0.5 * (fluid + pool + sqrt(difference * difference + 0.0064));
+}
+`;
+
+// Conservative screen coverage avoids ray marching pixels outside every kernel.
+export const MASK_VS = `#version 300 es
+precision highp float;
+layout(location = 0) in vec2 aCorner;
+layout(location = 2) in vec4 aParticle;
+uniform float uSupport;
 ${COMMON}
 void main() {
-	vWorld = aPos;
-	vNormal = aNormal;
-	vHeight = aPos.y - uLevel;
-	gl_Position = project(aPos);
+	vec4 centre = project(aParticle.xyz);
+	vec3 offset = aParticle.xyz - uCam;
+	vec2 slope = abs(vec2(dot(offset, uRight), dot(offset, uUp))) / max(NEAR, centre.w);
+	vec2 radius = vec2(2.0 * uFocal / uAspect, 2.0 * uFocal) * uSupport * (1.0 + slope) * centre.w / max(NEAR, centre.w - uSupport);
+	centre.xy += (aCorner * 2.0 - 1.0) * radius;
+	gl_Position = aParticle.w > 0.0 ? centre : vec4(2.0, 2.0, 2.0, 1.0);
+}`;
+export const MASK_FS = `#version 300 es
+precision highp float;
+out vec4 outColor;
+void main() { outColor = vec4(1.0); }
+`;
+
+export const DENSITY_VS = `#version 300 es
+precision highp float;
+layout(location = 0) in vec2 aCorner;
+layout(location = 2) in vec4 aParticle;
+uniform vec3 uVolumeOrigin, uVolumeExtent, uVolumeResolution;
+uniform vec2 uAtlasSize;
+uniform float uSupport;
+flat out vec4 vParticle;
+flat out float vSlice;
+flat out vec2 vTile;
+void main() {
+	vParticle = aParticle;
+	float centre = (aParticle.z - uVolumeOrigin.z) / uVolumeExtent.z * uVolumeResolution.z - 0.5;
+	vSlice = floor(centre) - ${(DENSITY_SLICES / 2 - 1).toFixed(1)} + float(gl_InstanceID % ${DENSITY_SLICES});
+	vTile = vec2(mod(vSlice, ${DENSITY_TILES.toFixed(1)}), floor(vSlice / ${DENSITY_TILES.toFixed(1)})) * uVolumeResolution.xy;
+	if (vSlice < 0.0 || vSlice >= uVolumeResolution.z) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); return; }
+	float z = uVolumeOrigin.z + (vSlice + 0.5) / uVolumeResolution.z * uVolumeExtent.z - aParticle.z;
+	float bound = uSupport;
+	float reach = sqrt(max(0.0, bound * bound - z * z));
+	vec2 world = aParticle.xy + (aCorner * 2.0 - 1.0) * reach;
+	vec2 pixel = vTile + (world - uVolumeOrigin.xy) / uVolumeExtent.xy * uVolumeResolution.xy;
+	gl_Position = vec4(pixel / uAtlasSize * 2.0 - 1.0, 0.0, 1.0);
+}`;
+
+export const DENSITY_FS = `#version 300 es
+precision highp float;
+flat in vec4 vParticle;
+flat in float vSlice;
+flat in vec2 vTile;
+uniform vec3 uVolumeOrigin, uVolumeExtent, uVolumeResolution;
+uniform float uSupport, uKernelScale;
+out vec4 outColor;
+void main() {
+	vec2 local = gl_FragCoord.xy - vTile;
+	if (any(lessThan(local, vec2(0.0))) || any(greaterThanEqual(local, uVolumeResolution.xy))) discard;
+	vec3 world = uVolumeOrigin + vec3(local / uVolumeResolution.xy, (vSlice + 0.5) / uVolumeResolution.z) * uVolumeExtent;
+	vec3 delta = world - vParticle.xyz;
+	float q = dot(delta, delta) / (uSupport * uSupport);
+	if (q >= 1.0) discard;
+	float w = 1.0 - q;
+	outColor = vec4(w * w * w * vParticle.w * uKernelScale, 0.0, 0.0, 0.0);
+}`;
+
+export const COMPOSITE_FS = `#version 300 es
+precision highp float;
+in vec2 vUv;
+uniform sampler2D uDepth;
+uniform vec2 uDepthSize;
+uniform float uVolumeActive;
+out vec4 outColor;
+${COMMON}
+${DEPTH_PACK}
+${SHADE}
+${ATLAS_SAMPLE}
+vec3 reconstruct(vec2 uv, float depth) {
+	return uCam + pixelRay(uv * uRes) * depth;
+}
+vec3 neighbour(vec2 uv, float fallback) {
+	vec4 value = texture(uDepth, uv);
+	return reconstruct(uv, value.a > 0.01 ? decodeDepth(value) : fallback);
+}
+void main() {
+	vec4 value = texture(uDepth, vUv);
+	if (value.a < 0.003) discard;
+	float depth = decodeDepth(value);
+	vec3 world = reconstruct(vUv, depth);
+	vec2 step = 1.0 / uDepthSize;
+	vec3 right = neighbour(vUv + vec2(step.x, 0.0), depth) - world;
+	vec3 left = world - neighbour(vUv - vec2(step.x, 0.0), depth);
+	vec3 up = neighbour(vUv + vec2(0.0, step.y), depth) - world;
+	vec3 down = world - neighbour(vUv - vec2(0.0, step.y), depth);
+	vec3 dx = abs(dot(right, uFwd)) < abs(dot(left, uFwd)) ? right : left;
+	vec3 dy = abs(dot(up, uFwd)) < abs(dot(down, uFwd)) ? up : down;
+	vec3 normal = cross(dx, dy);
+	float lengthSquared = dot(normal, normal);
+	normal = lengthSquared > 1e-12 ? normal * inversesqrt(lengthSquared) : normalize(uCam - world);
+	if (dot(normal, uCam - world) < 0.0) normal = -normal;
+	vec3 volumeUv = (world - uVolumeOrigin) / uVolumeExtent;
+	if (uVolumeActive > 0.5 && all(greaterThan(volumeUv, vec3(0.02))) && all(lessThan(volumeUv, vec3(0.98)))) {
+		vec3 e = 1.0 / uVolumeResolution;
+		vec3 d = uVolumeExtent * e;
+		vec3 gradient = vec3(
+			volumeDensity(world + vec3(d.x, 0.0, 0.0)) - volumeDensity(world - vec3(d.x, 0.0, 0.0)),
+			volumeDensity(world + vec3(0.0, d.y, 0.0)) - volumeDensity(world - vec3(0.0, d.y, 0.0)),
+			volumeDensity(world + vec3(0.0, 0.0, d.z)) - volumeDensity(world - vec3(0.0, 0.0, d.z))
+		) / d;
+		float density = volumeDensity(world);
+		if (density > 0.3 && density < 0.7 && dot(gradient, gradient) > 0.000001) normal = -normalize(gradient);
+	}
+	float height = world.y - uLevel;
+	float bodyDepth = max(0.05, 0.9 - 1.5 * max(height, 0.0));
+	float occluded = 0.6 * smoothstep(0.02, 0.3, -height);
+	float alpha = world.y > uLevel + 0.06 ? smoothstep(0.28, 0.52, value.a) : value.a;
+	gl_FragDepth = windowDepth(depth);
+	outColor = vec4(shade(world, normal, bodyDepth, occluded) * alpha, alpha);
+}`;
+
+// Ray-cast the SPH density isosurface. A parcel's sphere is only a sampling kernel;
+// the rendered water is the combined density field, including its union with the pool.
+export const VOLUME_FS = `#version 300 es
+precision highp float;
+in vec2 vUv;
+uniform vec4 uSolidCylinder;
+uniform sampler2D uMask;
+uniform float uSolidBase, uSolidBottom;
+out vec4 outColor;
+${COMMON}
+${DEPTH_PACK}
+${ATLAS_SAMPLE}
+float densityAt(vec3 world) {
+	vec3 uv = (world - uVolumeOrigin) / uVolumeExtent;
+	if (any(lessThan(uv, vec3(0.0))) || any(greaterThan(uv, vec3(1.0)))) return 0.0;
+	float fraction = clamp((world.y - uSolidBase) / max(0.001, uSolidCylinder.w - uSolidBase), 0.0, 1.0);
+	float radius = mix(uSolidBottom, uSolidCylinder.z, fraction);
+	vec2 delta = world.xz - uSolidCylinder.xy;
+	if (world.y > uSolidBase && world.y < uSolidCylinder.w && dot(delta, delta) < radius * radius) return 0.0;
+	return volumeDensity(world);
+}
+void main() {
+	if (texture(uMask, vUv).a < 0.5) discard;
+	vec3 ray = pixelRay(gl_FragCoord.xy);
+	vec3 safeRay = mix(ray, vec3(0.000001), lessThan(abs(ray), vec3(0.000001)));
+	vec3 a = (uVolumeOrigin - uCam) / safeRay;
+	vec3 b = (uVolumeOrigin + uVolumeExtent - uCam) / safeRay;
+	vec3 nearAxis = min(a, b), farAxis = max(a, b);
+	float start = max(NEAR, max(nearAxis.x, max(nearAxis.y, nearAxis.z)));
+	float finish = min(FAR, min(farAxis.x, min(farAxis.y, farAxis.z)));
+	if (finish <= start) discard;
+	vec3 voxel = uVolumeExtent / uVolumeResolution;
+	vec3 cellRay = abs(ray) / voxel;
+	float stepLength = max(0.5 / max(cellRay.x, max(cellRay.y, cellRay.z)), 0.22 * uSupport);
+	float before = start;
+	for (int i = 0; i < 160; i++) {
+		float depth = start + float(i) * stepLength;
+		if (depth > finish) break;
+		if (densityAt(uCam + ray * depth) >= 0.5) {
+			float low = before, high = depth;
+			for (int refine = 0; refine < 7; refine++) {
+				float middle = (low + high) * 0.5;
+				if (densityAt(uCam + ray * middle) >= 0.5) high = middle; else low = middle;
+			}
+			float surface = (low + high) * 0.5;
+			gl_FragDepth = windowDepth(surface);
+			outColor = encodeDepth(surface, 1.0);
+			return;
+		}
+		before = depth;
+	}
+	discard;
 }`;

@@ -15,7 +15,9 @@ const STATIC_PATHS = [
 	'/balikpapan/gatot-subroto',
 	'/about',
 	'/group',
-	'/feedback'
+	'/feedback',
+	'/privacy',
+	'/terms'
 ];
 
 export function GET(): Response {

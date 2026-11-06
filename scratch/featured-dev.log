@@ -1,0 +1,262 @@
+$ vite dev "--port" "5199" "--host" "127.0.0.1"
+
+  [32m[1mVITE[22m v8.3.0[39m  [2mready in [0m[1m7820[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m5199[22m/[39m
+(node:14632) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[2m19.55.53[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m19.55.53[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/sim.ts[22m
+[2m19.55.53[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m19.55.53[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m19.55.53[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m19.55.53[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m19.57.28[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m19.57.28[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m19.57.28[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m19.57.28[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/sim.ts[22m
+[2m19.57.28[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m19.57.28[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m19.57.28[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/lib/liquid/renderer.ts:38:17 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m38 │[0m [38;5;249mc[0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249ms[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249mB[0m[38;5;249mL[0m[38;5;249mU[0m[38;5;249mR[0m[38;5;249m_[0m[38;5;249mF[0m[38;5;249mS[0m[38;5;249m [0m[38;5;249m=[0m[38;5;249m [0m;
+ [38;5;240m   │[0m                 ┬  
+ [38;5;240m   │[0m                 ╰── 
+[38;5;246m────╯[0m
+
+  Plugin: [35mvite:oxc[39m
+  File: [36mD:/Projects/zatiarasjuice/src/lib/liquid/renderer.ts[39m
+[2m19.57.34[22m [31m[1m[vite][22m[39m [31m[2m(ssr)[22m[39m [31mError when evaluating SSR module /src/routes/qa/liquid/+page.svelte: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/lib/liquid/renderer.ts:38:17 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m38 │[0m [38;5;249mc[0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249ms[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249mB[0m[38;5;249mL[0m[38;5;249mU[0m[38;5;249mR[0m[38;5;249m_[0m[38;5;249mF[0m[38;5;249mS[0m[38;5;249m [0m[38;5;249m=[0m[38;5;249m [0m;
+ [38;5;240m   │[0m                 ┬  
+ [38;5;240m   │[0m                 ╰── 
+[38;5;246m────╯[0m
+[39m
+  Plugin: [35mvite:oxc[39m
+  File: [36mD:/Projects/zatiarasjuice/src/lib/liquid/renderer.ts[39m
+      at transformWithOxc (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:7208:19)
+      at TransformPluginContext.transform (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:7280:26)
+      at EnvironmentPluginContainer.transform (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:8172:51)
+      at async loadAndTransform (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:19634:26)
+      at async fetchModule (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:35529:15)
+      at async handleInvoke (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:24774:21)
+      at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:24829:13)
+
+[1;31m[500] GET /qa/liquid[0m
+Error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/lib/liquid/renderer.ts:38:17 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m38 │[0m [38;5;249mc[0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249ms[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249mB[0m[38;5;249mL[0m[38;5;249mU[0m[38;5;249mR[0m[38;5;249m_[0m[38;5;249mF[0m[38;5;249mS[0m[38;5;249m [0m[38;5;249m=[0m[38;5;249m [0m;
+ [38;5;240m   │[0m                 ┬  
+ [38;5;240m   │[0m                 ╰── 
+[38;5;246m────╯[0m
+
+    at transformWithOxc (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:7208:19)
+    at TransformPluginContext.transform (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:7280:26)
+    at EnvironmentPluginContainer.transform (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:8172:51)
+    at async loadAndTransform (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:19634:26)
+    at async fetchModule (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:35529:15)
+    at async handleInvoke (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:24774:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:24829:13)
+
+[1;31m[500] GET /qa/liquid[0m
+Error: Transform failed with 1 error:
+
+[31m[PARSE_ERROR] [0mUnexpected token
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/lib/liquid/renderer.ts:38:17 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m38 │[0m [38;5;249mc[0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249ms[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249mB[0m[38;5;249mL[0m[38;5;249mU[0m[38;5;249mR[0m[38;5;249m_[0m[38;5;249mF[0m[38;5;249mS[0m[38;5;249m [0m[38;5;249m=[0m[38;5;249m [0m;
+ [38;5;240m   │[0m                 ┬  
+ [38;5;240m   │[0m                 ╰── 
+[38;5;246m────╯[0m
+
+    at transformWithOxc (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:7208:19)
+    at TransformPluginContext.transform (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:7280:26)
+    at EnvironmentPluginContainer.transform (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:8172:51)
+    at async loadAndTransform (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:19634:26)
+    at async fetchModule (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:35529:15)
+    at async handleInvoke (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:24774:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:24829:13)
+[2m19.58.29[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m19.58.29[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m20.03.08[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.03.08[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/sim.ts[22m
+[2m20.03.08[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m20.03.08[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m20.04.31[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.04.31[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/sim.ts[22m
+[2m20.04.31[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m20.04.31[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m20.06.01[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.06.01[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/sim.ts[22m
+[2m20.08.23[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.08.23[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/sim.ts[22m
+[2m20.08.39[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.08.39[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/sim.ts[22m
+[2m20.09.00[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.09.00[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m20.09.49[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m20.09.49[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m20.11.41[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m20.11.41[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m20.11.41[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.11.41[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m20.13.07[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m20.13.07[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m20.13.07[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/lib/components/LiquidSplash.svelte?svelte&type=style&lang.css, /src/routes/layout.css[22m
+[2m20.13.07[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m20.13.07[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/qa/liquid/+page.svelte?svelte&type=style&lang.css, /src/routes/layout.css[22m
+[2m20.13.07[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/qa/liquid/+page.svelte[22m
+[2m20.14.58[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m20.14.58[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m20.15.59[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.15.59[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m20.15.59[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m20.15.59[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m20.16.41[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m20.16.41[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m20.16.41[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.16.41[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m20.16.42[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.16.42[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/sim.ts[22m
+[2m20.16.42[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m20.16.42[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m20.38.05[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.38.05[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m20.38.06[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m20.38.06[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m20.38.06[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m20.38.06[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m20.38.11[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m20.38.11[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/splash.ts[22m
+[2m20.39.42[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m20.39.42[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/splash.ts[22m
+[2m20.39.43[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/qa/liquid/+page.svelte, /src/routes/qa/liquid/+page.svelte?svelte&type=style&lang.css, /src/routes/layout.css[22m
+[2m20.39.43[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/routes/qa/liquid/+page.svelte[22m
+[2m20.39.43[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m20.39.43[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m20.41.46[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.41.46[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m20.41.46[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m20.41.46[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/splash.ts[22m
+[2m20.47.54[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.47.54[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m20.47.56[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m20.47.56[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m20.48.00[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.48.00[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m20.52.00[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.52.00[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m20.54.22[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.54.22[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m20.58.46[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m20.58.46[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/splash.ts[22m
+[2m20.59.33[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.59.33[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m20.59.35[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.59.35[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m20.59.52[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.59.52[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m20.59.54[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.59.54[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m20.59.56[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.59.56[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m20.59.58[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m20.59.58[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m21.00.14[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m21.00.14[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m21.00.16[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m21.00.16[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m21.00.18[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m21.00.18[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m21.00.20[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m21.00.20[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m21.00.35[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css[22m
+[2m21.01.18[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css[22m
+[2m21.01.18[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mscratch/hero-splash/shoot.mjs[22m
+[2m23.12.42[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m23.12.42[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m23.13.00[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m23.13.00[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m23.13.01[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m23.13.01[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/renderer.ts[22m
+[2m23.13.01[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css, /src/lib/components/LiquidSplash.svelte[22m
+[2m23.13.01[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/sim.ts[22m
+[2m23.13.01[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m23.13.01[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/splash.ts[22m
+[2m23.13.06[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to load url /src/lib/liquid/renderer.ts (resolved id: D:/Projects/zatiarasjuice/src/lib/liquid/renderer.ts) in D:/Projects/zatiarasjuice/src/lib/components/LiquidSplash.svelte. Does the file exist?
+[2m23.13.06[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to load url /src/lib/liquid/splash.ts (resolved id: D:/Projects/zatiarasjuice/src/lib/liquid/splash.ts) in D:/Projects/zatiarasjuice/src/lib/components/LiquidSplash.svelte. Does the file exist?
+[2m23.13.06[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to load url /src/lib/liquid/sim.ts (resolved id: D:/Projects/zatiarasjuice/src/lib/liquid/sim.ts) in D:/Projects/zatiarasjuice/src/lib/components/LiquidSplash.svelte. Does the file exist?
+[2m23.13.06[22m [31m[1m[vite][22m[39m [31m[2m(ssr)[22m[39m [31mError when evaluating SSR module /src/routes/qa/liquid/+page.svelte: Failed to load url /src/lib/liquid/sim.ts (resolved id: D:/Projects/zatiarasjuice/src/lib/liquid/sim.ts) in D:/Projects/zatiarasjuice/src/lib/components/LiquidSplash.svelte. Does the file exist?[39m
+      at loadAndTransform (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:19623:31)
+      at async fetchModule (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:35529:15)
+      at async handleInvoke (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:24774:21)
+      at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:24829:13)
+
+[1;31m[500] GET /qa/liquid[0m
+Error: Failed to load url /src/lib/liquid/sim.ts (resolved id: D:/Projects/zatiarasjuice/src/lib/liquid/sim.ts) in D:/Projects/zatiarasjuice/src/lib/components/LiquidSplash.svelte. Does the file exist?
+    at loadAndTransform (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:19623:31)
+    at async fetchModule (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:35529:15)
+    at async handleInvoke (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:24774:21)
+    at async EventEmitter.listenerForInvokeHandler (file:///D:/Projects/zatiarasjuice/node_modules/.pnpm/vite@8.3.0_@types+node@24.13.4_esbuild@0.28.1_jiti@2.7.0/node_modules/vite/dist/node/chunks/node.js:24829:13)
+
+[1;31m[404] GET /src/lib/liquid/renderer.ts[0m
+
+[1;31m[404] GET /src/lib/liquid/sim.ts[0m
+
+[1;31m[404] GET /src/lib/liquid/splash.ts[0m
+[2m23.13.12[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22m[vite] Failed to reload /src/lib/components/LiquidSplash.svelte. This could be due to syntax errors or importing non-existent modules. (see errors above)
+[2m23.13.12[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mTypeError[22m: Cannot read properties of undefined (reading 'default')
+[39m > src/lib/components/LiquidSplash.svelte?t=1792418420579:326:37
+ > ../../@vite/client:449:58
+ > ../../@vite/client:599:52
+ > ../../@vite/client:577:55
+ > HMRClient.queueUpdate ../../@vite/client:577:33
+ > handleMessage ../../@vite/client:1004:4
+
+[2m23.14.48[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m23.14.48[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m23.17.48[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css[22m
+[2m23.17.48[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mscratch/hero-splash/sheet.mjs[22m
+[2m23.18.36[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css[22m
+[2m23.21.48[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m23.21.48[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m23.21.50[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m23.21.50[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m23.24.54[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m23.24.54[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m23.24.54[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m23.24.54[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m23.28.05[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m23.28.05[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m23.28.07[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m23.28.07[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m23.31.04[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m23.31.04[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m23.31.05[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/routes/layout.css[22m
+[2m23.31.05[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2mscratch/hero-splash/shoot3d.mjs[22m
+[2m23.33.23[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m23.33.23[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m05.27.38[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m05.27.39[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m05.27.43[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m05.27.43[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m05.33.21[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m05.33.21[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m05.36.00[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m05.36.00[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m05.36.06[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m05.36.06[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/components/LiquidSplash.svelte[22m
+[2m05.38.16[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m05.38.16[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m
+[2m05.41.59[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/components/LiquidSplash.svelte, /src/routes/layout.css[22m
+[2m05.41.59[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m [32mpage reload [39m[2msrc/lib/liquid/crown.ts[22m

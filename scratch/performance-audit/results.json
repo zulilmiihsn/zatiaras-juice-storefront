@@ -1,0 +1,1589 @@
+{
+  "environment": "Local Vite dev server; Chromium headless. Not production CWV or physical phone FPS.",
+  "responsive": [
+    {
+      "width": 320,
+      "top": {
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 11730,
+        "y": 0,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 320,
+            "h": 73,
+            "right": 320
+          },
+          "transform": "none",
+          "translate": "none",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 16,
+              "y": 20,
+              "w": 111.96875,
+              "h": 32,
+              "right": 127.96875
+            },
+            {
+              "text": "Keranjang",
+              "x": 208,
+              "y": 14,
+              "w": 44,
+              "h": 44,
+              "right": 252
+            }
+          ],
+          "ctaVisible": false
+        },
+        "video": {
+          "paused": false,
+          "time": 1.040438,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "scrolled": {
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 11730,
+        "y": 1250,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": -73,
+            "w": 320,
+            "h": 73,
+            "right": 320
+          },
+          "transform": "none",
+          "translate": "0px -100%",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 16,
+              "y": -53,
+              "w": 111.96875,
+              "h": 32,
+              "right": 127.96875
+            },
+            {
+              "text": "Keranjang",
+              "x": 208,
+              "y": -59,
+              "w": 44,
+              "h": 44,
+              "right": 252
+            }
+          ],
+          "ctaVisible": true
+        },
+        "video": {
+          "paused": false,
+          "time": 1.753052,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "errors": []
+    },
+    {
+      "width": 360,
+      "top": {
+        "width": 360,
+        "scrollWidth": 360,
+        "height": 11442,
+        "y": 0,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 360,
+            "h": 73,
+            "right": 360
+          },
+          "transform": "none",
+          "translate": "none",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 16,
+              "y": 20,
+              "w": 111.96875,
+              "h": 32,
+              "right": 127.96875
+            },
+            {
+              "text": "Keranjang",
+              "x": 248,
+              "y": 14,
+              "w": 44,
+              "h": 44,
+              "right": 292
+            }
+          ],
+          "ctaVisible": false
+        },
+        "video": {
+          "paused": false,
+          "time": 1.024111,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "scrolled": {
+        "width": 360,
+        "scrollWidth": 360,
+        "height": 11442,
+        "y": 1250,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": -73,
+            "w": 360,
+            "h": 73,
+            "right": 360
+          },
+          "transform": "none",
+          "translate": "0px -100%",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 16,
+              "y": -53,
+              "w": 111.96875,
+              "h": 32,
+              "right": 127.96875
+            },
+            {
+              "text": "Keranjang",
+              "x": 248,
+              "y": -59,
+              "w": 44,
+              "h": 44,
+              "right": 292
+            }
+          ],
+          "ctaVisible": true
+        },
+        "video": {
+          "paused": false,
+          "time": 1.648857,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "errors": []
+    },
+    {
+      "width": 375,
+      "top": {
+        "width": 375,
+        "scrollWidth": 375,
+        "height": 11341,
+        "y": 0,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 375,
+            "h": 73,
+            "right": 375
+          },
+          "transform": "none",
+          "translate": "none",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 16,
+              "y": 20,
+              "w": 111.96875,
+              "h": 32,
+              "right": 127.96875
+            },
+            {
+              "text": "Keranjang",
+              "x": 263,
+              "y": 14,
+              "w": 44,
+              "h": 44,
+              "right": 307
+            }
+          ],
+          "ctaVisible": false
+        },
+        "video": {
+          "paused": false,
+          "time": 1.033552,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "scrolled": {
+        "width": 375,
+        "scrollWidth": 375,
+        "height": 11341,
+        "y": 1250,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": -73,
+            "w": 375,
+            "h": 73,
+            "right": 375
+          },
+          "transform": "none",
+          "translate": "0px -100%",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 16,
+              "y": -53,
+              "w": 111.96875,
+              "h": 32,
+              "right": 127.96875
+            },
+            {
+              "text": "Keranjang",
+              "x": 263,
+              "y": -59,
+              "w": 44,
+              "h": 44,
+              "right": 307
+            }
+          ],
+          "ctaVisible": true
+        },
+        "video": {
+          "paused": false,
+          "time": 1.64439,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "errors": []
+    },
+    {
+      "width": 390,
+      "top": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 11237,
+        "y": 0,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 390,
+            "h": 73,
+            "right": 390
+          },
+          "transform": "none",
+          "translate": "none",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 16,
+              "y": 20,
+              "w": 111.96875,
+              "h": 32,
+              "right": 127.96875
+            },
+            {
+              "text": "Keranjang",
+              "x": 278,
+              "y": 14,
+              "w": 44,
+              "h": 44,
+              "right": 322
+            }
+          ],
+          "ctaVisible": false
+        },
+        "video": {
+          "paused": false,
+          "time": 1.03559,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "scrolled": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 11237,
+        "y": 1250,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": -73,
+            "w": 390,
+            "h": 73,
+            "right": 390
+          },
+          "transform": "none",
+          "translate": "0px -100%",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 16,
+              "y": -53,
+              "w": 111.96875,
+              "h": 32,
+              "right": 127.96875
+            },
+            {
+              "text": "Keranjang",
+              "x": 278,
+              "y": -59,
+              "w": 44,
+              "h": 44,
+              "right": 322
+            }
+          ],
+          "ctaVisible": true
+        },
+        "video": {
+          "paused": false,
+          "time": 1.645447,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "errors": []
+    },
+    {
+      "width": 640,
+      "top": {
+        "width": 640,
+        "scrollWidth": 640,
+        "height": 8228,
+        "y": 0,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 640,
+            "h": 73,
+            "right": 640
+          },
+          "transform": "none",
+          "translate": "none",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 24,
+              "y": 18,
+              "w": 125.953125,
+              "h": 36,
+              "right": 149.953125
+            },
+            {
+              "text": "Keranjang",
+              "x": 516,
+              "y": 14,
+              "w": 44,
+              "h": 44,
+              "right": 560
+            }
+          ],
+          "ctaVisible": false
+        },
+        "video": {
+          "paused": false,
+          "time": 1.021615,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "scrolled": {
+        "width": 640,
+        "scrollWidth": 640,
+        "height": 8228,
+        "y": 1250,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": -73,
+            "w": 640,
+            "h": 73,
+            "right": 640
+          },
+          "transform": "none",
+          "translate": "0px -100%",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 24,
+              "y": -55,
+              "w": 125.953125,
+              "h": 36,
+              "right": 149.953125
+            },
+            {
+              "text": "Keranjang",
+              "x": 516,
+              "y": -59,
+              "w": 44,
+              "h": 44,
+              "right": 560
+            }
+          ],
+          "ctaVisible": true
+        },
+        "video": {
+          "paused": false,
+          "time": 1.639196,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "errors": []
+    },
+    {
+      "width": 768,
+      "top": {
+        "width": 768,
+        "scrollWidth": 768,
+        "height": 8020,
+        "y": 0,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 768,
+            "h": 73,
+            "right": 768
+          },
+          "transform": "none",
+          "translate": "none",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 24,
+              "y": 18,
+              "w": 125.953125,
+              "h": 36,
+              "right": 149.953125
+            },
+            {
+              "text": "Menu",
+              "x": 184.65625,
+              "y": 16.75,
+              "w": 39.890625,
+              "h": 38.5,
+              "right": 224.546875
+            },
+            {
+              "text": "Outlet",
+              "x": 260.546875,
+              "y": 16.75,
+              "w": 46.984375,
+              "h": 38.5,
+              "right": 307.53125
+            },
+            {
+              "text": "Pesan Rame-Rame",
+              "x": 343.53125,
+              "y": 16.75,
+              "w": 137.765625,
+              "h": 38.5,
+              "right": 481.296875
+            },
+            {
+              "text": "Keranjang",
+              "x": 516,
+              "y": 14,
+              "w": 44,
+              "h": 44,
+              "right": 560
+            },
+            {
+              "text": "Pesan Sekarang",
+              "x": 572,
+              "y": 12,
+              "w": 172,
+              "h": 40,
+              "right": 744
+            }
+          ],
+          "ctaVisible": false
+        },
+        "video": {
+          "paused": false,
+          "time": 1.030261,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "scrolled": {
+        "width": 768,
+        "scrollWidth": 768,
+        "height": 8020,
+        "y": 1250,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 768,
+            "h": 73,
+            "right": 768
+          },
+          "transform": "none",
+          "translate": "none",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 24,
+              "y": 18,
+              "w": 125.953125,
+              "h": 36,
+              "right": 149.953125
+            },
+            {
+              "text": "Menu",
+              "x": 184.65625,
+              "y": 16.75,
+              "w": 39.890625,
+              "h": 38.5,
+              "right": 224.546875
+            },
+            {
+              "text": "Outlet",
+              "x": 260.546875,
+              "y": 16.75,
+              "w": 46.984375,
+              "h": 38.5,
+              "right": 307.53125
+            },
+            {
+              "text": "Pesan Rame-Rame",
+              "x": 343.53125,
+              "y": 16.75,
+              "w": 137.765625,
+              "h": 38.5,
+              "right": 481.296875
+            },
+            {
+              "text": "Keranjang",
+              "x": 516,
+              "y": 14,
+              "w": 44,
+              "h": 44,
+              "right": 560
+            },
+            {
+              "text": "Pesan Sekarang",
+              "x": 572,
+              "y": 16,
+              "w": 172,
+              "h": 40,
+              "right": 744
+            }
+          ],
+          "ctaVisible": true
+        },
+        "video": {
+          "paused": false,
+          "time": 1.663504,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "errors": []
+    },
+    {
+      "width": 1024,
+      "top": {
+        "width": 1024,
+        "scrollWidth": 1024,
+        "height": 7598,
+        "y": 0,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1024,
+            "h": 73,
+            "right": 1024
+          },
+          "transform": "none",
+          "translate": "none",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 24,
+              "y": 18,
+              "w": 125.953125,
+              "h": 36,
+              "right": 149.953125
+            },
+            {
+              "text": "Menu",
+              "x": 312.65625,
+              "y": 16.75,
+              "w": 39.890625,
+              "h": 38.5,
+              "right": 352.546875
+            },
+            {
+              "text": "Outlet",
+              "x": 388.546875,
+              "y": 16.75,
+              "w": 46.984375,
+              "h": 38.5,
+              "right": 435.53125
+            },
+            {
+              "text": "Pesan Rame-Rame",
+              "x": 471.53125,
+              "y": 16.75,
+              "w": 137.765625,
+              "h": 38.5,
+              "right": 609.296875
+            },
+            {
+              "text": "Keranjang",
+              "x": 772,
+              "y": 14,
+              "w": 44,
+              "h": 44,
+              "right": 816
+            },
+            {
+              "text": "Pesan Sekarang",
+              "x": 828,
+              "y": 12,
+              "w": 172,
+              "h": 40,
+              "right": 1000
+            }
+          ],
+          "ctaVisible": false
+        },
+        "video": {
+          "paused": false,
+          "time": 1.03147,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "scrolled": {
+        "width": 1024,
+        "scrollWidth": 1024,
+        "height": 7598,
+        "y": 1250,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1024,
+            "h": 73,
+            "right": 1024
+          },
+          "transform": "none",
+          "translate": "none",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 24,
+              "y": 18,
+              "w": 125.953125,
+              "h": 36,
+              "right": 149.953125
+            },
+            {
+              "text": "Menu",
+              "x": 312.65625,
+              "y": 16.75,
+              "w": 39.890625,
+              "h": 38.5,
+              "right": 352.546875
+            },
+            {
+              "text": "Outlet",
+              "x": 388.546875,
+              "y": 16.75,
+              "w": 46.984375,
+              "h": 38.5,
+              "right": 435.53125
+            },
+            {
+              "text": "Pesan Rame-Rame",
+              "x": 471.53125,
+              "y": 16.75,
+              "w": 137.765625,
+              "h": 38.5,
+              "right": 609.296875
+            },
+            {
+              "text": "Keranjang",
+              "x": 772,
+              "y": 14,
+              "w": 44,
+              "h": 44,
+              "right": 816
+            },
+            {
+              "text": "Pesan Sekarang",
+              "x": 828,
+              "y": 16,
+              "w": 172,
+              "h": 40,
+              "right": 1000
+            }
+          ],
+          "ctaVisible": true
+        },
+        "video": {
+          "paused": false,
+          "time": 1.653674,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "errors": []
+    },
+    {
+      "width": 1280,
+      "top": {
+        "width": 1280,
+        "scrollWidth": 1280,
+        "height": 7664,
+        "y": 0,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1280,
+            "h": 73,
+            "right": 1280
+          },
+          "transform": "none",
+          "translate": "none",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 88,
+              "y": 18,
+              "w": 125.953125,
+              "h": 36,
+              "right": 213.953125
+            },
+            {
+              "text": "Menu",
+              "x": 440.65625,
+              "y": 16.75,
+              "w": 39.890625,
+              "h": 38.5,
+              "right": 480.546875
+            },
+            {
+              "text": "Outlet",
+              "x": 516.546875,
+              "y": 16.75,
+              "w": 46.984375,
+              "h": 38.5,
+              "right": 563.53125
+            },
+            {
+              "text": "Pesan Rame-Rame",
+              "x": 599.53125,
+              "y": 16.75,
+              "w": 137.765625,
+              "h": 38.5,
+              "right": 737.296875
+            },
+            {
+              "text": "Keranjang",
+              "x": 964,
+              "y": 14,
+              "w": 44,
+              "h": 44,
+              "right": 1008
+            },
+            {
+              "text": "Pesan Sekarang",
+              "x": 1020,
+              "y": 12,
+              "w": 172,
+              "h": 40,
+              "right": 1192
+            }
+          ],
+          "ctaVisible": false
+        },
+        "video": {
+          "paused": false,
+          "time": 1.036737,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "scrolled": {
+        "width": 1280,
+        "scrollWidth": 1280,
+        "height": 7664,
+        "y": 1250,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1280,
+            "h": 73,
+            "right": 1280
+          },
+          "transform": "none",
+          "translate": "none",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 88,
+              "y": 18,
+              "w": 125.953125,
+              "h": 36,
+              "right": 213.953125
+            },
+            {
+              "text": "Menu",
+              "x": 440.65625,
+              "y": 16.75,
+              "w": 39.890625,
+              "h": 38.5,
+              "right": 480.546875
+            },
+            {
+              "text": "Outlet",
+              "x": 516.546875,
+              "y": 16.75,
+              "w": 46.984375,
+              "h": 38.5,
+              "right": 563.53125
+            },
+            {
+              "text": "Pesan Rame-Rame",
+              "x": 599.53125,
+              "y": 16.75,
+              "w": 137.765625,
+              "h": 38.5,
+              "right": 737.296875
+            },
+            {
+              "text": "Keranjang",
+              "x": 964,
+              "y": 14,
+              "w": 44,
+              "h": 44,
+              "right": 1008
+            },
+            {
+              "text": "Pesan Sekarang",
+              "x": 1020,
+              "y": 16,
+              "w": 172,
+              "h": 40,
+              "right": 1192
+            }
+          ],
+          "ctaVisible": true
+        },
+        "video": {
+          "paused": false,
+          "time": 1.647871,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "errors": []
+    },
+    {
+      "width": 1440,
+      "top": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "height": 7706,
+        "y": 0,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1440,
+            "h": 73,
+            "right": 1440
+          },
+          "transform": "none",
+          "translate": "none",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 168,
+              "y": 18,
+              "w": 125.953125,
+              "h": 36,
+              "right": 293.953125
+            },
+            {
+              "text": "Menu",
+              "x": 520.65625,
+              "y": 16.75,
+              "w": 39.890625,
+              "h": 38.5,
+              "right": 560.546875
+            },
+            {
+              "text": "Outlet",
+              "x": 596.546875,
+              "y": 16.75,
+              "w": 46.984375,
+              "h": 38.5,
+              "right": 643.53125
+            },
+            {
+              "text": "Pesan Rame-Rame",
+              "x": 679.53125,
+              "y": 16.75,
+              "w": 137.765625,
+              "h": 38.5,
+              "right": 817.296875
+            },
+            {
+              "text": "Keranjang",
+              "x": 1044,
+              "y": 14,
+              "w": 44,
+              "h": 44,
+              "right": 1088
+            },
+            {
+              "text": "Pesan Sekarang",
+              "x": 1100,
+              "y": 12,
+              "w": 172,
+              "h": 40,
+              "right": 1272
+            }
+          ],
+          "ctaVisible": false
+        },
+        "video": {
+          "paused": false,
+          "time": 1.036901,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "scrolled": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "height": 7706,
+        "y": 1250,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1440,
+            "h": 73,
+            "right": 1440
+          },
+          "transform": "none",
+          "translate": "none",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 168,
+              "y": 18,
+              "w": 125.953125,
+              "h": 36,
+              "right": 293.953125
+            },
+            {
+              "text": "Menu",
+              "x": 520.65625,
+              "y": 16.75,
+              "w": 39.890625,
+              "h": 38.5,
+              "right": 560.546875
+            },
+            {
+              "text": "Outlet",
+              "x": 596.546875,
+              "y": 16.75,
+              "w": 46.984375,
+              "h": 38.5,
+              "right": 643.53125
+            },
+            {
+              "text": "Pesan Rame-Rame",
+              "x": 679.53125,
+              "y": 16.75,
+              "w": 137.765625,
+              "h": 38.5,
+              "right": 817.296875
+            },
+            {
+              "text": "Keranjang",
+              "x": 1044,
+              "y": 14,
+              "w": 44,
+              "h": 44,
+              "right": 1088
+            },
+            {
+              "text": "Pesan Sekarang",
+              "x": 1100,
+              "y": 16,
+              "w": 172,
+              "h": 40,
+              "right": 1272
+            }
+          ],
+          "ctaVisible": true
+        },
+        "video": {
+          "paused": false,
+          "time": 1.6487,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "errors": []
+    }
+  ],
+  "motion": [
+    {
+      "reducedMotion": "reduce",
+      "requests": [
+        "http://localhost:5173/videos/hero-poster.jpg"
+      ],
+      "state": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 11187,
+        "y": 0,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 390,
+            "h": 73,
+            "right": 390
+          },
+          "transform": "none",
+          "translate": "none",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 16,
+              "y": 20,
+              "w": 111.96875,
+              "h": 32,
+              "right": 127.96875
+            },
+            {
+              "text": "Keranjang",
+              "x": 278,
+              "y": 14,
+              "w": 44,
+              "h": 44,
+              "right": 322
+            }
+          ],
+          "ctaVisible": false
+        },
+        "video": {
+          "paused": true,
+          "time": 0,
+          "source": "",
+          "width": 0,
+          "height": 0,
+          "duration": null
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "scrollBehavior": "auto"
+    },
+    {
+      "reducedMotion": "no-preference",
+      "requests": [
+        "http://localhost:5173/videos/hero-poster.jpg",
+        "http://localhost:5173/videos/hero.webm"
+      ],
+      "state": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 11187,
+        "y": 0,
+        "header": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 390,
+            "h": 73,
+            "right": 390
+          },
+          "transform": "none",
+          "translate": "none",
+          "links": [
+            {
+              "text": "Zatiaras Juice",
+              "x": 16,
+              "y": 20,
+              "w": 111.96875,
+              "h": 32,
+              "right": 127.96875
+            },
+            {
+              "text": "Keranjang",
+              "x": 278,
+              "y": 14,
+              "w": 44,
+              "h": 44,
+              "right": 322
+            }
+          ],
+          "ctaVisible": false
+        },
+        "video": {
+          "paused": false,
+          "time": 1.325269,
+          "source": "http://localhost:5173/videos/hero.webm",
+          "width": 1280,
+          "height": 720,
+          "duration": 6
+        },
+        "footerSource": "",
+        "unresolvedSvgRefs": []
+      },
+      "scrollBehavior": "smooth"
+    }
+  ],
+  "tabletDrawer": {
+    "open": true,
+    "videoPaused": true,
+    "bodyOverflow": "hidden",
+    "closed": {
+      "open": false,
+      "videoPaused": false,
+      "focusLabel": "Buka menu navigasi"
+    }
+  },
+  "footerArtwork": {
+    "atTop": [],
+    "atBottom": [
+      "http://localhost:5173/images/zatiaras-wave-divider-3840.avif"
+    ]
+  },
+  "mobileHeaderDirection": {
+    "hidden": {
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 11299,
+      "y": 1500,
+      "header": {
+        "rect": {
+          "x": 0,
+          "y": -73,
+          "w": 390,
+          "h": 73,
+          "right": 390
+        },
+        "transform": "none",
+        "translate": "0px -100%",
+        "links": [
+          {
+            "text": "Zatiaras Juice",
+            "x": 16,
+            "y": -53,
+            "w": 111.96875,
+            "h": 32,
+            "right": 127.96875
+          },
+          {
+            "text": "Keranjang",
+            "x": 278,
+            "y": -59,
+            "w": 44,
+            "h": 44,
+            "right": 322
+          }
+        ],
+        "ctaVisible": true
+      },
+      "video": {
+        "paused": false,
+        "time": 1.455202,
+        "source": "http://localhost:5173/videos/hero.webm",
+        "width": 1280,
+        "height": 720,
+        "duration": 6
+      },
+      "footerSource": "",
+      "unresolvedSvgRefs": []
+    },
+    "slowUp": {
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 11299,
+      "y": 1420,
+      "header": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 390,
+          "h": 73,
+          "right": 390
+        },
+        "transform": "none",
+        "translate": "none",
+        "links": [
+          {
+            "text": "Zatiaras Juice",
+            "x": 16,
+            "y": 20,
+            "w": 111.96875,
+            "h": 32,
+            "right": 127.96875
+          },
+          {
+            "text": "Keranjang",
+            "x": 278,
+            "y": 14,
+            "w": 44,
+            "h": 44,
+            "right": 322
+          }
+        ],
+        "ctaVisible": true
+      },
+      "video": {
+        "paused": false,
+        "time": 0.256206,
+        "source": "http://localhost:5173/videos/hero.webm",
+        "width": 1280,
+        "height": 720,
+        "duration": 6
+      },
+      "footerSource": "",
+      "unresolvedSvgRefs": []
+    },
+    "fastUp": {
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 11299,
+      "y": 1390,
+      "header": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 390,
+          "h": 73,
+          "right": 390
+        },
+        "transform": "none",
+        "translate": "none",
+        "links": [
+          {
+            "text": "Zatiaras Juice",
+            "x": 16,
+            "y": 20,
+            "w": 111.96875,
+            "h": 32,
+            "right": 127.96875
+          },
+          {
+            "text": "Keranjang",
+            "x": 278,
+            "y": 14,
+            "w": 44,
+            "h": 44,
+            "right": 322
+          }
+        ],
+        "ctaVisible": true
+      },
+      "video": {
+        "paused": false,
+        "time": 0.664924,
+        "source": "http://localhost:5173/videos/hero.webm",
+        "width": 1280,
+        "height": 720,
+        "duration": 6
+      },
+      "footerSource": "",
+      "unresolvedSvgRefs": []
+    }
+  },
+  "mobileDrawer": {
+    "open": true,
+    "videoPaused": true,
+    "bodyOverflow": "hidden",
+    "closed": {
+      "open": false,
+      "videoPaused": false,
+      "focusLabel": "Buka menu navigasi"
+    }
+  },
+  "coveredVideo": {
+    "middleStart": {
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 11299,
+      "y": 4569,
+      "header": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 390,
+          "h": 73,
+          "right": 390
+        },
+        "transform": "none",
+        "translate": "none",
+        "links": [
+          {
+            "text": "Zatiaras Juice",
+            "x": 16,
+            "y": 20,
+            "w": 111.96875,
+            "h": 32,
+            "right": 127.96875
+          },
+          {
+            "text": "Keranjang",
+            "x": 278,
+            "y": 14,
+            "w": 44,
+            "h": 44,
+            "right": 322
+          }
+        ],
+        "ctaVisible": true
+      },
+      "video": {
+        "paused": true,
+        "time": 2.915896,
+        "source": "http://localhost:5173/videos/hero.webm",
+        "width": 1280,
+        "height": 720,
+        "duration": 6
+      },
+      "footerSource": "",
+      "unresolvedSvgRefs": []
+    },
+    "middleEnd": {
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 11299,
+      "y": 4569,
+      "header": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 390,
+          "h": 73,
+          "right": 390
+        },
+        "transform": "none",
+        "translate": "none",
+        "links": [
+          {
+            "text": "Zatiaras Juice",
+            "x": 16,
+            "y": 20,
+            "w": 111.96875,
+            "h": 32,
+            "right": 127.96875
+          },
+          {
+            "text": "Keranjang",
+            "x": 278,
+            "y": 14,
+            "w": 44,
+            "h": 44,
+            "right": 322
+          }
+        ],
+        "ctaVisible": true
+      },
+      "video": {
+        "paused": true,
+        "time": 2.915896,
+        "source": "http://localhost:5173/videos/hero.webm",
+        "width": 1280,
+        "height": 720,
+        "duration": 6
+      },
+      "footerSource": "",
+      "unresolvedSvgRefs": []
+    }
+  },
+  "footerVideo": {
+    "width": 390,
+    "scrollWidth": 390,
+    "height": 11299,
+    "y": 10455,
+    "header": {
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 390,
+        "h": 73,
+        "right": 390
+      },
+      "transform": "none",
+      "translate": "none",
+      "links": [
+        {
+          "text": "Zatiaras Juice",
+          "x": 16,
+          "y": 20,
+          "w": 111.96875,
+          "h": 32,
+          "right": 127.96875
+        },
+        {
+          "text": "Keranjang",
+          "x": 278,
+          "y": 14,
+          "w": 44,
+          "h": 44,
+          "right": 322
+        }
+      ],
+      "ctaVisible": false
+    },
+    "video": {
+      "paused": true,
+      "time": 2.915896,
+      "source": "http://localhost:5173/videos/hero.webm",
+      "width": 1280,
+      "height": 720,
+      "duration": 6
+    },
+    "footerSource": "http://localhost:5173/images/zatiaras-wave-divider-3840.avif",
+    "unresolvedSvgRefs": []
+  },
+  "saveData": {
+    "supported": true,
+    "state": {
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 11187,
+      "y": 0,
+      "header": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 390,
+          "h": 73,
+          "right": 390
+        },
+        "transform": "none",
+        "translate": "none",
+        "links": [
+          {
+            "text": "Zatiaras Juice",
+            "x": 16,
+            "y": 20,
+            "w": 111.96875,
+            "h": 32,
+            "right": 127.96875
+          },
+          {
+            "text": "Keranjang",
+            "x": 278,
+            "y": 14,
+            "w": 44,
+            "h": 44,
+            "right": 322
+          }
+        ],
+        "ctaVisible": false
+      },
+      "video": {
+        "paused": true,
+        "time": 0,
+        "source": "",
+        "width": 0,
+        "height": 0,
+        "duration": null
+      },
+      "footerSource": "",
+      "unresolvedSvgRefs": []
+    }
+  }
+}

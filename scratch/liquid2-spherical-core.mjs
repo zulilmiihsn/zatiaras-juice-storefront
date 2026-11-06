@@ -1,0 +1,25 @@
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+const rendererPath = 'src/lib/liquid2/renderer.ts', shaderPath = 'src/lib/liquid2/shaders.ts';
+let renderer = readFileSync(rendererPath, 'utf8'), shaders = readFileSync(shaderPath, 'utf8');
+const original = [renderer, shaders];
+renderer = renderer.replace(/^\tprivate readonly kernelBuffer: WebGLBuffer;\n/m, '').replace(/^\tprivate densityKernels = new Float32Array\(0\);\n/m, '');
+renderer = renderer.replace(/^\t+kernelBuffer = gl.createBuffer\(\),\n/m, '').replace(' || !kernelBuffer', '').replace(/^\t+this.kernelBuffer = kernelBuffer;\n/m, '');
+const a = renderer.indexOf('\t\tgl.bindBuffer(gl.ARRAY_BUFFER, kernelBuffer);');
+const b = renderer.indexOf('\t\tgl.bindVertexArray(null);', a);
+if (a < 0 || b < 0) throw new Error('Missing core kernel attributes');
+renderer = renderer.slice(0, a) + renderer.slice(b);
+renderer = renderer.replace(/^\t+this.densityKernels = new Float32Array\(capacity \* 9\);\n/m, '').replace(/^\t+this.densityKernels.fill\(0\);\n/m, '');
+renderer = renderer.replace(/\t+const matrix = this.sampleCount \* 9;\n[\s\S]*?\n\t+this.sampleCount\+\+;/, '\t\t\t\tthis.sampleCount++;');
+renderer = renderer.replace(/^\t+this.densityKernels.fill\(0, 0, 9\);\n/m, '').replace(/^\t+this.densityKernels\[0\][^\n]+\n/m, '');
+renderer = renderer.replace(/\t+gl.bindBuffer\(gl.ARRAY_BUFFER, this.kernelBuffer\);\n\t+gl.bufferData\(gl.ARRAY_BUFFER, capacity \* 36, gl.DYNAMIC_DRAW\);\n\t+gl.bindBuffer\(gl.ARRAY_BUFFER, this.fluidBuffer\);\n/, '');
+renderer = renderer.replace(/\t+gl.bindBuffer\(gl.ARRAY_BUFFER, this.kernelBuffer\);\n\t+gl.bufferSubData\(gl.ARRAY_BUFFER, 0, this.densityKernels.subarray\(0, splats \* 9\)\);\n/, '');
+renderer = renderer.replace(/^\t+gl.deleteBuffer\(this.kernelBuffer\);\n/m, '');
+if (/kernelBuffer|densityKernels/.test(renderer)) throw new Error('Incomplete spherical core cleanup');
+shaders = shaders.replace('export const DENSITY_SLICES = 12;', 'export const DENSITY_SLICES = 8;');
+shaders = shaders.replace(/^layout\(location = [345]\) in vec3 aKernel[012];\n/gm, '').replace(/^flat (?:out|in) mat3 vKernel;\n/gm, '').replace(/^\tvKernel = mat3\(aKernel0, aKernel1, aKernel2\);\n/m, '');
+shaders = shaders.replace('vec3 delta = vKernel * (world - vParticle.xyz);', 'vec3 delta = world - vParticle.xyz;').replace('float bound = uSupport * 1.35;', 'float bound = uSupport;');
+shaders = shaders.replace('float bound = 1.8 * uSupport;\n\tvec2 radius = vec2(2.0 * uFocal / uAspect, 2.0 * uFocal) * bound * centre.w / max(NEAR, centre.w - bound);', 'vec3 offset = aParticle.xyz - uCam;\n\tvec2 slope = abs(vec2(dot(offset, uRight), dot(offset, uUp))) / max(NEAR, centre.w);\n\tvec2 radius = vec2(2.0 * uFocal / uAspect, 2.0 * uFocal) * uSupport * (1.0 + slope) * centre.w / max(NEAR, centre.w - uSupport);');
+if (/vKernel|aKernel/.test(shaders)) throw new Error('Incomplete kernel shader cleanup');
+mkdirSync('scratch/liquid2-review/before-spherical-core', { recursive: true });
+for (let i = 0; i < 2; i++) { const path = i ? shaderPath : rendererPath; writeFileSync(`scratch/liquid2-review/before-spherical-core/${path.split('/').at(-1)}`, original[i]); writeFileSync(path, i ? shaders : renderer); }
+console.log('Spherical core pipeline and explicit thin films share camera, depth and material.');

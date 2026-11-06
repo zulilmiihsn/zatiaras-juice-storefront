@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { dev } from '$app/environment';
 	import { cart } from '$lib/stores/cart.svelte';
 	import { AVAILABILITY_VERIFIED, MENU_VERIFIED } from '$lib/data/menu';
 	import { isValidOutletId, getOutlet } from '$lib/core/outlets';
@@ -283,7 +284,7 @@
 				{/if}
 
 				<div class="mt-8 flex flex-col gap-3 sm:flex-row">
-					{#if MENU_VERIFIED && AVAILABILITY_VERIFIED}
+					{#if dev && MENU_VERIFIED && AVAILABILITY_VERIFIED}
 						<a
 							href="/checkout"
 							class="tap-scale flex-1 rounded-full bg-brand px-8 py-4 text-center font-bold text-white shadow-xl shadow-brand/25 transition hover:bg-brand-dark"

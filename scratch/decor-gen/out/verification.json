@@ -1,0 +1,122 @@
+[
+  {
+    "file": "leaf-single.png",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 1234579,
+    "KB": 1205.6,
+    "alphaCorners": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "partialAlphaPixels": 389914,
+    "borderVisiblePixels": 0
+  },
+  {
+    "file": "leaf-single.webp",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 239196,
+    "KB": 233.6,
+    "alphaCorners": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "partialAlphaPixels": 389914,
+    "borderVisiblePixels": 0
+  },
+  {
+    "file": "leaf-pair.png",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 819201,
+    "KB": 800,
+    "alphaCorners": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "partialAlphaPixels": 254207,
+    "borderVisiblePixels": 0
+  },
+  {
+    "file": "leaf-pair.webp",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 176372,
+    "KB": 172.2,
+    "alphaCorners": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "partialAlphaPixels": 254207,
+    "borderVisiblePixels": 0
+  },
+  {
+    "file": "strawberry-whole.png",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 1094734,
+    "KB": 1069.1,
+    "alphaCorners": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "partialAlphaPixels": 351319,
+    "borderVisiblePixels": 0
+  },
+  {
+    "file": "strawberry-whole.webp",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 234472,
+    "KB": 229,
+    "alphaCorners": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "partialAlphaPixels": 351319,
+    "borderVisiblePixels": 0
+  },
+  {
+    "file": "strawberry-half-leaf.png",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 1028424,
+    "KB": 1004.3,
+    "alphaCorners": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "partialAlphaPixels": 316624,
+    "borderVisiblePixels": 0
+  },
+  {
+    "file": "strawberry-half-leaf.webp",
+    "width": 1024,
+    "height": 1024,
+    "bytes": 221238,
+    "KB": 216.1,
+    "alphaCorners": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "partialAlphaPixels": 316624,
+    "borderVisiblePixels": 0
+  }
+]

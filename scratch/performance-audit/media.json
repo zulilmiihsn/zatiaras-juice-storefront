@@ -1,0 +1,67 @@
+{
+  "reduce": {
+    "video": {
+      "paused": true,
+      "time": 5.893729,
+      "frames": 144,
+      "dropped": 3
+    },
+    "mediaResources": [
+      {
+        "path": "/videos/hero-poster.jpg",
+        "encodedBytes": 44669,
+        "transferBytes": 44969,
+        "startTime": 1075
+      },
+      {
+        "path": "/images/zatiaras-wave-divider-3840.avif",
+        "encodedBytes": 185763,
+        "transferBytes": 186063,
+        "startTime": 1075.2999997138977
+      },
+      {
+        "path": "/videos/hero.webm",
+        "encodedBytes": 313918,
+        "transferBytes": 314218,
+        "startTime": 1186.5999999046326
+      }
+    ],
+    "blurCount": 15,
+    "gsapLoaded": false
+  },
+  "no-preference": {
+    "video": {
+      "paused": false,
+      "time": 3.05362,
+      "frames": 77,
+      "dropped": 1
+    },
+    "mediaResources": [
+      {
+        "path": "/videos/hero-poster.jpg",
+        "encodedBytes": 44669,
+        "transferBytes": 44969,
+        "startTime": 65.10000038146973
+      },
+      {
+        "path": "/images/zatiaras-wave-divider-3840.avif",
+        "encodedBytes": 185763,
+        "transferBytes": 186063,
+        "startTime": 65.2000002861023
+      },
+      {
+        "path": "/videos/hero.webm",
+        "encodedBytes": 313918,
+        "transferBytes": 314218,
+        "startTime": 123.80000019073486
+      }
+    ],
+    "blurCount": 15,
+    "gsapLoaded": false
+  },
+  "drawer": {
+    "open": true,
+    "overflow": "hidden",
+    "videoPaused": false
+  }
+}

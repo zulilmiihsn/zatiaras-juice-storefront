@@ -1,0 +1,10 @@
+import { chromium } from 'playwright-core';
+import { readFileSync } from 'node:fs';
+const [,, src, out, y0, y1] = process.argv;
+const data = readFileSync(src).toString('base64');
+const b = await chromium.launch({ executablePath: 'C:/Users/ASUS/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe' });
+const p = await b.newPage({ viewport: { width: 1920, height: +y1 - +y0 } });
+await p.setContent(`<body style="margin:0;overflow:hidden"><img src="data:image/png;base64,${data}" style="display:block;margin-top:-${y0}px;filter:contrast(3)">`);
+await p.waitForTimeout(500);
+await p.screenshot({ path: out });
+await b.close();

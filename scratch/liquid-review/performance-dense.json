@@ -1,0 +1,21 @@
+{
+  "label": "dense",
+  "startupMs": 5180,
+  "renderer": "ANGLE (Intel, Intel(R) HD Graphics 620 (0x00005921) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "backing": [
+    1200,
+    750
+  ],
+  "frames": 301,
+  "frameP50Ms": 16.599999994039536,
+  "frameP95Ms": 17.5,
+  "gpuWaitP50Ms": 0.10000002384185791,
+  "gpuWaitP95Ms": 0.20000001788139343,
+  "mode": "live",
+  "interaction": {
+    "frames": 240,
+    "frameP50Ms": 16.599999994039536,
+    "frameP95Ms": 17.19999998807907,
+    "mode": "live"
+  }
+}

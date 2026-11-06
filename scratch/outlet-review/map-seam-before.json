@@ -1,0 +1,26 @@
+[
+  {
+    "width": 1440,
+    "height": 900,
+    "bottom": 450.140625,
+    "rootBackground": "rgb(255, 248, 236)",
+    "mapBackground": "rgb(255, 248, 236)",
+    "canvasMask": "none",
+    "washMask": "none",
+    "creditMask": "none",
+    "creditOpacity": "1",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "bottom": 422.328125,
+    "rootBackground": "rgb(255, 248, 236)",
+    "mapBackground": "rgb(255, 248, 236)",
+    "canvasMask": "none",
+    "washMask": "none",
+    "creditMask": "none",
+    "creditOpacity": "1",
+    "overflow": false
+  }
+]

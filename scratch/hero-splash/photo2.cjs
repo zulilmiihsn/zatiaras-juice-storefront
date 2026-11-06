@@ -1,0 +1,14 @@
+const fs = require('fs');
+let s;
+const rep = (a, b) => { if (!s.includes(a)) throw new Error('missing: ' + a.slice(0, 70)); s = s.replace(a, () => b); };
+let f = 'src/lib/components/LiquidSplash.svelte'; s = fs.readFileSync(f, 'utf8');
+rep('const cx = (portrait ? 0.5 : anchorX) * aspect;\n', 'const wideW = Math.min(size * 1.5, aspect * 0.56);\n\t\t\t// Keep the whole image on screen: clamp the centre so the right arm is not cropped.\n\t\t\tconst cx = portrait ? 0.5 * aspect : Math.min(anchorX * aspect, aspect - wideW / 2 - 0.02);\n');
+rep('const w = portrait ? Math.min(aspect * 1.0, 0.72) : Math.min(size * 1.5, aspect * 0.56);', 'const w = portrait ? Math.min(aspect * 1.0, 0.72) : wideW;');
+fs.writeFileSync(f, s);
+f = 'src/lib/liquid/splash.ts'; s = fs.readFileSync(f, 'utf8');
+rep('{ u: 0.18, v: 0.07, dir: [-0.3, -0.95], rate: 1.0 }', '{ u: 0.18, v: 0.07, dir: [0.1, -1], rate: 0.8 }');
+rep('const speedOut = rect.h * (0.45 + Math.random() * 0.45);', 'const speedOut = rect.h * (0.4 + Math.random() * 0.35);');
+fs.writeFileSync(f, s);
+f = 'src/routes/qa/liquid/+page.svelte'; s = fs.readFileSync(f, 'utf8');
+rep('left: 75%;', 'left: 71%;');
+fs.writeFileSync(f, s);

@@ -22,6 +22,8 @@ export interface Drink {
 	x: number;
 	z: number;
 	radius: number;
+	/** Bottom radius of a tapered cup; omitted for a cylindrical obstacle. */
+	baseRadius?: number;
 	height: number;
 	baseY: number;
 }
@@ -50,7 +52,7 @@ const SHIFT = -0.17;
 /** Drink base below the calm surface: it starts partly submerged. */
 export const DRINK_BASE_Y = -0.15;
 /** Cylinder radius as a fraction of the image's drawn width (cut-outs have side margins). */
-export const CUP_FILL = 0.42;
+export const CUP_FILL = 0.23;
 /** How far the grid reaches back from its front edge, in world units. */
 const DOMAIN_DEPTH = 6;
 
@@ -112,7 +114,8 @@ export function placeDrink(
 	const aspect = finite(imageAspect, 0.8) > 0 ? finite(imageAspect, 0.8) : 0.8;
 	const base = unprojectToPlane(cam, ax, ay, DRINK_BASE_Y) ?? [0, DRINK_BASE_Y, 0];
 	const baseScreen = project(cam, base).y;
-	const projected = (h: number) => baseScreen - project(cam, [base[0], DRINK_BASE_Y + h, base[2]]).y;
+	const projected = (h: number) =>
+		baseScreen - project(cam, [base[0], DRINK_BASE_Y + h, base[2]]).y;
 	// Projected height grows monotonically with world height while the top stays in front
 	// of the camera; bisect.
 	let lo = 0.01;
@@ -123,7 +126,21 @@ export function placeDrink(
 		else hi = mid;
 	}
 	const height = (lo + hi) / 2;
-	return { x: base[0], z: base[2], radius: height * aspect * CUP_FILL, height, baseY: DRINK_BASE_Y };
+	return {
+		x: base[0],
+		z: base[2],
+		radius: height * aspect * CUP_FILL,
+		baseRadius: height * aspect * 0.135,
+		height,
+		baseY: DRINK_BASE_Y
+	};
+}
+
+/** Radius of the photographed cup, excluding the surrounding fruit and transparent margin. */
+export function radiusAt(drink: Drink, y: number): number {
+	const base = drink.baseRadius ?? drink.radius;
+	const t = Math.min(1, Math.max(0, (y - drink.baseY) / drink.height));
+	return base + (drink.radius - base) * t;
 }
 
 /** Floor area the camera sees, from just past the bottom screen edge back DOMAIN_DEPTH. */
@@ -143,12 +160,16 @@ export function coverLevel(cam: Camera): number {
 
 export function levelForProgress(p: number, cover: number): number {
 	if (!Number.isFinite(p)) return 0;
-	const t = clamp((p - 0.08) / (0.92 - 0.08), 0, 1);
-	return cover * t * t * (3 - 2 * t);
+	const t = clamp((p - 0.74) / (0.98 - 0.74), 0, 1);
+	const eased = t * t * (3 - 2 * t);
+	// Portrait framing makes the drink smaller in world units. Keep its upper body above
+	// the mean surface through the wrap, then let the pool climb the rest of the way to
+	// the camera. The curve stays monotone and has smooth endpoints in both directions.
+	// The entire collision phase now leaves the mean level unchanged; only the final
+	// quarter of the track fills the camera, independently of the local run-up height.
+	return cover * eased;
 }
 
 export function qualityTier(coarse: boolean): Tier {
-	return coarse
-		? { cols: 96, rows: 64 }
-		: { cols: 160, rows: 112 };
+	return coarse ? { cols: 48, rows: 32 } : { cols: 112, rows: 80 };
 }

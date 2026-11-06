@@ -10,7 +10,7 @@
 	import zcup from '$lib/assets/brand/ZJ_CUP_STANDALONE.svg';
 
 	const title = 'Lacak Pesanan | Zatiaras Juice';
-	const desc = 'Pantau status pesanan pickup Zatiaras Juice di Samarinda, Berau, dan Balikpapan.';
+	const desc = 'Lihat data pesanan Zatiaras Juice yang tersimpan di perangkat ini.';
 
 	let id = $state('');
 	let mine = $state<Order[]>([]);
@@ -22,7 +22,7 @@
 	function handleSearch(): void {
 		const clean = id.trim().replace(/^#/, '');
 		if (clean) {
-			goto(`/order/${clean}`);
+			void goto(`/order/${encodeURIComponent(clean)}`);
 		}
 	}
 
@@ -86,8 +86,8 @@
 			</h1>
 			<div class="cup-lip-bar mt-3 w-12 sm:mx-auto"></div>
 			<p class="mt-3 max-w-md text-xs leading-relaxed text-neutral-600 sm:mx-auto sm:text-sm">
-				Cek progres peracikan pesanan pickup jus segarmu atau temukan nomor pesanan dari riwayat
-				perangkat ini.
+				Lihat data pesanan yang tersimpan di browser ini. Pelacakan langsung dari outlet belum
+				tersedia; hubungi outlet untuk memastikan status pesanan.
 			</p>
 		</div>
 
@@ -108,6 +108,7 @@
 					<input
 						bind:value={id}
 						type="text"
+						aria-label="ID pesanan"
 						placeholder="Ketik ID Pesanan (contoh: order_...)"
 						class="w-full rounded-2xl border border-black/15 bg-neutral-50/50 py-3.5 pr-4 pl-9 text-sm text-ink placeholder:text-neutral-400 focus:border-brand focus:bg-white"
 					/>

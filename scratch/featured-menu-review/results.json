@@ -1,0 +1,66 @@
+[
+  {
+    "width": 320,
+    "scrollWidth": 320,
+    "clipped": false,
+    "columns": 1,
+    "arrows": true,
+    "cupMotion": "none"
+  },
+  {
+    "width": 360,
+    "scrollWidth": 360,
+    "clipped": false,
+    "columns": 1,
+    "arrows": true,
+    "cupMotion": "none"
+  },
+  {
+    "width": 375,
+    "scrollWidth": 375,
+    "clipped": false,
+    "columns": 1,
+    "arrows": true,
+    "cupMotion": "none"
+  },
+  {
+    "width": 390,
+    "scrollWidth": 390,
+    "clipped": false,
+    "columns": 1,
+    "arrows": true,
+    "cupMotion": "none"
+  },
+  {
+    "width": 768,
+    "scrollWidth": 768,
+    "clipped": false,
+    "columns": 3,
+    "arrows": true,
+    "cupMotion": "none"
+  },
+  {
+    "width": 1024,
+    "scrollWidth": 1024,
+    "clipped": false,
+    "columns": 3,
+    "arrows": true,
+    "cupMotion": "none"
+  },
+  {
+    "width": 1280,
+    "scrollWidth": 1280,
+    "clipped": false,
+    "columns": 3,
+    "arrows": true,
+    "cupMotion": "none"
+  },
+  {
+    "width": 1440,
+    "scrollWidth": 1440,
+    "clipped": false,
+    "columns": 3,
+    "arrows": true,
+    "cupMotion": "none"
+  }
+]

@@ -1,0 +1,11 @@
+const fs = require('fs');
+let s;
+const rep = (a, b) => { if (!s.includes(a)) throw new Error('missing: ' + a.slice(0, 70)); s = s.replace(a, () => b); };
+let f = 'src/lib/liquid/renderer.ts'; s = fs.readFileSync(f, 'utf8');
+rep(') * 0.0075 * hw;', ') * 0.017 * hw;');
+rep('sin(uv.y * 17.0 - uTime * 2.6) * 0.0028 * hw', 'sin(uv.y * 17.0 - uTime * 2.6) * 0.005 * hw');
+rep('sin(uv.x * 21.0 + uTime * 2.1) * 0.0022 * hw', 'sin(uv.x * 21.0 + uTime * 2.1) * 0.004 * hw');
+fs.writeFileSync(f, s);
+f = 'src/lib/liquid/splash.ts'; s = fs.readFileSync(f, 'utf8');
+rep('Math.sin(time * 1.15 + side * 2.1) * 0.012 + Math.sin(time * 2.9 + side) * 0.005', 'Math.sin(time * 1.15 + side * 2.1) * 0.03 + Math.sin(time * 2.9 + side) * 0.01');
+fs.writeFileSync(f, s);

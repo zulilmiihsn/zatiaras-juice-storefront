@@ -34,8 +34,9 @@ get human support on failure, and pick up. V1 fulfillment is pickup-first (`Pesa
 
 `/`, `/menu`, `/menu/[slug]`, `/locations`, `/samarinda`, `/samarinda/juanda`,
 `/samarinda/slamet-riyadi`, `/berau`, `/berau/merah-delima`, `/balikpapan`,
-`/balikpapan/kutilang`, `/balikpapan/gatot-subroto`, `/order`, `/order/[id]`,
-`/track`, `/feedback`, `/about`, `/group`.
+`/balikpapan/kutilang`, `/balikpapan/gatot-subroto`, `/cart`, `/checkout`, `/order/[id]`,
+`/track`, `/feedback`, `/about`, `/group`, `/privacy`, `/terms`. Unknown routes use the
+branded SvelteKit error page (`src/routes/+error.svelte`).
 
 ## Develop
 
@@ -69,7 +70,9 @@ Still open:
 - Slamet Riyadi street address; Kutilang + Gatot Subroto street addresses/coords
   (hours owner-confirmed 2026-09-25: Slamet Riyadi 07:00–22:00 Mon–Sat, Sunday
   closed; Kutilang + Gatot Subroto same as Juanda 07:00–23:00 daily).
-- Outlet pin coordinates (only city-level centroids known — not used as pins).
+- Outlet pin coordinates for Slamet Riyadi, Merah Delima, Kutilang, and Gatot Subroto.
+  Juanda now uses the Plus Code published in the employer profile (see `docs/ARCHITECTURE.md`).
+  Other branches show city-area overviews without guessed pins.
 - Final menu/price truth (Supabase live, not publicly accessible; 2023 receipt stale).
 - Payment provider, group threshold, slot capacity.
 

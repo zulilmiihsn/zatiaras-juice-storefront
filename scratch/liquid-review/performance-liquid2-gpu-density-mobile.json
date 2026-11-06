@@ -1,0 +1,29 @@
+{
+  "label": "liquid2-gpu-density-mobile",
+  "route": "/qa/liquid2",
+  "mobile": true,
+  "startupMs": 5457,
+  "renderer": "ANGLE (Intel, Intel(R) HD Graphics 620 (0x00005921) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "backing": [
+    390,
+    844
+  ],
+  "frames": 283,
+  "frameP50Ms": 17.799999952316284,
+  "frameP95Ms": 22.600000023841858,
+  "gpuWaitP50Ms": 3.199999988079071,
+  "gpuWaitP95Ms": 6.5,
+  "mode": "live",
+  "interaction": {
+    "frames": 229,
+    "frameP50Ms": 17.5,
+    "frameP95Ms": 22.30000001192093,
+    "mode": "live"
+  },
+  "scrolling": {
+    "frames": 193,
+    "frameP50Ms": 19,
+    "frameP95Ms": 32.5,
+    "mode": "live"
+  }
+}

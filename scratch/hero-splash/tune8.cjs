@@ -1,0 +1,16 @@
+const fs = require('fs');
+let s;
+const rep = (a, b) => { if (!s.includes(a)) throw new Error('missing: ' + a.slice(0, 70)); s = s.replace(a, b); };
+let f = 'src/lib/liquid/crown.ts'; s = fs.readFileSync(f, 'utf8');
+rep('{ p0: [-0.12, 0.04], p1: [-0.3, 0.12], p2: [-0.58, 0.3], p3: [-0.74, 0.7], base: 0.24,', '{ p0: [-0.12, 0.04], p1: [-0.3, 0.14], p2: [-0.5, 0.36], p3: [-0.52, 0.8], base: 0.24,');
+rep('{ p0: [0.12, 0.04], p1: [0.32, 0.12], p2: [0.6, 0.32], p3: [0.76, 0.74], base: 0.24,', '{ p0: [0.12, 0.04], p1: [0.32, 0.12], p2: [0.62, 0.32], p3: [0.8, 0.76], base: 0.24,');
+fs.writeFileSync(f, s);
+f = 'src/lib/components/LiquidSplash.svelte'; s = fs.readFileSync(f, 'utf8');
+rep('anchorX = 0.72,', 'anchorX = 0.75,');
+rep('size = 0.5,', 'size = 0.62,');
+rep('size: portrait ? Math.min(size * 0.84, aspect * 0.95) : Math.min(size, aspect * 0.36)', 'size: portrait ? Math.min(size * 0.68, aspect * 0.95) : Math.min(size, aspect * 0.4)');
+rep('.still {\n\t\tposition: absolute;\n\t\tleft: 68%;', '.still {\n\t\tposition: absolute;\n\t\tleft: 75%;');
+fs.writeFileSync(f, s);
+f = 'src/routes/qa/liquid/+page.svelte'; s = fs.readFileSync(f, 'utf8');
+rep('left: 68%;\n\t\tbottom: 3%;\n\t\theight: min(62svh, 40rem);', 'left: 75%;\n\t\tbottom: 3%;\n\t\theight: min(52svh, 34rem);');
+fs.writeFileSync(f, s);

@@ -1,0 +1,13 @@
+{
+  "name": "zatiaras-matilampu-render",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "render": "node render_local.cjs",
+    "test": "node render_local.cjs --test"
+  },
+  "dependencies": {
+    "puppeteer": "latest",
+    "ffmpeg-static": "^5.2.0"
+  }
+}

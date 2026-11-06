@@ -1,0 +1,32 @@
+{
+  "label": "liquid2-gpu-film-mobile",
+  "route": "/qa/liquid2",
+  "mobile": true,
+  "startupMs": 4838,
+  "renderer": "ANGLE (Intel, Intel(R) HD Graphics 620 (0x00005921) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "backing": [
+    346,
+    749
+  ],
+  "frames": 269,
+  "frameP50Ms": 18,
+  "frameP95Ms": 27.899999976158142,
+  "completedFrameP95Ms": 26.900000035762787,
+  "gpuWaitP50Ms": 4,
+  "gpuWaitP95Ms": 8.800000011920929,
+  "mode": "live",
+  "interaction": {
+    "frames": 211,
+    "frameP50Ms": 18.30000001192093,
+    "frameP95Ms": 27.399999976158142,
+    "completedFrameP95Ms": 27.399999976158142,
+    "mode": "live"
+  },
+  "scrolling": {
+    "frames": 147,
+    "frameP50Ms": 23.19999998807907,
+    "frameP95Ms": 41.69999998807907,
+    "completedFrameP95Ms": 42.89999997615814,
+    "mode": "live"
+  }
+}

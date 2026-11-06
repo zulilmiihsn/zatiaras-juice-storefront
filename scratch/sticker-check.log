@@ -1,0 +1,13 @@
+Already up to date
+Done in 2.3s using pnpm v11.1.3
+$ wrangler types --check && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json
+
+ ⛅️ wrangler 4.132.0 (update available 4.158.0)
+───────────────────────────────────────────────
+✨ Types at worker-configuration.d.ts are up to date.
+
+Loading svelte-check in workspace: d:\Projects\zatiarasjuice
+Getting Svelte diagnostics...
+
+[32msvelte-check found 0 errors and 0 warnings
+[39m

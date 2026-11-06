@@ -1,0 +1,178 @@
+[
+  {
+    "width": 390,
+    "height": 844,
+    "sections": [
+      {
+        "title": "JUS ALPUKAT",
+        "top": 5,
+        "height": 760,
+        "left": 0,
+        "right": 390,
+        "headingLeft": 16,
+        "paddingTop": "0px",
+        "paddingBottom": "0px"
+      },
+      {
+        "title": "Jus Apa Aja Ada",
+        "top": 765,
+        "height": 1668,
+        "left": 0,
+        "right": 390,
+        "headingLeft": 16,
+        "paddingTop": "0px",
+        "paddingBottom": "0px"
+      },
+      {
+        "title": "Menu Andalan Zatiaras",
+        "top": 2433,
+        "height": 1906,
+        "left": 0,
+        "right": 390,
+        "headingLeft": 16,
+        "paddingTop": "64px",
+        "paddingBottom": "80px"
+      },
+      {
+        "title": "Pesan dulu Tinggal ambil",
+        "top": 4339,
+        "height": 912,
+        "left": 0,
+        "right": 390,
+        "headingLeft": 16,
+        "paddingTop": "80px",
+        "paddingBottom": "80px"
+      },
+      {
+        "title": "Temukan Zatiaras dekat kamu.",
+        "top": 5252,
+        "height": 844,
+        "left": 0,
+        "right": 390,
+        "headingLeft": 34,
+        "paddingTop": "0px",
+        "paddingBottom": "0px"
+      },
+      {
+        "title": "Pesan Rame-Rame",
+        "top": 6096,
+        "height": 402,
+        "left": 0,
+        "right": 390,
+        "headingLeft": 48,
+        "paddingTop": "80px",
+        "paddingBottom": "80px"
+      },
+      {
+        "title": "Kentalnya Beneran",
+        "top": 6497,
+        "height": 1040,
+        "left": 0,
+        "right": 390,
+        "headingLeft": 16,
+        "paddingTop": "144px",
+        "paddingBottom": "144px"
+      },
+      {
+        "title": "Haus? Pesan Dulu, Tinggal Ambil di Outlet",
+        "top": 7537,
+        "height": 597,
+        "left": 0,
+        "right": 390,
+        "headingLeft": 16,
+        "paddingTop": "80px",
+        "paddingBottom": "48px"
+      }
+    ],
+    "errors": [],
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "height": 900,
+    "sections": [
+      {
+        "title": "JUS ALPUKAT",
+        "top": 0,
+        "height": 882,
+        "left": 0,
+        "right": 1440,
+        "headingLeft": 168,
+        "paddingTop": "0px",
+        "paddingBottom": "0px"
+      },
+      {
+        "title": "Jus Apa Aja Ada",
+        "top": 882,
+        "height": 804,
+        "left": 0,
+        "right": 1440,
+        "headingLeft": 168,
+        "paddingTop": "0px",
+        "paddingBottom": "0px"
+      },
+      {
+        "title": "Menu Andalan Zatiaras",
+        "top": 1686,
+        "height": 934,
+        "left": 144,
+        "right": 1296,
+        "headingLeft": 168,
+        "paddingTop": "96px",
+        "paddingBottom": "112px"
+      },
+      {
+        "title": "Pesan dulu Tinggal ambil",
+        "top": 2621,
+        "height": 647,
+        "left": 144,
+        "right": 1296,
+        "headingLeft": 168,
+        "paddingTop": "96px",
+        "paddingBottom": "96px"
+      },
+      {
+        "title": "Temukan Zatiaras dekat kamu.",
+        "top": 3269,
+        "height": 900,
+        "left": 0,
+        "right": 1440,
+        "headingLeft": 128,
+        "paddingTop": "0px",
+        "paddingBottom": "0px"
+      },
+      {
+        "title": "Pesan Rame-Rame",
+        "top": 4169,
+        "height": 474,
+        "left": 144,
+        "right": 1296,
+        "headingLeft": 224,
+        "paddingTop": "96px",
+        "paddingBottom": "96px"
+      },
+      {
+        "title": "Kentalnya Beneran",
+        "top": 4643,
+        "height": 772,
+        "left": 144,
+        "right": 1296,
+        "headingLeft": 168,
+        "paddingTop": "224px",
+        "paddingBottom": "224px"
+      },
+      {
+        "title": "Haus? Pesan Dulu, Tinggal Ambil di Outlet",
+        "top": 5414,
+        "height": 626,
+        "left": 0,
+        "right": 1440,
+        "headingLeft": 296,
+        "paddingTop": "128px",
+        "paddingBottom": "80px"
+      }
+    ],
+    "errors": [],
+    "overflow": false
+  }
+]

@@ -1,0 +1,15 @@
+import { chromium } from 'playwright-core';
+const [,, out, w = '1440', h = '900', dy = '0'] = process.argv;
+const browser = await chromium.launch({ executablePath: 'C:/Users/ASUS/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe', args: ['--enable-unsafe-swiftshader'] });
+const page = await browser.newPage({ reducedMotion: 'reduce', viewport: { width: +w, height: +h } });
+const errors = [];
+page.on('pageerror', (e) => errors.push(e.message));
+page.on('console', (m) => { if (m.type() === 'error' || /liquid/.test(m.text())) errors.push(m.text()); });
+await page.goto('http://localhost:5173/', { waitUntil: 'networkidle' });
+await page.evaluate((dy) => { const r = document.querySelector('.footer-wave').getBoundingClientRect(); scrollTo(0, scrollY + r.top - innerHeight * +dy); }, dy);
+await page.waitForTimeout(2500);
+const mode = await page.evaluate(() => document.querySelector('.footer-wave [data-liquid-mode]')?.getAttribute('data-liquid-mode'));
+const box = await page.evaluate(() => { const r = document.querySelector('.footer-wave').getBoundingClientRect(); return [r.top, r.height]; });
+await page.screenshot({ path: out });
+console.log(JSON.stringify({ mode, box, errors }));
+await browser.close();

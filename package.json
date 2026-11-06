@@ -42,7 +42,8 @@
 	},
 	"dependencies": {
 		"@fontsource/plus-jakarta-sans": "^5.3.0",
-		"gsap": "^3.15.0"
+		"gsap": "^3.15.0",
+		"maplibre-gl": "^6.13.0"
 	},
 	"description": "Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).",
 	"main": "eslint.config.js",

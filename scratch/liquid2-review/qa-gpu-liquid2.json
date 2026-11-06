@@ -1,0 +1,199 @@
+{
+  "results": [
+    {
+      "name": "WebGL2 and viewport 320",
+      "overflow": false,
+      "width": 320,
+      "height": 844
+    },
+    {
+      "name": "WebGL2 and viewport 360",
+      "overflow": false,
+      "width": 360,
+      "height": 844
+    },
+    {
+      "name": "WebGL2 and viewport 375",
+      "overflow": false,
+      "width": 375,
+      "height": 844
+    },
+    {
+      "name": "WebGL2 and viewport 390",
+      "overflow": false,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "Calm surface throws no droplets 390"
+    },
+    {
+      "name": "Collision run-up rises locally while the main pool stays low 390",
+      "draws": 2,
+      "visiblePixels": 453,
+      "level": 0,
+      "farFieldPeak": 0.021396644413471222,
+      "runUp": 0.6291782259941101
+    },
+    {
+      "name": "Scrolling stirs the surface without drops 390"
+    },
+    {
+      "name": "Bright pink surface 390"
+    },
+    {
+      "name": "Liquid body is one connected surface 390",
+      "connected": 127283,
+      "detached": 0
+    },
+    {
+      "name": "Full viewport covered 390: 25 opaque samples"
+    },
+    {
+      "name": "Reverse scroll restores wave 390"
+    },
+    {
+      "name": "Mobile touch disturbs the surface locally without driving swells"
+    },
+    {
+      "name": "Liquid wraps the drink front and back 390",
+      "shown": {
+        "pink": 17644,
+        "other": 45830,
+        "tinted": 70853,
+        "partial": 6352,
+        "total": 87248
+      },
+      "hidden": {
+        "pink": 25255,
+        "other": 23704,
+        "tinted": 60680,
+        "partial": 9928,
+        "total": 87248
+      }
+    },
+    {
+      "name": "WebGL2 and viewport 768",
+      "overflow": false,
+      "width": 768,
+      "height": 900
+    },
+    {
+      "name": "WebGL2 and viewport 1024",
+      "overflow": false,
+      "width": 1011,
+      "height": 889
+    },
+    {
+      "name": "WebGL2 and viewport 1280",
+      "overflow": false,
+      "width": 1131,
+      "height": 795
+    },
+    {
+      "name": "WebGL2 and viewport 1440",
+      "overflow": false,
+      "width": 1200,
+      "height": 750
+    },
+    {
+      "name": "Calm surface throws no droplets 1440"
+    },
+    {
+      "name": "Collision run-up rises locally while the main pool stays low 1440",
+      "draws": 2,
+      "visiblePixels": 2191,
+      "level": 0,
+      "farFieldPeak": 0.013644757680594921,
+      "runUp": 0.5304080247879028
+    },
+    {
+      "name": "Scrolling stirs the surface without drops 1440"
+    },
+    {
+      "name": "Bright pink surface 1440"
+    },
+    {
+      "name": "Liquid body is one connected surface 1440",
+      "connected": 361920,
+      "detached": 0
+    },
+    {
+      "name": "Full viewport covered 1440: 25 opaque samples"
+    },
+    {
+      "name": "Resizing a settled covered canvas repaints the full surface"
+    },
+    {
+      "name": "Reverse scroll restores wave 1440"
+    },
+    {
+      "name": "Pointer wake disturbs the surface locally without driving swells"
+    },
+    {
+      "name": "Liquid wraps the drink front and back 1440",
+      "shown": {
+        "pink": 26898,
+        "other": 88472,
+        "tinted": 118175,
+        "partial": 2524,
+        "total": 173625
+      },
+      "hidden": {
+        "pink": 47916,
+        "other": 12896,
+        "tinted": 75800,
+        "partial": 13032,
+        "total": 173625
+      }
+    },
+    {
+      "name": "Cover fades in before the lens submerges 1440",
+      "pink": 0,
+      "other": 0,
+      "tinted": 72000,
+      "partial": 72000,
+      "total": 72000
+    },
+    {
+      "name": "Back edge fades into the page 1440",
+      "pink": 24452,
+      "other": 123875,
+      "tinted": 174716,
+      "partial": 23174,
+      "total": 271200
+    },
+    {
+      "name": "Offscreen rendering stops"
+    },
+    {
+      "name": "Context loss falls back and still completes scroll"
+    },
+    {
+      "name": "Drink image failing to load: liquid stays live, no WebGL error, alt kept"
+    },
+    {
+      "name": "No float colour buffer: still live and fully covered"
+    },
+    {
+      "name": "HiDPI drawing buffer capped at 900000 pixels",
+      "pixels": 898704
+    },
+    {
+      "name": "Changing reduced-motion preference stops the live renderer"
+    },
+    {
+      "name": "reduced-motion: loaded still, no render loop, reversible cover"
+    },
+    {
+      "name": "no-webgl: loaded still, no render loop, reversible cover"
+    },
+    {
+      "name": "data-saver: loaded still, no render loop, reversible cover"
+    },
+    {
+      "name": "No JavaScript: static visual and menu navigation"
+    }
+  ],
+  "errors": []
+}

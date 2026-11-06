@@ -1,0 +1,594 @@
+// Local position-based fluid for impact against the drink. A bounded reservoir feeds a
+// dense stream; density constraints, gravity, viscosity and the solid cylinder determine
+// its shape. Rendering receives a volume of particles, never a prescribed splash mesh.
+
+import { radiusAt, type Drink } from './scene';
+import { GRAVITY, MAX_SUBSTEPS, SIM_STEP, type ShallowWater } from './shallow-water';
+
+const STRIDE = 3;
+const MAX_NEIGHBOURS = 80;
+const FLUID_STEP = 1 / 60;
+const NX = 48,
+	NY = 28,
+	NZ = 40;
+const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
+
+// Integral of the poly6 kernel inside a solid half-space. Restoring this missing
+// boundary density prevents low-resolution fluid from collapsing into clumps at walls.
+function boundaryCap(distance: number, h: number, out: Float64Array) {
+	if (distance >= h) {
+		out[0] = 0;
+		out[1] = 0;
+		return;
+	}
+	const a = clamp(distance / h, 0, 1),
+		a2 = a * a;
+	const integral = a * (1 - a2 * (4 / 3 - a2 * (6 / 5 - a2 * (4 / 7 - a2 / 9))));
+	out[0] = (128 / 315 - integral) / (256 / 315);
+	const edge = 1 - a2;
+	out[1] = (-edge * edge * edge * edge) / ((256 / 315) * h);
+}
+
+export class Fluid {
+	readonly position: Float32Array;
+	readonly velocity: Float32Array;
+	readonly renderData: Float32Array;
+	readonly densitySamples: Float32Array;
+	readonly volumeResolution: readonly [number, number, number];
+	readonly density: Float32Array;
+	readonly volumeOrigin = new Float32Array(3);
+	readonly volumeExtent = new Float32Array([1, 1, 1]);
+	count = 0;
+	renderCount = 0;
+	speed = 0;
+	radius = 0;
+	private drink: Drink | null = null;
+	private readonly predicted: Float32Array;
+	private readonly old: Float32Array;
+	private readonly correction: Float32Array;
+	private readonly lambda: Float32Array;
+	private readonly particleDensity: Float32Array;
+	private readonly renderWeight: Float32Array;
+	private readonly boundaryGradient: Float32Array;
+	private readonly boundarySample = new Float64Array(2);
+	private readonly age: Float32Array;
+	private readonly neighbours: Int32Array;
+	private readonly neighbourCount: Uint8Array;
+	private readonly heads = new Int32Array(NX * NY * NZ);
+	private readonly next: Int32Array;
+	private readonly connected: Uint8Array;
+	private readonly queue: Int32Array;
+	private h = 0;
+	private spacing = 0;
+	private restDensity = 1;
+	private emission = 0;
+	private remainder = 0;
+	private level = 0;
+	private seed = 0x193ab;
+	private readonly origin = [0, 0, 0];
+
+	constructor(readonly capacity: number) {
+		this.position = new Float32Array(capacity * STRIDE);
+		this.velocity = new Float32Array(capacity * STRIDE);
+		this.predicted = new Float32Array(capacity * STRIDE);
+		this.old = new Float32Array(capacity * STRIDE);
+		this.correction = new Float32Array(capacity * STRIDE);
+		this.renderData = new Float32Array(capacity * 8);
+		this.densitySamples = new Float32Array(capacity * 4);
+		this.volumeResolution = capacity <= 768 ? [48, 56, 40] : [64, 64, 48];
+		this.density = new Float32Array(
+			this.volumeResolution[0] * this.volumeResolution[1] * this.volumeResolution[2]
+		);
+		this.lambda = new Float32Array(capacity);
+		this.particleDensity = new Float32Array(capacity);
+		this.renderWeight = new Float32Array(capacity);
+		this.boundaryGradient = new Float32Array(capacity * 3);
+		this.age = new Float32Array(capacity);
+		this.neighbours = new Int32Array(capacity * MAX_NEIGHBOURS);
+		this.neighbourCount = new Uint8Array(capacity);
+		this.next = new Int32Array(capacity);
+		this.connected = new Uint8Array(capacity);
+		this.queue = new Int32Array(capacity);
+	}
+
+	layout(drink: Drink | null) {
+		if (drink && this.drink) {
+			const scale = drink.height / this.drink.height;
+			for (let i = 0; i < this.count; i++) {
+				const k = i * 3;
+				this.position[k] = drink.x + (this.position[k] - this.drink.x) * scale;
+				this.position[k + 1] = this.level + (this.position[k + 1] - this.level) * scale;
+				this.position[k + 2] = drink.z + (this.position[k + 2] - this.drink.z) * scale;
+				for (let j = 0; j < 3; j++) this.velocity[k + j] *= Math.sqrt(scale);
+			}
+			this.speed *= Math.sqrt(scale);
+			this.old.set(this.position);
+		}
+		this.drink = drink;
+		if (!drink) {
+			this.count = 0;
+			this.renderCount = 0;
+			return;
+		}
+		const coarse = this.capacity <= 768;
+		this.spacing = drink.height * (coarse ? 0.08 : 0.055);
+		this.h = this.spacing * 2.3;
+		this.radius = this.spacing * 0.52;
+		this.volumeOrigin.set([
+			drink.x - drink.height * 1.6,
+			this.level - drink.height * 0.25,
+			drink.z - drink.height * 1.3
+		]);
+		this.volumeExtent.set([drink.height * 3.4, drink.height * 2.5, drink.height * 2.6]);
+		let density = 0;
+		for (let z = -3; z <= 3; z++)
+			for (let y = -3; y <= 3; y++)
+				for (let x = -3; x <= 3; x++) {
+					const q = ((x * x + y * y + z * z) * this.spacing * this.spacing) / (this.h * this.h);
+					if (q < 1) density += Math.pow(1 - q, 3);
+				}
+		this.restDensity = density;
+	}
+
+	private random() {
+		this.seed ^= this.seed << 13;
+		this.seed ^= this.seed >>> 17;
+		this.seed ^= this.seed << 5;
+		return (this.seed >>> 0) / 4294967296;
+	}
+
+	advance(dt: number, drive: number, field: ShallowWater, level: number) {
+		if (!this.drink || !Number.isFinite(dt) || dt <= 0) return;
+		const force = Number.isFinite(drive) ? clamp(drive, 0, 1) : 0;
+		this.level = level;
+		this.remainder = Math.min(this.remainder + dt, MAX_SUBSTEPS * SIM_STEP);
+		while (this.remainder >= FLUID_STEP) {
+			this.remainder -= FLUID_STEP;
+			this.step(FLUID_STEP, force, field);
+		}
+		this.prepareRender();
+	}
+
+	private emit(dt: number) {
+		const drink = this.drink!;
+		if (this.speed < 0.08) return;
+		this.emission += (this.speed * dt) / this.spacing;
+		const columns = Math.min(3, Math.floor(this.emission));
+		this.emission -= columns;
+		const width = Math.max(2, Math.floor((drink.radius * 1.3) / this.spacing));
+		for (let x = 0; x < columns; x++)
+			for (let y = 0; y < 2; y++)
+				for (let z = 0; z <= width; z++) {
+					if (this.count >= this.capacity) return;
+					const px = drink.x - drink.radius * 2.2 - x * this.spacing;
+					const py =
+						this.level -
+						drink.height * 0.18 +
+						this.radius +
+						drink.height * 0.001 +
+						y * this.spacing;
+					const pz = drink.z + (z - width * 0.5) * this.spacing;
+					let occupied = false;
+					for (let j = 0; j < this.count && !occupied; j++) {
+						const dx = this.position[j * 3] - px,
+							dy = this.position[j * 3 + 1] - py,
+							dz = this.position[j * 3 + 2] - pz;
+						occupied = dx * dx + dy * dy + dz * dz < this.spacing * this.spacing * 0.85;
+					}
+					// A blocked inlet cannot create overlapping mass. Pressure may stop new emission,
+					// while the existing fluid continues to receive the incoming momentum.
+					if (occupied) continue;
+					const i = this.count++,
+						k = i * 3;
+					this.position[k] = px;
+					this.position[k + 1] = py;
+					this.position[k + 2] = pz;
+					this.velocity[k] = this.speed;
+					// An approaching crest carries upward orbital momentum as well as forward
+					// flow. The collision and gravity determine where that momentum goes next.
+					this.velocity[k + 1] = this.speed * 0.45;
+					this.velocity[k + 2] = (this.random() - 0.5) * this.speed * 0.035;
+					this.age[i] = 0;
+				}
+	}
+
+	private step(dt: number, drive: number, field: ShallowWater) {
+		const drink = this.drink!,
+			scale = drink.height;
+		this.speed = clamp(
+			this.speed + (2.4 * GRAVITY * drive - (0.45 * this.speed * this.speed) / scale) * dt,
+			0,
+			Math.sqrt(5 * GRAVITY * scale)
+		);
+		this.emit(dt);
+		for (let i = 0; i < this.count;) {
+			const k = i * 3;
+			this.age[i] += dt;
+			const underground = this.position[k + 1] < this.level - scale * 0.025 && this.age[i] > 0.65;
+			const outside =
+				Math.abs(this.position[k] - drink.x) > scale * 2.8 ||
+				Math.abs(this.position[k + 2] - drink.z) > scale * 2.4 ||
+				this.age[i] > 3;
+			if (underground || outside) {
+				const last = --this.count;
+				for (let j = 0; j < 3; j++) {
+					this.position[k + j] = this.position[last * 3 + j];
+					this.velocity[k + j] = this.velocity[last * 3 + j];
+				}
+				this.age[i] = this.age[last];
+				continue;
+			}
+			this.velocity[k + 1] -= GRAVITY * dt;
+			if (this.position[k] < drink.x - drink.radius * 1.25)
+				this.velocity[k] += (this.speed - this.velocity[k]) * (1 - Math.exp(-dt / 0.12));
+			for (let j = 0; j < 3; j++) {
+				this.old[k + j] = this.position[k + j];
+				this.predicted[k + j] = this.position[k + j] + this.velocity[k + j] * dt;
+			}
+			this.collide(k, field);
+			i++;
+		}
+		this.hash();
+		this.findNeighbours();
+		for (let iteration = 0; iteration < (this.capacity <= 768 ? 2 : 3); iteration++)
+			this.constrain(field);
+		for (let i = 0; i < this.count; i++) {
+			const k = i * 3;
+			for (let j = 0; j < 3; j++) {
+				this.velocity[k + j] = clamp(
+					(this.predicted[k + j] - this.old[k + j]) / dt,
+					-10 * Math.sqrt(scale),
+					10 * Math.sqrt(scale)
+				);
+				this.position[k + j] = this.predicted[k + j];
+			}
+		}
+		// XSPH viscosity damps relative velocity while preserving the stream's momentum.
+		for (let i = 0; i < this.count; i++) {
+			let vx = 0,
+				vy = 0,
+				vz = 0,
+				weight = 0,
+				cx = 0,
+				cy = 0,
+				cz = 0;
+			const k = i * 3;
+			for (let n = 0; n < this.neighbourCount[i]; n++) {
+				const j = this.neighbours[i * MAX_NEIGHBOURS + n] * 3;
+				const dx = this.position[k] - this.position[j],
+					dy = this.position[k + 1] - this.position[j + 1],
+					dz = this.position[k + 2] - this.position[j + 2];
+				const q = (dx * dx + dy * dy + dz * dz) / (this.h * this.h);
+				const kernel = Math.max(0, 1 - q);
+				const w = kernel * kernel * kernel;
+				vx += this.velocity[j] * w;
+				vy += this.velocity[j + 1] * w;
+				vz += this.velocity[j + 2] * w;
+				weight += w;
+				const r2 = dx * dx + dy * dy + dz * dz;
+				if (r2 > this.spacing * this.spacing && w > 0) {
+					const cohesion = (-0.6 * GRAVITY * dt * w) / (Math.sqrt(r2) * this.restDensity);
+					cx += cohesion * dx;
+					cy += cohesion * dy;
+					cz += cohesion * dz;
+				}
+			}
+			this.correction[k] = cx + (weight ? (vx / weight - this.velocity[k]) * 0.055 : 0);
+			this.correction[k + 1] = cy + (weight ? (vy / weight - this.velocity[k + 1]) * 0.055 : 0);
+			this.correction[k + 2] = cz + (weight ? (vz / weight - this.velocity[k + 2]) * 0.055 : 0);
+		}
+		for (let i = 0; i < this.count * 3; i++) this.velocity[i] += this.correction[i];
+	}
+
+	private collide(k: number, field: ShallowWater) {
+		const drink = this.drink!,
+			p = this.predicted;
+		const floor = this.level + field.sample(p[k], p[k + 2]) - drink.height * 0.18 + this.radius;
+		p[k + 1] = Math.max(floor, p[k + 1]);
+		if (!field.obstacle) return;
+		const dx = p[k] - drink.x,
+			dz = p[k + 2] - drink.z;
+		const r = Math.sqrt(dx * dx + dz * dz);
+		const rim = drink.baseY + drink.height + this.radius;
+		const solidRadius = radiusAt(drink, p[k + 1]) + this.radius;
+		if (r >= solidRadius || p[k + 1] >= rim || p[k + 1] < drink.baseY - this.radius) return;
+		if (rim - p[k + 1] < solidRadius - r) p[k + 1] = rim;
+		else {
+			p[k] = drink.x + (r > 1e-6 ? dx / r : -1) * solidRadius;
+			p[k + 2] = drink.z + (r > 1e-6 ? dz / r : 0) * solidRadius;
+		}
+	}
+
+	private hash() {
+		const drink = this.drink!;
+		this.origin[0] = drink.x - this.h * NX * 0.5;
+		this.origin[1] = this.level - drink.height * 0.3;
+		this.origin[2] = drink.z - this.h * NZ * 0.5;
+		this.heads.fill(-1);
+		for (let i = 0; i < this.count; i++) {
+			const k = i * 3;
+			const x = clamp(Math.floor((this.predicted[k] - this.origin[0]) / this.h), 0, NX - 1);
+			const y = clamp(Math.floor((this.predicted[k + 1] - this.origin[1]) / this.h), 0, NY - 1);
+			const z = clamp(Math.floor((this.predicted[k + 2] - this.origin[2]) / this.h), 0, NZ - 1);
+			const cell = (z * NY + y) * NX + x;
+			this.next[i] = this.heads[cell];
+			this.heads[cell] = i;
+		}
+	}
+
+	private findNeighbours() {
+		const p = this.predicted,
+			h2 = this.h * this.h;
+		for (let i = 0; i < this.count; i++) {
+			const k = i * 3;
+			const cx = Math.floor((p[k] - this.origin[0]) / this.h),
+				cy = Math.floor((p[k + 1] - this.origin[1]) / this.h),
+				cz = Math.floor((p[k + 2] - this.origin[2]) / this.h);
+			let count = 0;
+			for (let z = Math.max(0, cz - 1); z <= Math.min(NZ - 1, cz + 1); z++)
+				for (let y = Math.max(0, cy - 1); y <= Math.min(NY - 1, cy + 1); y++)
+					for (let x = Math.max(0, cx - 1); x <= Math.min(NX - 1, cx + 1); x++)
+						for (
+							let j = this.heads[(z * NY + y) * NX + x];
+							j >= 0 && count < MAX_NEIGHBOURS;
+							j = this.next[j]
+						) {
+							if (j === i) continue;
+							const o = j * 3,
+								dx = p[k] - p[o],
+								dy = p[k + 1] - p[o + 1],
+								dz = p[k + 2] - p[o + 2];
+							if (dx * dx + dy * dy + dz * dz < h2)
+								this.neighbours[i * MAX_NEIGHBOURS + count++] = j;
+						}
+			this.neighbourCount[i] = count;
+		}
+	}
+
+	private constrain(field: ShallowWater) {
+		const p = this.predicted,
+			h2 = this.h * this.h,
+			invDensity = 1 / this.restDensity;
+		const inverseH2 = 1 / h2,
+			gradientScale = -6 * inverseH2 * invDensity;
+		for (let i = 0; i < this.count; i++) {
+			const k = i * 3;
+			const boundary = this.boundary(k, field);
+			let density = 1 + boundary * this.restDensity,
+				gx = this.boundaryGradient[k],
+				gy = this.boundaryGradient[k + 1],
+				gz = this.boundaryGradient[k + 2],
+				squared = 0;
+			for (let n = 0; n < this.neighbourCount[i]; n++) {
+				const j = this.neighbours[i * MAX_NEIGHBOURS + n] * 3;
+				const dx = p[k] - p[j],
+					dy = p[k + 1] - p[j + 1],
+					dz = p[k + 2] - p[j + 2];
+				const w = Math.max(0, 1 - (dx * dx + dy * dy + dz * dz) * inverseH2);
+				density += w * w * w;
+				const grad = gradientScale * w * w;
+				gx += grad * dx;
+				gy += grad * dy;
+				gz += grad * dz;
+				squared += grad * grad * (dx * dx + dy * dy + dz * dz);
+			}
+			this.particleDensity[i] = density;
+			this.lambda[i] =
+				-Math.max(0, density * invDensity - 1) /
+				(squared + gx * gx + gy * gy + gz * gz + 0.002 / h2);
+		}
+		for (let i = 0; i < this.count; i++) {
+			const k = i * 3;
+			let x = this.lambda[i] * this.boundaryGradient[k],
+				y = this.lambda[i] * this.boundaryGradient[k + 1],
+				z = this.lambda[i] * this.boundaryGradient[k + 2];
+			for (let n = 0; n < this.neighbourCount[i]; n++) {
+				const other = this.neighbours[i * MAX_NEIGHBOURS + n],
+					j = other * 3;
+				const dx = p[k] - p[j],
+					dy = p[k + 1] - p[j + 1],
+					dz = p[k + 2] - p[j + 2];
+				const w = Math.max(0, 1 - (dx * dx + dy * dy + dz * dz) * inverseH2);
+				const ratio = w / 0.91,
+					square = ratio * ratio,
+					fourth = square * square;
+				const correction = 0.0002 * h2 * fourth * fourth * fourth;
+				const force = (this.lambda[i] + this.lambda[other] - correction) * gradientScale * w * w;
+				x += force * dx;
+				y += force * dy;
+				z += force * dz;
+			}
+			const length = Math.sqrt(x * x + y * y + z * z),
+				cap = this.h * 0.25;
+			const scale = length > cap ? cap / length : 1;
+			this.correction[k] = x * scale;
+			this.correction[k + 1] = y * scale;
+			this.correction[k + 2] = z * scale;
+		}
+		for (let i = 0; i < this.count; i++) {
+			for (let j = 0; j < 3; j++) p[i * 3 + j] += this.correction[i * 3 + j];
+			this.collide(i * 3, field);
+		}
+	}
+
+	private boundary(k: number, field: ShallowWater): number {
+		const p = this.predicted,
+			drink = this.drink!,
+			result = this.boundarySample;
+		const floor = this.level + field.sample(p[k], p[k + 2]) - drink.height * 0.18;
+		boundaryCap(p[k + 1] - floor, this.h, result);
+		let density = result[0],
+			gx = 0,
+			gy = result[1],
+			gz = 0;
+		const solid = field.obstacle;
+		if (solid) {
+			const dx = p[k] - solid.x,
+				dz = p[k + 2] - solid.z;
+			const radius = Math.sqrt(dx * dx + dz * dz);
+			const rim = solid.baseY + solid.height;
+			if (p[k + 1] >= solid.baseY && p[k + 1] <= rim && radius > 0.00001) {
+				boundaryCap(radius - radiusAt(solid, p[k + 1]), this.h, result);
+				density += result[0];
+				gx += (result[1] * dx) / radius;
+				gz += (result[1] * dz) / radius;
+				gy -= (result[1] * (solid.radius - (solid.baseRadius ?? solid.radius))) / solid.height;
+			} else if (radius < solid.radius && p[k + 1] > rim) {
+				boundaryCap(p[k + 1] - rim, this.h, result);
+				density += result[0];
+				gy += result[1];
+			}
+		}
+		this.boundaryGradient[k] = gx;
+		this.boundaryGradient[k + 1] = gy;
+		this.boundaryGradient[k + 2] = gz;
+		return density;
+	}
+
+	private prepareRender() {
+		// The pressure step's neighbourhood is also the fluid's connectivity graph.
+		// Reusing it avoids a second spatial search just to prepare the same frame.
+		this.connected.fill(0);
+		let head = 0,
+			tail = 0;
+		for (let i = 0; i < this.count; i++)
+			if (this.position[i * 3 + 1] <= this.level + this.h * 0.5) {
+				this.connected[i] = 1;
+				this.queue[tail++] = i;
+			}
+		while (head < tail) {
+			const i = this.queue[head++];
+			for (let n = 0; n < this.neighbourCount[i]; n++) {
+				const j = this.neighbours[i * MAX_NEIGHBOURS + n];
+				const dx = this.position[i * 3] - this.position[j * 3],
+					dy = this.position[i * 3 + 1] - this.position[j * 3 + 1],
+					dz = this.position[i * 3 + 2] - this.position[j * 3 + 2];
+				if (!this.connected[j] && dx * dx + dy * dy + dz * dz < this.h * this.h) {
+					this.connected[j] = 1;
+					this.queue[tail++] = j;
+				}
+			}
+		}
+		this.renderCount = 0;
+		const alpha = this.remainder / FLUID_STEP;
+		let highest = this.level;
+		for (let i = 0; i < this.count; i++) {
+			if (!this.connected[i] || this.neighbourCount[i] < 3) continue;
+			const o = this.renderCount++ * 8;
+			this.renderWeight[this.renderCount - 1] =
+				1 / Math.max(this.particleDensity[i], this.restDensity * 0.2);
+			this.renderData[o] = this.old[i * 3] * (1 - alpha) + this.position[i * 3] * alpha;
+			this.renderData[o + 1] = this.old[i * 3 + 1] * (1 - alpha) + this.position[i * 3 + 1] * alpha;
+			this.renderData[o + 2] = this.old[i * 3 + 2] * (1 - alpha) + this.position[i * 3 + 2] * alpha;
+			this.renderData[o + 3] = this.h * 0.55;
+			const vx = this.velocity[i * 3],
+				vy = this.velocity[i * 3 + 1],
+				vz = this.velocity[i * 3 + 2];
+			const speed = Math.sqrt(vx * vx + vy * vy + vz * vz);
+			this.renderData[o + 4] = speed > 0.001 ? vx / speed : 0;
+			this.renderData[o + 5] = speed > 0.001 ? vy / speed : 1;
+			this.renderData[o + 6] = speed > 0.001 ? vz / speed : 0;
+			this.renderData[o + 7] = Math.min(2.2, 1 + (speed * 0.22) / Math.sqrt(this.drink!.height));
+			const q = (this.renderCount - 1) * 4;
+			this.densitySamples[q] = this.renderData[o];
+			this.densitySamples[q + 1] = this.renderData[o + 1];
+			this.densitySamples[q + 2] = this.renderData[o + 2];
+			this.densitySamples[q + 3] = this.renderWeight[this.renderCount - 1];
+			highest = Math.max(highest, this.renderData[o + 1] + this.h);
+		}
+		const scale = this.drink!.height;
+		this.volumeOrigin[1] = this.level - scale * 0.25;
+		this.volumeExtent[1] = clamp(
+			Math.ceil((highest - this.volumeOrigin[1] + scale * 0.1) / (scale * 0.25)) * scale * 0.25,
+			scale * 0.75,
+			scale * 2.5
+		);
+	}
+
+	reconstruct(field: ShallowWater) {
+		const drink = this.drink!,
+			scale = drink.height;
+		const [nx, ny, nz] = this.volumeResolution;
+		this.volumeOrigin[0] = drink.x - scale * 1.6;
+		this.volumeOrigin[1] = this.level - scale * 0.25;
+		this.volumeOrigin[2] = drink.z - scale * 1.3;
+		this.volumeExtent.set([scale * 3.4, scale * 2.5, scale * 2.6]);
+		const ox = this.volumeOrigin[0],
+			oy = this.volumeOrigin[1],
+			oz = this.volumeOrigin[2];
+		const dx = this.volumeExtent[0] / nx,
+			dy = this.volumeExtent[1] / ny,
+			dz = this.volumeExtent[2] / nz;
+		const h2 = this.h * this.h,
+			density = this.density;
+		density.fill(0);
+		for (let i = 0; i < this.renderCount; i++) {
+			const x = this.renderData[i * 8],
+				y = this.renderData[i * 8 + 1],
+				z = this.renderData[i * 8 + 2];
+			const x0 = Math.max(0, Math.ceil((x - this.h - ox) / dx - 0.5)),
+				x1 = Math.min(nx - 1, Math.floor((x + this.h - ox) / dx - 0.5));
+			const y0 = Math.max(0, Math.ceil((y - this.h - oy) / dy - 0.5)),
+				y1 = Math.min(ny - 1, Math.floor((y + this.h - oy) / dy - 0.5));
+			const z0 = Math.max(0, Math.ceil((z - this.h - oz) / dz - 0.5)),
+				z1 = Math.min(nz - 1, Math.floor((z + this.h - oz) / dz - 0.5));
+			for (let k = z0; k <= z1; k++) {
+				const rz = oz + (k + 0.5) * dz - z;
+				for (let j = y0; j <= y1; j++) {
+					const ry = oy + (j + 0.5) * dy - y,
+						yz = ry * ry + rz * rz;
+					if (yz >= h2) continue;
+					const row = (k * ny + j) * nx;
+					for (let c = x0; c <= x1; c++) {
+						const rx = ox + (c + 0.5) * dx - x,
+							q = (rx * rx + yz) / h2;
+						if (q < 1) {
+							const w = 1 - q;
+							density[row + c] += w * w * w * this.renderWeight[i];
+						}
+					}
+				}
+			}
+		}
+		// The same density field includes the reservoir. Its smooth union with the local
+		// volume creates a shared wet foot instead of a separate splash drawn over a plane.
+		for (let k = 0; k < nz; k++)
+			for (let c = 0; c < nx; c++) {
+				const surface = this.level + field.sample(ox + (c + 0.5) * dx, oz + (k + 0.5) * dz);
+				for (let j = 0; j < ny; j++) {
+					const value = clamp(0.5 + (surface - oy - (j + 0.5) * dy) / this.h, 0, 1);
+					const pool = value * value * (3 - 2 * value),
+						index = (k * ny + j) * nx + c;
+					const fluid = density[index],
+						difference = fluid - pool;
+					density[index] = 0.5 * (fluid + pool + Math.sqrt(difference * difference + 0.0064));
+				}
+			}
+	}
+
+	get smoothingRadius(): number {
+		return this.h;
+	}
+
+	get maxHeight(): number {
+		let height = 0;
+		for (let i = 0; i < this.count; i++)
+			height = Math.max(height, this.position[i * 3 + 1] - this.level);
+		return height;
+	}
+
+	get visibleHeight(): number {
+		let height = 0;
+		for (let i = 0; i < this.renderCount; i++) {
+			const o = i * 8,
+				radius = this.renderData[o + 3],
+				stretch = this.renderData[o + 7];
+			const long = radius * stretch,
+				short2 = (radius * radius) / stretch,
+				axisY = this.renderData[o + 5];
+			const extent = Math.sqrt(short2 + (long * long - short2) * axisY * axisY);
+			height = Math.max(height, this.renderData[o + 1] + extent - this.level);
+		}
+		return height;
+	}
+}

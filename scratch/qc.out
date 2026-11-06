@@ -1,0 +1,14 @@
+PASS categories 320px
+PASS categories 360px
+PASS categories 375px
+PASS categories 390px
+PASS categories 768px
+PASS categories 1024px
+PASS categories 1280px
+PASS categories 1440px
+PASS fits one viewport 1024x768
+PASS fits one viewport 1280x720
+PASS fits one viewport 1366x768
+PASS fits one viewport 1440x900
+PASS fits one viewport 1908x827
+PASS menu filter, no-JavaScript, hover, keyboard, targets

@@ -1,0 +1,191 @@
+{
+  "results": [
+    {
+      "name": "WebGL2 and viewport 320",
+      "overflow": false,
+      "width": 320,
+      "height": 844
+    },
+    {
+      "name": "WebGL2 and viewport 360",
+      "overflow": false,
+      "width": 360,
+      "height": 844
+    },
+    {
+      "name": "WebGL2 and viewport 375",
+      "overflow": false,
+      "width": 375,
+      "height": 844
+    },
+    {
+      "name": "WebGL2 and viewport 390",
+      "overflow": false,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "Calm surface throws no droplets 390"
+    },
+    {
+      "name": "Complete moving frame includes pool and swirl sheets 390",
+      "draws": 3
+    },
+    {
+      "name": "Scrolling stirs the surface without drops 390"
+    },
+    {
+      "name": "Bright pink surface 390"
+    },
+    {
+      "name": "Liquid body is one connected surface 390",
+      "connected": 130202,
+      "detached": 0
+    },
+    {
+      "name": "Full viewport covered 390: 25 opaque samples"
+    },
+    {
+      "name": "Reverse scroll restores wave 390"
+    },
+    {
+      "name": "Mobile touch disturbs the surface locally without driving swells"
+    },
+    {
+      "name": "Liquid wraps the drink front and back 390",
+      "shown": {
+        "pink": 26028,
+        "other": 41864,
+        "tinted": 74812,
+        "partial": 6062,
+        "total": 87248
+      },
+      "hidden": {
+        "pink": 40039,
+        "other": 15409,
+        "tinted": 66661,
+        "partial": 9931,
+        "total": 87248
+      }
+    },
+    {
+      "name": "WebGL2 and viewport 768",
+      "overflow": false,
+      "width": 768,
+      "height": 900
+    },
+    {
+      "name": "WebGL2 and viewport 1024",
+      "overflow": false,
+      "width": 1011,
+      "height": 889
+    },
+    {
+      "name": "WebGL2 and viewport 1280",
+      "overflow": false,
+      "width": 1131,
+      "height": 795
+    },
+    {
+      "name": "WebGL2 and viewport 1440",
+      "overflow": false,
+      "width": 1200,
+      "height": 750
+    },
+    {
+      "name": "Calm surface throws no droplets 1440"
+    },
+    {
+      "name": "Complete moving frame includes pool and swirl sheets 1440",
+      "draws": 4
+    },
+    {
+      "name": "Scrolling stirs the surface without drops 1440"
+    },
+    {
+      "name": "Bright pink surface 1440"
+    },
+    {
+      "name": "Liquid body is one connected surface 1440",
+      "connected": 395938,
+      "detached": 0
+    },
+    {
+      "name": "Full viewport covered 1440: 25 opaque samples"
+    },
+    {
+      "name": "Resizing a settled covered canvas repaints the full surface"
+    },
+    {
+      "name": "Reverse scroll restores wave 1440"
+    },
+    {
+      "name": "Pointer wake disturbs the surface locally without driving swells"
+    },
+    {
+      "name": "Liquid wraps the drink front and back 1440",
+      "shown": {
+        "pink": 54206,
+        "other": 70794,
+        "tinted": 131040,
+        "partial": 5099,
+        "total": 173625
+      },
+      "hidden": {
+        "pink": 72285,
+        "other": 21675,
+        "tinted": 105417,
+        "partial": 9288,
+        "total": 173625
+      }
+    },
+    {
+      "name": "Cover fades in before the lens submerges 1440",
+      "pink": 0,
+      "other": 0,
+      "tinted": 72000,
+      "partial": 72000,
+      "total": 72000
+    },
+    {
+      "name": "Back edge fades into the page 1440",
+      "pink": 44810,
+      "other": 103249,
+      "tinted": 180512,
+      "partial": 28544,
+      "total": 271200
+    },
+    {
+      "name": "Offscreen rendering stops"
+    },
+    {
+      "name": "Context loss falls back and still completes scroll"
+    },
+    {
+      "name": "Drink image failing to load: liquid stays live, no WebGL error, alt kept"
+    },
+    {
+      "name": "No float colour buffer: still live and fully covered"
+    },
+    {
+      "name": "HiDPI drawing buffer capped at 900000 pixels",
+      "pixels": 898704
+    },
+    {
+      "name": "Changing reduced-motion preference stops the live renderer"
+    },
+    {
+      "name": "reduced-motion: loaded still, no render loop, reversible cover"
+    },
+    {
+      "name": "no-webgl: loaded still, no render loop, reversible cover"
+    },
+    {
+      "name": "data-saver: loaded still, no render loop, reversible cover"
+    },
+    {
+      "name": "No JavaScript: static visual and menu navigation"
+    }
+  ],
+  "errors": []
+}

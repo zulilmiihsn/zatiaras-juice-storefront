@@ -32,7 +32,16 @@ export const OUTLETS: Outlet[] = [
 		hours: 'Mon-Sun 07:00-23:00',
 		load: 'NORMAL',
 		acceptsWebOrders: true,
-		verified: true
+		verified: true,
+		// Published employer address: G4FP+GX5, Juanda, Samarinda (checked 2026-10-12).
+		// Google Open Location Code recovery: 6PFVG4FP+GX5, cell centre.
+		coordinates: {
+			latitude: -0.4762375,
+			longitude: 117.137484375,
+			verified: true,
+			source: 'https://www.kitalulus.com/company/zatiaras-juice-samarinda-r6vq',
+			verifiedAt: '2026-10-12'
+		}
 	},
 	{
 		id: 'slamet-riyadi',

@@ -1,0 +1,127 @@
+{
+  "results": [
+    {
+      "name": "WebGL2 and viewport 320",
+      "overflow": false,
+      "width": 320,
+      "height": 844
+    },
+    {
+      "name": "WebGL2 and viewport 360",
+      "overflow": false,
+      "width": 360,
+      "height": 844
+    },
+    {
+      "name": "WebGL2 and viewport 375",
+      "overflow": false,
+      "width": 375,
+      "height": 844
+    },
+    {
+      "name": "WebGL2 and viewport 390",
+      "overflow": false,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "Calm surface throws no droplets 390"
+    },
+    {
+      "name": "Colliding waves throw droplets 390"
+    },
+    {
+      "name": "Bright pink surface 390"
+    },
+    {
+      "name": "Liquid body is one connected surface 390",
+      "connected": 78631,
+      "detached": 0
+    },
+    {
+      "name": "Full viewport covered 390: 25 opaque samples"
+    },
+    {
+      "name": "Reverse scroll restores wave 390"
+    },
+    {
+      "name": "Mobile touch creates a local wave without a whole-body bounce"
+    },
+    {
+      "name": "WebGL2 and viewport 768",
+      "overflow": false,
+      "width": 768,
+      "height": 900
+    },
+    {
+      "name": "WebGL2 and viewport 1024",
+      "overflow": false,
+      "width": 1011,
+      "height": 889
+    },
+    {
+      "name": "WebGL2 and viewport 1280",
+      "overflow": false,
+      "width": 1131,
+      "height": 795
+    },
+    {
+      "name": "WebGL2 and viewport 1440",
+      "overflow": false,
+      "width": 1200,
+      "height": 750
+    },
+    {
+      "name": "Calm surface throws no droplets 1440"
+    },
+    {
+      "name": "Colliding waves throw droplets 1440"
+    },
+    {
+      "name": "Bright pink surface 1440"
+    },
+    {
+      "name": "Liquid body is one connected surface 1440",
+      "connected": 239809,
+      "detached": 0
+    },
+    {
+      "name": "Full viewport covered 1440: 25 opaque samples"
+    },
+    {
+      "name": "Resizing a settled covered canvas repaints the full surface"
+    },
+    {
+      "name": "Reverse scroll restores wave 1440"
+    },
+    {
+      "name": "Pointer wake propagates in the surface field without a whole-body spring"
+    },
+    {
+      "name": "Offscreen rendering stops"
+    },
+    {
+      "name": "Context loss falls back and still completes scroll"
+    },
+    {
+      "name": "HiDPI drawing buffer capped at 900000 pixels",
+      "pixels": 898704
+    },
+    {
+      "name": "Changing reduced-motion preference stops the live renderer"
+    },
+    {
+      "name": "reduced-motion: loaded still, no render loop, reversible cover"
+    },
+    {
+      "name": "no-webgl: loaded still, no render loop, reversible cover"
+    },
+    {
+      "name": "data-saver: loaded still, no render loop, reversible cover"
+    },
+    {
+      "name": "No JavaScript: static visual and menu navigation"
+    }
+  ],
+  "errors": []
+}

@@ -95,8 +95,8 @@
 >
 	<div class="cats-head reveal" style="--i: 0">
 		<h2 id="cats-title" class="font-display" aria-label="Jus Apa Aja Ada">
-			<KernedText text="JUS APA AJA" {reveal} />
-			<span class="cats-hot"><KernedText text="ADA" {reveal} base={330} /></span>
+			<KernedText text="Jus Apa Aja" {reveal} />
+			<span class="cats-hot"><KernedText text="Ada" {reveal} base={330} /></span>
 		</h2>
 		<div class="cats-aside">
 			<p>Dari jus buah dan sayur sampai kocok dan baby. Pilih kategori, lihat isinya.</p>
@@ -136,7 +136,7 @@
 						onclick={() => (active = index)}
 						onfocus={() => (active = index)}
 					>
-						<span class="cat-name font-display">{panel.name.toUpperCase()}</span>
+						<span class="cat-name font-display">{panel.name}</span>
 						<span class="cat-plus" aria-hidden="true">
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
 								<path d="M12 5v14M5 12h14" />
@@ -148,7 +148,7 @@
 					<div class="cat-inner">
 						<div class="cat-text">
 							<p class="cat-big font-display" aria-hidden="true">
-								<KernedText text={panel.name.toUpperCase()} />
+								<KernedText text={panel.name} />
 							</p>
 							<p class="cat-blurb">{panel.blurb}</p>
 							{#if panel.samples.length}
@@ -651,7 +651,7 @@
 				box-shadow 500ms ease;
 		}
 		.cat.open {
-			box-shadow: 0 28px 48px -30px color-mix(in srgb, var(--tone) 70%, transparent);
+			box-shadow: none;
 		}
 	}
 

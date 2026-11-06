@@ -44,6 +44,7 @@ Surface Fruit Cream, aksen Heritage Magenta. Hormat reduced-motion. -->
 	}
 
 	$effect(() => {
+		window.dispatchEvent(new CustomEvent('zatiaras:mobile-drawer', { detail: open }));
 		if (open) {
 			prevFocus = document.activeElement;
 			document.body.style.overflow = 'hidden';
@@ -62,7 +63,7 @@ Surface Fruit Cream, aksen Heritage Magenta. Hormat reduced-motion. -->
 
 {#if open}
 	<div
-		class="fixed inset-0 z-50 sm:hidden"
+		class="fixed inset-0 z-50 md:hidden"
 		role="dialog"
 		aria-modal="true"
 		aria-label="Menu navigasi"

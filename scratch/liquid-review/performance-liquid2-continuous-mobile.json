@@ -1,0 +1,29 @@
+{
+  "label": "liquid2-continuous-mobile",
+  "route": "/qa/liquid2",
+  "mobile": true,
+  "startupMs": 4679,
+  "renderer": "ANGLE (Intel, Intel(R) HD Graphics 620 (0x00005921) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "backing": [
+    390,
+    844
+  ],
+  "frames": 295,
+  "frameP50Ms": 16.69999998807907,
+  "frameP95Ms": 25.600000023841858,
+  "gpuWaitP50Ms": 1.300000011920929,
+  "gpuWaitP95Ms": 4.400000035762787,
+  "mode": "live",
+  "interaction": {
+    "frames": 235,
+    "frameP50Ms": 16.599999964237213,
+    "frameP95Ms": 22.100000023841858,
+    "mode": "live"
+  },
+  "scrolling": {
+    "frames": 237,
+    "frameP50Ms": 16.80000001192093,
+    "frameP95Ms": 24.69999998807907,
+    "mode": "live"
+  }
+}

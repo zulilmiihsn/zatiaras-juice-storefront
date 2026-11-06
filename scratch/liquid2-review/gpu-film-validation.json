@@ -1,0 +1,56 @@
+[
+  {
+    "tier": 48,
+    "state": "curved",
+    "vertices": 4888,
+    "positionError": 3.5762786865234375e-7,
+    "normalError": 0.0001846335690061096,
+    "unitError": 0.000004488273835701051,
+    "glError": 0
+  },
+  {
+    "tier": 48,
+    "state": "impact",
+    "vertices": 4888,
+    "positionError": 2.384185791015625e-7,
+    "normalError": 0.01603593770414591,
+    "unitError": 0.000004466992085339072,
+    "glError": 0
+  },
+  {
+    "tier": 48,
+    "state": "submerged",
+    "vertices": 4888,
+    "positionError": 2.384185791015625e-7,
+    "normalError": 0.015608891379088163,
+    "unitError": 0.000004460513613580019,
+    "glError": 0
+  },
+  {
+    "tier": 112,
+    "state": "curved",
+    "vertices": 14200,
+    "positionError": 3.5762786865234375e-7,
+    "normalError": 0.000025874003767967224,
+    "unitError": 0.000004497927844626659,
+    "glError": 0
+  },
+  {
+    "tier": 112,
+    "state": "impact",
+    "vertices": 14200,
+    "positionError": 2.384185791015625e-7,
+    "normalError": 0.029631124809384346,
+    "unitError": 0.000004463242332164441,
+    "glError": 0
+  },
+  {
+    "tier": 112,
+    "state": "submerged",
+    "vertices": 14200,
+    "positionError": 2.384185791015625e-7,
+    "normalError": 0.05457426980137825,
+    "unitError": 0.000004502075689138962,
+    "glError": 0
+  }
+]

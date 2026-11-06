@@ -113,6 +113,13 @@ export interface Outlet {
 	mapsUrl?: string;
 	phone?: string;
 	verified: boolean; // false = alamat/jam/koordinat belum terverifikasi penuh
+	coordinates?: {
+		latitude: number;
+		longitude: number;
+		verified: boolean;
+		source: string;
+		verifiedAt: string;
+	};
 }
 
 export interface MenuItem {
