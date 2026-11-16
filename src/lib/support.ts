@@ -15,6 +15,7 @@ export function isSupportConfigured(): boolean {
 export const STATUS_LABEL: Record<OrderState, string> = {
 	DRAFT: 'Draf',
 	PENDING_PAYMENT: 'Menunggu pembayaran',
+	AWAITING_CASHIER: 'Menunggu cek pembayaran QRIS',
 	PAID: 'Sudah dibayar',
 	CONFIRMED: 'Diterima outlet',
 	PREPARING: 'Disiapkan',

@@ -1,6 +1,8 @@
 // Logika cart murni. FR-CART-001/002/003. Satu outlet per order.
 // ADR 2026-09-25: satu cart normal = satu outlet; pindah outlet wajib revalidasi.
 import type { Availability, OutletId } from '$lib/core/contracts';
+import { jumboEligible, unitPrice, type Ice, type Size, type Sweetness } from '$lib/core/options';
+import type { CategorySlug } from '$lib/data/menu';
 import {
 	AVAILABILITY_VERIFIED,
 	MENU_VERIFIED,
@@ -12,15 +14,29 @@ import {
 export interface Line {
 	menuItemId: string;
 	name: string;
-	price: number;
+	price: number; // harga satuan final (sudah termasuk selisih Jumbo bila ada)
 	qty: number;
 	outletId: string;
 	availability: Availability;
+	// Opsi cup. Opsional supaya baris lama tanpa opsi tetap valid.
+	size?: Size;
+	sweet?: Sweetness;
+	ice?: Ice;
+	basePrice?: number; // harga Reguler, untuk menghitung ulang saat ukuran berubah
+	category?: CategorySlug;
+}
+
+// Kunci baris: item yang sama dengan opsi berbeda adalah baris berbeda.
+// Tanpa opsi, kunci = menuItemId (kompatibel dengan pemakaian lama).
+export function lineKey(l: Pick<Line, 'menuItemId' | 'size' | 'sweet' | 'ice'>): string {
+	if (!l.size && !l.sweet && !l.ice) return l.menuItemId;
+	return [l.menuItemId, l.size ?? '', l.sweet ?? '', l.ice ?? ''].join('|');
 }
 
 export function addLine(lines: Line[], next: Line): Line[] {
 	if (lines.length > 0 && lines[0].outletId !== next.outletId) return lines;
-	const i = lines.findIndex((l) => l.menuItemId === next.menuItemId);
+	const key = lineKey(next);
+	const i = lines.findIndex((l) => lineKey(l) === key);
 	if (i >= 0) {
 		const copy = [...lines];
 		copy[i] = { ...copy[i], qty: copy[i].qty + next.qty };
@@ -29,9 +45,40 @@ export function addLine(lines: Line[], next: Line): Line[] {
 	return [...lines, next];
 }
 
-export function setQty(lines: Line[], menuItemId: string, qty: number): Line[] {
-	if (qty <= 0) return lines.filter((l) => l.menuItemId !== menuItemId);
-	return lines.map((l) => (l.menuItemId === menuItemId ? { ...l, qty } : l));
+// key = lineKey(baris). Menerima menuItemId polos untuk baris tanpa opsi.
+export function setQty(lines: Line[], key: string, qty: number): Line[] {
+	if (qty <= 0) return lines.filter((l) => lineKey(l) !== key);
+	return lines.map((l) => (lineKey(l) === key ? { ...l, qty } : l));
+}
+
+// Tawaran naik ukuran: Reguler jadi Jumbo. Baris yang sudah sama dengan Jumbo digabung.
+export function upsizeLine(lines: Line[], key: string): Line[] {
+	const target = lines.find((l) => lineKey(l) === key);
+	if (!target || target.size !== 'REG' || target.basePrice === undefined) return lines;
+	if (!jumboEligible(target.category)) return lines;
+	const upsized: Line = {
+		...target,
+		size: 'JUMBO',
+		price: unitPrice(target.basePrice, 'JUMBO')
+	};
+	const rest = lines.filter((l) => lineKey(l) !== key);
+	const j = rest.findIndex((l) => lineKey(l) === lineKey(upsized));
+	if (j >= 0) {
+		const copy = [...rest];
+		copy[j] = { ...copy[j], qty: copy[j].qty + upsized.qty };
+		return copy;
+	}
+	// Pertahankan posisi baris di keranjang.
+	const idx = lines.findIndex((l) => lineKey(l) === key);
+	const out = [...lines];
+	out[idx] = upsized;
+	return out;
+}
+
+// Tambahan yang diperoleh bila baris dinaikkan ke Jumbo. 0 bila tidak memenuhi syarat.
+export function upsizeGain(line: Line): number {
+	if (line.size !== 'REG' || line.basePrice === undefined || !jumboEligible(line.category)) return 0;
+	return (unitPrice(line.basePrice, 'JUMBO') - line.price) * line.qty;
 }
 
 export function subtotal(lines: Line[]): number {
@@ -82,12 +129,14 @@ export function revalidateForOutlet(lines: Line[], targetOutlet: OutletId): Reva
 			removed.push({ ...l, outletId: targetOutlet, availability: avail, status: 'unavailable' });
 			continue;
 		}
-		const price = priceFor(item, targetOutlet);
+		const base = priceFor(item, targetOutlet);
+		const price = l.size ? unitPrice(base, l.size) : base;
 		if (price !== l.price) {
 			const r: RevalidatedLine = {
 				...l,
 				outletId: targetOutlet,
 				price,
+				basePrice: base,
 				availability: avail,
 				status: 'price-changed',
 				oldPrice: l.price

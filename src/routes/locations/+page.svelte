@@ -8,7 +8,7 @@
 
 	const title = 'Lokasi Outlet Zatiaras Juice | Samarinda · Berau · Balikpapan';
 	const desc =
-		'Lima outlet resmi Zatiaras Juice: Juanda + Slamet Riyadi (Samarinda), Merah Delima (Berau), Kutilang + Gatot Subroto (Balikpapan). Pesan online pickup mandiri.';
+		'Empat outlet resmi Zatiaras Juice: Juanda + Slamet Riyadi (Samarinda), Merah Delima (Berau), MT Haryono (Balikpapan). Pesan online pickup mandiri.';
 
 	function selectAndOrder(outletId: string) {
 		cart.setOutlet(outletId);
@@ -69,7 +69,7 @@
 			</h1>
 			<div class="cup-lip-bar mt-3 w-12 sm:mx-auto"></div>
 			<p class="mt-3 max-w-md text-xs leading-relaxed text-neutral-600 sm:mx-auto sm:text-sm">
-				Lima outlet aktif. Pilih kota, lalu outlet pickup terdekat — satu pesanan untuk satu outlet.
+				Empat outlet aktif. Pilih kota, lalu outlet pickup terdekat — satu pesanan untuk satu outlet.
 			</p>
 			<div class="mt-4 flex flex-col items-center gap-2">
 				<button

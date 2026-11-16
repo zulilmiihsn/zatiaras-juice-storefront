@@ -104,8 +104,7 @@
 					</h2>
 					<div class="space-y-3 text-xs leading-relaxed text-neutral-700">
 						<p>
-							<strong>Alamat:</strong> Jl. Ir. H. Juanda (samping Ami Ali Parfum), Sidodadi, Samarinda
-							Ulu.
+							<strong>Alamat:</strong> Jl. Juanda No. 8, Air Hitam, Samarinda Ulu, Samarinda (turunan flyover Juanda, depan Kantor Imigrasi Kelas I Samarinda).
 						</p>
 						<p><strong>Hari Operasional:</strong> Senin – Minggu (Buka setiap hari).</p>
 						<p>

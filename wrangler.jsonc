@@ -8,6 +8,14 @@
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
 	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "zatiaras-orders",
+			"database_id": "ISI_SETELAH_wrangler_d1_create",
+			"migrations_dir": "migrations"
+		}
+	],
 	"workers_dev": true,
 	"preview_urls": true
 }

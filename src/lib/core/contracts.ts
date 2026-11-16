@@ -8,6 +8,7 @@ export type OutletLoad = (typeof OUTLET_LOAD)[number];
 export const ORDER_STATES = [
 	'DRAFT',
 	'PENDING_PAYMENT',
+	'AWAITING_CASHIER',
 	'PAID',
 	'CONFIRMED',
 	'PREPARING',
@@ -23,8 +24,10 @@ export type OrderState = (typeof ORDER_STATES)[number];
 
 // FR-ORDER-001/002/003. CANCELLED bukan pengganti vague paid failure.
 export const ALLOWED_ORDER_TRANSITIONS: Record<OrderState, OrderState[]> = {
-	DRAFT: ['PENDING_PAYMENT'],
+	DRAFT: ['PENDING_PAYMENT', 'AWAITING_CASHIER'],
 	PENDING_PAYMENT: ['PAID', 'EXPIRED'],
+	// Jalur kasir: tanpa gateway, bayar QRIS statis dengan kode unik. Kasir yang mencocokkan uang masuk.
+	AWAITING_CASHIER: ['CONFIRMED', 'EXPIRED', 'CANCELLED'],
 	PAID: ['CONFIRMED', 'FULFILLMENT_FAILED'],
 	CONFIRMED: ['PREPARING', 'FULFILLMENT_FAILED'],
 	PREPARING: ['READY'],
@@ -47,6 +50,10 @@ export const PAYMENT_STATES = [
 	'REFUNDED'
 ] as const;
 export type PaymentState = (typeof PAYMENT_STATES)[number];
+
+// GATEWAY = lewat PaymentService + webhook. CASHIER = QRIS statis + kode unik, dicek kasir.
+export const PAYMENT_MODES = ['GATEWAY', 'CASHIER'] as const;
+export type PaymentMode = (typeof PAYMENT_MODES)[number];
 
 export const GROUP_ORDER_STATES = [
 	'REQUESTED',
@@ -84,8 +91,7 @@ export const OUTLET_IDS = [
 	'juanda',
 	'slamet-riyadi',
 	'merah-delima',
-	'kutilang',
-	'gatot-subroto'
+	'mt-haryono'
 ] as const;
 export type OutletId = (typeof OUTLET_IDS)[number];
 
@@ -112,6 +118,8 @@ export interface Outlet {
 	acceptsWebOrders: boolean;
 	mapsUrl?: string;
 	phone?: string;
+	/** Gambar QRIS statis outlet (path di /static). Belum diisi = checkout outlet ini tertutup. */
+	qrisImage?: string;
 	verified: boolean; // false = alamat/jam/koordinat belum terverifikasi penuh
 	coordinates?: {
 		latitude: number;
@@ -173,12 +181,22 @@ export interface OrderItem {
 	qty: number;
 	note?: string;
 	unitPrice: number;
+	// Opsi cup (ukuran, manis, es). Opsional: item tanpa opsi tetap valid.
+	size?: 'REG' | 'JUMBO';
+	sweet?: 'NORMAL' | 'LESS' | 'NONE';
+	ice?: 'NORMAL' | 'LESS' | 'NONE';
 }
 
 export interface Order {
 	id: string;
 	outletId: OutletId;
 	fulfillmentMethod?: FulfillmentMethod;
+	paymentMode?: PaymentMode;
+	pickupNote?: string; // teks waktu ambil yang diajukan pelanggan, mis. '15 menit lagi (sekitar 11.34 WITA)'
+	note?: string; // catatan pelanggan
+	uniqueCode?: number; // kode unik QRIS 1-99 dari server
+	payTotal?: number; // total + kode unik: nominal yang dibayar lewat QRIS
+	expiresAt?: number; // batas waktu pembayaran (ms epoch)
 	contact: CustomerContact;
 	items: OrderItem[];
 	pickupSlotId: string;

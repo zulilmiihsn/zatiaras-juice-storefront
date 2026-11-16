@@ -12,6 +12,8 @@ export const EVENTS = [
 	'checkout_started',
 	'pickup_slot_selected',
 	'payment_created',
+	'order_placed_qris',
+	'upsell_accepted',
 	'payment_success',
 	'payment_failed',
 	'order_confirmed',

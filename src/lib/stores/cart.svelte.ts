@@ -5,6 +5,7 @@ import {
 	addLine as addPure,
 	revalidateForOutlet,
 	setQty as setPure,
+	upsizeLine as upsizePure,
 	subtotal as subPure,
 	type Line,
 	type RevalidationResult
@@ -88,8 +89,13 @@ export const cart = {
 			save();
 		}
 	},
-	qty(menuItemId: string, qty: number): void {
-		lines = setPure(lines, menuItemId, qty);
+	// key = lineKey(baris); untuk baris tanpa opsi sama dengan menuItemId.
+	qty(key: string, qty: number): void {
+		lines = setPure(lines, key, qty);
+		save();
+	},
+	upsize(key: string): void {
+		lines = upsizePure(lines, key);
 		save();
 	},
 	clear(): void {

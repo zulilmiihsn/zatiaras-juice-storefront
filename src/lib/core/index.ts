@@ -4,3 +4,6 @@ export * from './order-machine';
 export * from './payment';
 export * from './checkout';
 export * from './config';
+export * from './options';
+export * from './whatsapp-order';
+export * from './checkout-gate';

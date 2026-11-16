@@ -21,4 +21,16 @@ describe('order-machine', () => {
 		expect(canTransition('DRAFT', 'PAID')).toBe(false);
 		expect(() => assertTransition('READY', 'PAID')).toThrow();
 	});
+
+	it('jalur kasir WhatsApp lolos', () => {
+		expect(canTransition('DRAFT', 'AWAITING_CASHIER')).toBe(true);
+		expect(canTransition('AWAITING_CASHIER', 'CONFIRMED')).toBe(true);
+		expect(canTransition('AWAITING_CASHIER', 'EXPIRED')).toBe(true);
+		expect(canTransition('AWAITING_CASHIER', 'CANCELLED')).toBe(true);
+	});
+
+	it('jalur kasir tidak melompati konfirmasi', () => {
+		expect(canTransition('AWAITING_CASHIER', 'PREPARING')).toBe(false);
+		expect(canTransition('AWAITING_CASHIER', 'PAID')).toBe(false);
+	});
 });

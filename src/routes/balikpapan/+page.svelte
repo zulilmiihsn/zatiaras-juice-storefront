@@ -14,10 +14,10 @@
 </script>
 
 <svelte:head>
-	<title>Zatiaras Juice Balikpapan | Kutilang + Gatot Subroto</title>
+	<title>Zatiaras Juice Balikpapan | MT Haryono</title>
 	<meta
 		name="description"
-		content="Zatiaras Juice Balikpapan: outlet Kutilang dan Gatot Subroto. Order pickup, menu, jam buka."
+		content="Zatiaras Juice Balikpapan: outlet MT Haryono. Order pickup dan menu."
 	/>
 	<link rel="canonical" href={url} />
 	{@html ldCrumb}
@@ -27,7 +27,7 @@
 	<p class="text-xs font-bold tracking-wider text-neutral-500 uppercase">Kota · Balikpapan</p>
 	<h1 class="mt-2 font-display text-4xl font-extrabold text-ink">Zatiaras Juice Balikpapan</h1>
 	<p class="mt-2 text-sm text-neutral-600">
-		2 outlet aktif: Kutilang · Gatot Subroto. Pilih outlet untuk order pickup.
+		1 outlet aktif: MT Haryono. Pilih outlet untuk order pickup.
 	</p>
 	<ul class="mt-6 grid gap-4 sm:grid-cols-2">
 		{#each outlets as o}

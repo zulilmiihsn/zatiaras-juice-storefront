@@ -39,4 +39,18 @@ describe('checkout validate', () => {
 		expect(errs).toContain('single_outlet_only');
 		expect(errs).toContain('outlet_paused');
 	});
+
+	it('jalur kasir tidak mewajibkan nomor WA', () => {
+		const errs = validateCheckout({
+			name: 'Budi',
+			whatsapp: '',
+			outlet: OUTLETS[0],
+			pickupSlotId: 'juanda-now',
+			paymentMode: 'CASHIER',
+			cart: [
+				{ menuItemId: 'm1', qty: 1, outletId: 'juanda', availability: 'AVAILABLE', price: 20000 }
+			]
+		});
+		expect(errs).toEqual([]);
+	});
 });

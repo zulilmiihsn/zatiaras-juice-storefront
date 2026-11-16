@@ -38,6 +38,7 @@
 			case 'READY':
 				return 'bg-emerald-50 text-emerald-700 border-emerald-200';
 			case 'PENDING_PAYMENT':
+			case 'AWAITING_CASHIER':
 				return 'bg-amber-50 text-amber-700 border-amber-200';
 			case 'PREPARING':
 			case 'PAID':

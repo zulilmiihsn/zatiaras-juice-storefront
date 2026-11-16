@@ -1,5 +1,5 @@
 // FR-CHECKOUT + FR-CART + FR-MENU-002 + QUALITY gates.
-import type { Availability, Outlet } from './contracts';
+import type { Availability, Outlet, PaymentMode } from './contracts';
 import { canAcceptWebOrders } from './outlets';
 
 export interface CartLine {
@@ -16,12 +16,17 @@ export interface CheckoutInput {
 	outlet: Outlet;
 	pickupSlotId: string;
 	cart: CartLine[];
+	// CASHIER: pelanggan mengirim dari WhatsApp-nya sendiri, jadi nomor tidak perlu diketik ulang.
+	paymentMode?: PaymentMode;
 }
 
 export function validateCheckout(input: CheckoutInput): string[] {
 	const errors: string[] = [];
 	if (!input.name.trim()) errors.push('name_required');
-	if (!/^\+?62\d{8,14}$/.test(input.whatsapp.replace(/[\s-]/g, '')))
+	if (
+		input.paymentMode !== 'CASHIER' &&
+		!/^\+?62\d{8,14}$/.test(input.whatsapp.replace(/[\s-]/g, ''))
+	)
 		errors.push('whatsapp_invalid');
 	if (!input.pickupSlotId) errors.push('slot_required');
 	if (input.cart.length === 0) errors.push('cart_empty');

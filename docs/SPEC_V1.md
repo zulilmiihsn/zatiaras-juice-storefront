@@ -6,15 +6,15 @@
 
 `/`, `/menu`, `/menu/[slug]`, `/locations`, `/samarinda`, `/samarinda/juanda`,
 `/samarinda/slamet-riyadi`, `/berau`, `/berau/merah-delima`, `/balikpapan`,
-`/balikpapan/kutilang`, `/balikpapan/gatot-subroto`, `/cart`, `/checkout`,
+`/balikpapan/mt-haryono`, `/cart`, `/checkout`,
 `/order/[id]`, `/track`, `/feedback`, `/about`, `/group`, `/privacy`, `/terms`.
 Unknown routes use the branded error page (`+error.svelte`). No standalone `/order` page:
 ordering starts at `/menu` and follows `/cart` → `/checkout` → `/order/[id]`.
 No fake delivery routes.
 
-## Homepage (brand-level, 8 sections)
+## Homepage (brand-level; eight sections after owner-approved consolidation)
 
-01 Hero (two-line solid magenta, heavier Jus Alpukat headline; no `Buahnya Berasa.`
+01 Hero (two-line solid magenta, heavier Jus Alpukat headline; no `Buahnya Berasa`
 subheading; supporting copy `Jus buah segar dengan rasa asli buah pilihan.`
 and `Pesan online, ambil di outlet terdekat.`; `Pesan Sekarang` → `/menu`,
 `Pilih Outlet` → `/locations`; coverage "Samarinda · Berau · Balikpapan").
@@ -28,10 +28,45 @@ fruit smoothies with whipped cream and fruit-piece topping (no age or health cla
 Sample names come from `MENU` (essential items per category, regular prices from the
 official 2026-06-18 menu); Camilan is not shown on the homepage. A category with no items
 shows an honest "sedang disiapkan" state on /menu. Category photos come later; official cup mark stands in.
-04 Pesan Dulu. Tinggal Ambil. (3 steps + Pesan Sekarang). 05 Temukan Zatiaras
-(multi-city grouping). 06 Pesan Rame-Rame (outlet-aware). 07 Product/process proof
-(no fake claims). 08 Support + footer. One cinematic hero only; reduced-motion = full
-static hero.
+04 `Buahnya Berasa` fruit story, using the supplied
+strawberry/blender video. Native page scrolling controls the footage with 0.4s catch-up;
+no wheel/touch interception. Owner-selected bright, full-viewport footage without a dark
+scrim; sentences alternate left, right, left in one bounded column each. Supporting
+words use cream with a berry keyline; accents use Heritage Magenta with a cream
+keyline and subtle static highlight. Use short berry depth without blur/glow, the same
+responsive size for every part (24px mobile minimum), and no decorative fruit cutouts.
+Extend the first reading hold to progress 0.20 and the second through 0.64,
+without lengthening the 300svh track or changing 0.4s smoothing.
+High-contrast mode restores solid text. Keep the thin edge progress line. No local `Lihat menu` button (owner request). Three scroll chapters:
+`Buahnya Berasa` → `Rasa buah tetap jadi bintang utama` → `Dari buah, jadi kesegaran`
+Use varied, reversible vortex choreography: letters leave last-character first,
+spinning and shrinking on curved paths into the blender on both exits; the right-hand
+sentence arrives full-size from the right edge, with staggered same-side edge entrances
+for the finale. Suction is exit-only; incoming text never grows from the blender. Reading holds stay
+still; no simultaneous visible sentences. Remove decorative eyebrow/instruction badges. Reduced motion, save-data, short viewports, no JavaScript or
+media failure retain a readable static illustration without the long sticky track.
+This owner-requested scene supersedes the original hero-only sequence restriction.
+No ingredient, hygiene, nutrition or operational claims are inferred from the footage.
+05 Temukan Zatiaras (multi-city grouping), answering outlet proximity before the full
+pickup explanation. 06 Pesan Dulu. Tinggal Ambil. (3 steps + Pesan Sekarang).
+07 Pesan Rame-Rame (a secondary, outlet-aware group request; approval before payment).
+08 Closing Pesan Sekarang, followed by support and the shared footer.
+
+The owner-approved consolidation removes the separate `Kentalnya Beneran` proof block
+formerly after group ordering. Its overlapping fruit message belongs to FruitStory;
+size/outlet details belong to the selected menu/outlet and pickup flow. Do not migrate
+internal compliance language or unsupported operational promises into marketing copy.
+FruitStory remains a brand narrative, not evidence of an actual Zatiaras recipe/process.
+Genuine texture/process proof requires verified Zatiaras material; synthetic cutouts and
+the supplied blender clip do not establish composition. Preserve the approved visual
+choreography and direct menu/outlet CTAs; visitors need not complete the story to order.
+
+Homepage rhythm: hero track 300dvh, fruit-story track 300svh, each with a 100dvh film
+stage rather than forcing every section to the same height. Content sections share
+fluid 64–96px vertical padding and 32–48px content gaps (default root size), with
+balanced closing-CTA padding. Keep desktop product/category viewport fitting and
+map geometry. Static/no-JavaScript heroes do not retain an empty scrub track;
+short-screen hero height follows content to keep actions accessible.
 
 Homepage section 05 uses `OutletFinder`: a 100dvh map composition with a wavy top edge,
 a compact city panel and a bounded, centered outlet-card row without a large outer shelf.
@@ -71,7 +106,10 @@ Direct on Fruit Cream, no capsule; Plus Jakarta Sans; ink default, magenta hover
 
 - underline, `aria-current="page"`, 140–220ms. Top: no duplicate CTA while hero CTA
   visible (IntersectionObserver, no layout shift, reserved space). Scrolled ~60–64px,
-  cream opaque. No decorative progress line. Cart = utility (icon, real badge only).
+  cream opaque outside the fullscreen fruit film. When FruitStory covers the whole
+  header row, use a transparent overlay with cream nav labels; restore the solid
+  header on exit/reverse exit. The film remains 100dvh, with no header-height deduction.
+  No decorative progress line. Cart = utility (icon, real badge only).
   Mobile: `[logo] [Cart] [Menu]`, ~56–64px; hide-on-scroll-down with hysteresis; never
   hide when drawer open/focus in header/near top. Drawer: primary Menu/Outlet/Pesan
   Rame-Rame; secondary Lacak/Bantuan (only existing routes).
@@ -117,7 +155,7 @@ Server rechecks outlet acceptance + orderability before payment. Lifecycle
 
 ## Definition of Done (multi-city)
 
-Homepage brand-level; route/data model supports all 5 outlets (ordering activates only
+Homepage brand-level; route/data model supports all 4 outlets (ordering activates only
 after approved offerings are configured); no hardcoded Samarinda in shared logic;
 location priority respected; cart invariant + revalidation; city/outlet pages + structured
 data; sitemap/canonical valid; docs updated; tests/check/lint/build pass.

@@ -6,12 +6,12 @@
 	import { goto } from '$app/navigation';
 	import { formatOutletHours, getOutlet } from '$lib/core/outlets';
 
-	const outlet = getOutlet('gatot-subroto')!;
-	const url = canonical('/balikpapan/gatot-subroto');
+	const outlet = getOutlet('mt-haryono')!;
+	const url = canonical('/balikpapan/mt-haryono');
 
 	const ldBusiness = jsonLdTag(
 		localBusinessJsonLd({
-			name: 'Gatot Subroto Balikpapan',
+			name: 'MT Haryono Balikpapan',
 			url,
 			hours: outlet.hours,
 			city: 'Balikpapan',
@@ -22,27 +22,23 @@
 		breadcrumbJsonLd([
 			{ name: 'Home', url: canonical('/') },
 			{ name: 'Balikpapan', url: canonical('/balikpapan') },
-			{ name: 'Gatot Subroto', url }
+			{ name: 'MT Haryono', url }
 		])
 	);
-	onMount(() => track('outlet_view', { outlet: 'gatot-subroto', city: 'Balikpapan' }));
+	onMount(() => track('outlet_view', { outlet: 'mt-haryono', city: 'Balikpapan' }));
 
 	function orderHere() {
-		cart.setOutlet('gatot-subroto');
-		track('outlet_selected', {
-			outlet: 'gatot-subroto',
-			city: 'Balikpapan',
-			source: 'outlet-page'
-		});
+		cart.setOutlet('mt-haryono');
+		track('outlet_selected', { outlet: 'mt-haryono', city: 'Balikpapan', source: 'outlet-page' });
 		goto('/menu');
 	}
 </script>
 
 <svelte:head>
-	<title>Zatiaras Juice Gatot Subroto Balikpapan | Order Pickup</title>
+	<title>Zatiaras Juice MT Haryono Balikpapan | Order Pickup</title>
 	<meta
 		name="description"
-		content="Zatiaras Juice Outlet Gatot Subroto Balikpapan. Order pickup praktis tanpa antre."
+		content="Zatiaras Juice Outlet MT Haryono Balikpapan. Order pickup praktis tanpa antre."
 	/>
 	<link rel="canonical" href={url} />
 	{@html ldBusiness}
@@ -59,24 +55,25 @@
 			<span class="text-neutral-300">/</span>
 			<a href="/balikpapan" class="transition-colors hover:text-brand">Balikpapan</a>
 			<span class="text-neutral-300">/</span>
-			<span class="font-bold text-ink">Gatot Subroto</span>
+			<span class="font-bold text-ink">MT Haryono</span>
 		</nav>
 		<div class="rounded-3xl border border-black/[0.08] bg-white p-6 shadow-xs sm:p-10">
 			<span
 				class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700"
 			>
-				ALAMAT OUTLET SEDANG DIVERIFIKASI
+				JAM BUKA MENYUSUL
 			</span>
 			<h1 class="mt-3 font-display text-3xl font-extrabold text-ink sm:text-4xl">
-				Zatiaras Outlet Gatot Subroto
+				Zatiaras Outlet MT Haryono
 			</h1>
 			<p class="mt-2 text-xs font-bold tracking-wider text-brand uppercase">
 				Balikpapan, Kalimantan Timur
 			</p>
 			<p class="mt-3 text-sm leading-relaxed text-neutral-600">
-				Alamat jalan dan pin Maps akan ditambahkan setelah verifikasi. Jam operasional: {formatOutletHours(
-					outlet.hours
-				)}.
+				<strong>Alamat:</strong> {outlet.address}.
+				{#if outlet.hours.startsWith('VERIFY')}Jam buka akan ditambahkan setelah dikonfirmasi.{:else}Jam operasional: {formatOutletHours(
+						outlet.hours
+					)}.{/if}
 			</p>
 			<div class="mt-6 flex flex-wrap gap-3">
 				<button
@@ -84,7 +81,7 @@
 					onclick={orderHere}
 					class="tap-scale rounded-full bg-brand px-7 py-3.5 text-xs font-bold text-white shadow-lg shadow-brand/25 transition hover:bg-brand-dark"
 				>
-					Pesan Pickup di Gatot Subroto →
+					Pesan Pickup di MT Haryono →
 				</button>
 				<a
 					href="/locations"

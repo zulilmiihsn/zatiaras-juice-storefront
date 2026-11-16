@@ -1,7 +1,7 @@
 // Order draft lokal. FR-ORDER-001 DRAFT->PENDING_PAYMENT.
 import { browser } from '$app/environment';
 import { assertTransition, canTransition } from '$lib/core/order-machine';
-import type { Order, OrderState, OutletId } from '$lib/core/contracts';
+import type { Order, OrderState, OutletId, PaymentMode } from '$lib/core/contracts';
 import type { Line } from '$lib/stores/cart-logic';
 
 export interface DraftInput {
@@ -11,6 +11,9 @@ export interface DraftInput {
 	slotId: string;
 	lines: Line[];
 	existingIds?: string[];
+	paymentMode?: PaymentMode; // default GATEWAY (perilaku lama); CASHIER = QRIS statis + kode unik, dicek kasir
+	pickupNote?: string;
+	note?: string;
 }
 
 // Kode pickup pendek ramah-manusia (tanpa 0/O/1/I/L yang mirip).
@@ -48,14 +51,25 @@ export function createDraft(input: DraftInput): Order {
 			menuItemId: l.menuItemId,
 			name: l.name,
 			qty: l.qty,
-			unitPrice: l.price
+			unitPrice: l.price,
+			...(l.size ? { size: l.size } : {}),
+			...(l.sweet ? { sweet: l.sweet } : {}),
+			...(l.ice ? { ice: l.ice } : {})
 		})),
 		pickupSlotId: input.slotId,
 		state: 'DRAFT',
 		total
 	};
-	if (!canTransition('DRAFT', 'PENDING_PAYMENT')) throw new Error('no-transition');
-	return { ...order, state: 'PENDING_PAYMENT' };
+	const mode = input.paymentMode ?? 'GATEWAY';
+	const next: OrderState = mode === 'CASHIER' ? 'AWAITING_CASHIER' : 'PENDING_PAYMENT';
+	if (!canTransition('DRAFT', next)) throw new Error('no-transition');
+	return {
+		...order,
+		state: next,
+		...(input.paymentMode ? { paymentMode: input.paymentMode } : {}),
+		...(input.pickupNote ? { pickupNote: input.pickupNote } : {}),
+		...(input.note?.trim() ? { note: input.note.trim() } : {})
+	};
 }
 
 const KEY = 'z-orders';
@@ -87,6 +101,19 @@ export function moveOrder(id: string, to: OrderState): Order {
 	if (i < 0) throw new Error('order_not_found');
 	assertTransition(all[i].state, to);
 	all[i] = { ...all[i], state: to };
+	localStorage.setItem(KEY, JSON.stringify(all));
+	return all[i];
+}
+
+// Server adalah otoritas status untuk pesanan jalur kasir. Sinkron tanpa assertTransition
+// karena polling bisa melewati langkah antara (mis. CONFIRMED langsung READY).
+export function syncOrderState(id: string, state: OrderState): Order | undefined {
+	if (!browser) return undefined;
+	const all = listOrders();
+	const i = all.findIndex((o) => o.id === id);
+	if (i < 0) return undefined;
+	if (all[i].state === state) return all[i];
+	all[i] = { ...all[i], state };
 	localStorage.setItem(KEY, JSON.stringify(all));
 	return all[i];
 }

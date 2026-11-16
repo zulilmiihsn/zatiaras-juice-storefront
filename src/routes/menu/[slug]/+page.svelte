@@ -3,7 +3,8 @@
 	import { canonical, productJsonLd, breadcrumbJsonLd, jsonLdTag } from '$lib/seo';
 	import { cart } from '$lib/stores/cart.svelte';
 	import { track } from '$lib/analytics/events';
-	import { AVAILABILITY_VERIFIED, MENU_VERIFIED, availabilityFor, priceFor } from '$lib/data/menu';
+	import { MENU_VERIFIED } from '$lib/data/menu';
+	import { liveMenu } from '$lib/stores/live-menu.svelte';
 	import { CITIES, OUTLETS, getOutlet, isValidOutletId } from '$lib/core/outlets';
 	import type { OutletId } from '$lib/core/contracts';
 	import { KERN_MAP } from '$lib/kern';
@@ -18,18 +19,22 @@
 		? (cart.outletId as OutletId)
 		: 'juanda';
 	let outlet = $state<OutletId>(initialOutlet);
+
+	$effect(() => {
+		void liveMenu.ensure(outlet);
+	});
 	let qty = $state(1);
 	let added = $state(false);
 	let confirmOutletSwitch = $state(false);
 
 	const url = $derived(canonical(`/menu/${item.slug}`));
-	const avail = $derived(availabilityFor(item, outlet) === 'SOLD_OUT' ? 'OutOfStock' : 'InStock');
+	const avail = $derived(liveMenu.availabilityFor(item, outlet) === 'SOLD_OUT' ? 'OutOfStock' : 'InStock');
 
-	const currentStatus = $derived(availabilityFor(item, outlet));
-	const isSoldOut = $derived(AVAILABILITY_VERIFIED && currentStatus === 'SOLD_OUT');
-	const canOrder = $derived(MENU_VERIFIED && AVAILABILITY_VERIFIED && !isSoldOut);
+	const currentStatus = $derived(liveMenu.availabilityFor(item, outlet));
+	const isSoldOut = $derived(liveMenu.verified(outlet) && currentStatus === 'SOLD_OUT');
+	const canOrder = $derived(MENU_VERIFIED && liveMenu.verified(outlet) && !isSoldOut);
 	const badge = $derived(getStatusBadge(currentStatus));
-	const unitPrice = $derived(priceFor(item, outlet));
+	const unitPrice = $derived(liveMenu.priceFor(item, outlet));
 	const emptyRevalidation: RevalidationResult = {
 		lines: [],
 		removed: [],
@@ -107,7 +112,7 @@
 	}
 
 	function getStatusBadge(st: string) {
-		if (!AVAILABILITY_VERIFIED) {
+		if (!liveMenu.verified(outlet)) {
 			return {
 				label: 'Cek ketersediaan di outlet',
 				class: 'border-neutral-200 bg-neutral-50 text-neutral-600'
@@ -256,7 +261,7 @@
 
 					<div class="my-6 border-t border-black/[0.08]"></div>
 
-					<!-- OUTLET SELECTION: 5 outlet -->
+					<!-- OUTLET SELECTION: 4 outlet -->
 					<div>
 						<label
 							for="outlet-select"
@@ -274,8 +279,8 @@
 								<optgroup label={c.name}>
 									{#each OUTLETS.filter((o) => o.cityId === c.id) as o}
 										<option value={o.id}>
-											Zatiaras {o.name} — {AVAILABILITY_VERIFIED
-												? availabilityFor(item, o.id) === 'SOLD_OUT'
+											Zatiaras {o.name} — {liveMenu.verified(outlet)
+												? liveMenu.availabilityFor(item, o.id) === 'SOLD_OUT'
 													? 'Habis'
 													: 'Tersedia'
 												: 'Cek di outlet'}

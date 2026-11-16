@@ -47,14 +47,13 @@
 					</p>
 				{:else}
 					<p class="mt-2">
-						Walaupun data menu telah diverifikasi, transaksi hanya dapat dilakukan jika checkout dan
-						metode pembayaran resmi sudah diaktifkan. Status pembayaran harus diverifikasi server,
-						bukan hanya oleh tampilan browser.
+						Pesanan baru dianggap diterima setelah kasir outlet mencocokkan pembayaran QRIS dan
+						statusnya berubah. Tampilan status di browser bukan konfirmasi dari outlet.
 					</p>
 				{/if}
 				<p class="mt-2">
-					Jangan melakukan pembayaran di luar instruksi pembayaran resmi yang ditampilkan pada alur
-					pemesanan.
+					Pembayaran hanya lewat QRIS outlet dengan nominal yang tampil di halaman pesanan. Jangan
+					mentransfer uang atau mengirim bukti bayar ke nomor yang tidak tampil di website ini.
 				</p>
 			</section>
 
@@ -78,9 +77,17 @@
 			<section class="rounded-2xl border border-black/8 bg-white p-5 sm:p-6">
 				<h2 class="font-display text-xl font-bold text-ink">Pesanan dan pembayaran</h2>
 				<p class="mt-3 text-sm leading-relaxed text-neutral-700">
-					Pesanan baru dianggap dibayar setelah statusnya diverifikasi melalui sistem pembayaran
-					resmi. Tampilan status pada browser saja bukan bukti pembayaran. Ikuti konfirmasi outlet
-					untuk waktu pickup dan status persiapan pesanan.
+					Pesanan dibayar lewat QRIS di depan dengan nominal persis yang tampil setelah pesanan
+					dibuat: harga menu ditambah kode unik beberapa rupiah. Kode unik adalah bagian dari
+					jumlah yang kamu bayar, bukan biaya tambahan, dan dipakai kasir untuk mencocokkan
+					pembayaran. Kasir memproses pesanan setelah pembayaran masuk. Pesanan yang belum dibayar
+					kedaluwarsa dalam 30 menit. Tampilan status di browser bukan bukti pembayaran.
+				</p>
+				<p class="mt-3 text-sm leading-relaxed text-neutral-700">
+					Bayar dengan nominal yang sama persis. Jika nominal berbeda, pembayaran masuk setelah
+					pesanan kedaluwarsa, atau pesanan ditolak outlet padahal uang sudah masuk, hubungi outlet
+					lewat WhatsApp dengan menyebut kode pesanan. Uang yang tidak berujung pada pesanan
+					dikembalikan ke pembayar paling lambat 3 hari kerja setelah dikonfirmasi outlet.
 				</p>
 			</section>
 
@@ -97,12 +104,24 @@
 			<section class="rounded-2xl border border-black/8 bg-white p-5 sm:p-6">
 				<h2 class="font-display text-xl font-bold text-ink">Pembatalan, kendala, dan refund</h2>
 				<p class="mt-3 text-sm leading-relaxed text-neutral-700">
-					Ketentuan pembatalan dan refund yang lebih rinci akan ditampilkan sebelum pembayaran
-					online diaktifkan. Jika terjadi kendala pada pesanan yang sudah dibayar dan terverifikasi,
-					gunakan jalur bantuan manusia yang disediakan untuk pesanan tersebut; jangan mengirim data
-					pembayaran rahasia melalui formulir feedback.
+					Pesanan dapat dibatalkan dengan menghubungi outlet lewat WhatsApp selama belum mulai
+					diracik. Minuman yang sudah diracik tidak bisa dibatalkan atau dikembalikan, kecuali ada
+					kesalahan dari outlet. Outlet yang memutuskan apakah pesanan sudah mulai diracik. Jika
+					terjadi kendala pada pesanan, hubungi outlet lewat WhatsApp dengan menyebut kode pesanan;
+					jangan mengirim data pembayaran rahasia melalui formulir feedback.
 				</p>
 			</section>
+
+			<section class="rounded-2xl border border-black/8 bg-white p-5 sm:p-6">
+				<h2 class="font-display text-xl font-bold text-ink">Sengketa dan hukum yang berlaku</h2>
+				<p class="mt-3 text-sm leading-relaxed text-neutral-700">
+					Ketentuan ini tunduk pada hukum Republik Indonesia. Perselisihan diselesaikan lebih dulu
+					dengan musyawarah lewat outlet terkait. Jika belum selesai, pelanggan dapat mengadu ke
+					Badan Penyelesaian Sengketa Konsumen atau menempuh jalur pengadilan yang berwenang.
+				</p>
+			</section>
+
+			<p class="px-1 text-xs text-neutral-500">Terakhir diperbarui: 16 November 2026</p>
 		</div>
 
 		<nav

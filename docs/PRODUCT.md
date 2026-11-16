@@ -26,8 +26,7 @@ menu, order, pay safely, know what is happening, and receive my order without un
   address `VERIFY_VIA_GBP`).
 - Berau: Merah Delima (Jl. Merah Delima depan Klinik Berlian Bakti, 08:00–22:00 WITA,
   +62813-4988-2015 — triple-corroborated: official team repo + live site + GoFood receipt).
-- Balikpapan: Kutilang, Gatot Subroto (hours same as Juanda 07:00–23:00 daily —
-  owner-confirmed; street addresses/coords `VERIFY_VIA_GBP` / `VERIFY_VIA_OPS`).
+- Balikpapan: MT Haryono only (owner 2026-11-16; hours `VERIFY_VIA_OPS`).
 
 City/outlet are discovery context, fulfillment context, pricing context, availability
 context, pickup-capacity context, and analytics dimensions.

@@ -10,6 +10,9 @@
 // Yang TIDAK ditemukan di sumber mana pun: alamat Slamet Riyadi,
 // Kutilang, Gatot Subroto; harga menu terkini (Supabase dinamis, tak
 // terakses publik; struk 2023 basi) — tetap VERIFY, jangan invent.
+// Update owner 2026-11-16: Balikpapan tinggal satu outlet, MT Haryono (Kutilang dan Gatot Subroto dihapus).
+// Update owner 2026-11-16: alamat Juanda yang benar = versi prototype (Jl. Juanda No. 8, Air Hitam,
+// depan Kantor Imigrasi); versi "samping Ami Ali Parfum, Sidodadi" dari situs lama sudah tidak dipakai.
 // Update owner 2026-09-25: Slamet Riyadi 07:00-22:00, Minggu libur (cocok
 // planning truth); Kutilang + Gatot Subroto ikut jam Juanda Mon-Sun
 // 07:00-23:00. Alamat Balikpapan + Slamet Riyadi tetap VERIFY.
@@ -18,7 +21,7 @@ import type { City, CityInfo, Outlet, OutletId } from './contracts';
 export const CITIES: CityInfo[] = [
 	{ id: 'samarinda', name: 'Samarinda', tagline: 'Juanda · Slamet Riyadi' },
 	{ id: 'berau', name: 'Berau', tagline: 'Merah Delima' },
-	{ id: 'balikpapan', name: 'Balikpapan', tagline: 'Kutilang · Gatot Subroto' }
+	{ id: 'balikpapan', name: 'Balikpapan', tagline: 'MT Haryono' }
 ];
 
 export const OUTLETS: Outlet[] = [
@@ -28,7 +31,7 @@ export const OUTLETS: Outlet[] = [
 		city: 'Samarinda',
 		cityId: 'samarinda',
 		address:
-			'Jl. Ir. H. Juanda (samping Ami Ali Parfum), Sidodadi, Samarinda Ulu, Kota Samarinda 75243',
+			'Jl. Juanda No. 8, Air Hitam, Samarinda Ulu, Kota Samarinda. Turunan flyover Juanda, depan Kantor Imigrasi Kelas I Samarinda',
 		hours: 'Mon-Sun 07:00-23:00',
 		load: 'NORMAL',
 		acceptsWebOrders: true,
@@ -67,23 +70,13 @@ export const OUTLETS: Outlet[] = [
 		verified: true
 	},
 	{
-		id: 'kutilang',
-		name: 'Kutilang',
+		id: 'mt-haryono',
+		name: 'MT Haryono',
 		city: 'Balikpapan',
 		cityId: 'balikpapan',
-		address: 'VERIFY_VIA_GBP',
-		hours: 'Mon-Sun 07:00-23:00',
-		load: 'NORMAL',
-		acceptsWebOrders: true,
-		verified: false
-	},
-	{
-		id: 'gatot-subroto',
-		name: 'Gatot Subroto',
-		city: 'Balikpapan',
-		cityId: 'balikpapan',
-		address: 'VERIFY_VIA_GBP',
-		hours: 'Mon-Sun 07:00-23:00',
+		// Satu-satunya outlet Balikpapan (owner 2026-11-16, yang ada di Google Maps). Alamat dari prototype.
+		address: 'Jl. MT Haryono No. 85, Damai, Balikpapan Selatan',
+		hours: 'VERIFY_VIA_OPS',
 		load: 'NORMAL',
 		acceptsWebOrders: true,
 		verified: false
@@ -111,6 +104,7 @@ export function formatOutletHours(hours: string): string {
 	if (hours === 'Mon-Sat 07:00-22:00; Sunday closed') {
 		return 'Senin–Sabtu · 07.00–22.00 · Minggu libur';
 	}
+	if (hours.startsWith('VERIFY')) return 'Jam buka menyusul';
 	return hours;
 }
 

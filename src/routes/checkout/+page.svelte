@@ -1,13 +1,16 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { dev } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { cart } from '$lib/stores/cart.svelte';
-	import { AVAILABILITY_VERIFIED, MENU_VERIFIED } from '$lib/data/menu';
-	import { slotsFor } from '$lib/data/slots';
+	import { MENU_VERIFIED } from '$lib/data/menu';
+	import { liveMenu } from '$lib/stores/live-menu.svelte';
 	import { getOutlet } from '$lib/core/outlets';
 	import { outlet } from '$lib/stores/outlet.svelte';
 	import { validateCheckout } from '$lib/core/checkout';
+	import { checkoutGate } from '$lib/core/checkout-gate';
+	import { optionSummary } from '$lib/core/options';
+	import { lineKey } from '$lib/stores/cart-logic';
+	import { PICKUP_CHOICES, pickupText, rupiah, witaClock } from '$lib/core/whatsapp-order';
 	import { createDraft, listOrders, saveOrder } from '$lib/stores/orders';
 	import { track } from '$lib/analytics/events';
 	import { canonical } from '$lib/seo';
@@ -15,40 +18,39 @@
 	import zcup from '$lib/assets/brand/ZJ_CUP_STANDALONE.svg';
 
 	let name = $state('');
-	let whatsapp = $state('');
-	let slotId = $state('');
+	let pickupId = $state('now');
+	let note = $state('');
 	let errors = $state<string[]>([]);
 	let isSubmitting = $state(false);
+	let now = $state(new Date());
 
-	const slots = $derived(slotsFor(cart.outletId));
 	const currentOutlet = $derived(getOutlet(cart.outletId));
-	const checkoutAvailable = dev && MENU_VERIFIED && AVAILABILITY_VERIFIED;
+
+	$effect(() => {
+		void liveMenu.ensure(cart.outletId);
+	});
+	const gate = $derived(
+		checkoutGate({
+			menuVerified: MENU_VERIFIED,
+			availabilityVerified: liveMenu.verified(cart.outletId),
+			hasQris: Boolean(currentOutlet?.qrisImage)
+		})
+	);
+	const checkoutAvailable = $derived(gate.open);
 
 	onMount(() => {
+		now = new Date();
 		if (!cart.empty && checkoutAvailable) {
 			track('checkout_started', { outlet: cart.outletId, value: cart.subtotal });
 		}
-		if (slots.length > 0 && !slotId) {
-			slotId = slots[0].id;
-		}
 	});
-
-	function normalizeWhatsapp(raw: string): string {
-		let clean = raw.trim().replace(/[\s-]/g, '');
-		if (clean.startsWith('08')) {
-			clean = '628' + clean.slice(2);
-		}
-		return clean;
-	}
 
 	function getErrorMessage(code: string): string {
 		switch (code) {
 			case 'name_required':
 				return 'Nama pemesan wajib diisi.';
-			case 'whatsapp_invalid':
-				return 'Nomor WhatsApp tidak valid (Gunakan format 0812... atau +62812...).';
 			case 'slot_required':
-				return 'Silakan pilih perkiraan waktu pickup.';
+				return 'Silakan pilih perkiraan waktu ambil.';
 			case 'cart_empty':
 				return 'Keranjang pesanan masih kosong.';
 			case 'single_outlet_only':
@@ -63,9 +65,14 @@
 		}
 	}
 
-	function submit(): void {
-		if (cart.empty) return;
-		if (!checkoutAvailable) return;
+	let sendError = $state('');
+
+	// Satu ketukan: server mencatat pesanan, menghitung harga, dan memberi kode unik QRIS.
+	// Pelanggan lalu membayar nominal persis itu lewat QRIS outlet; kasir mencocokkan uang masuk.
+	// Tanpa server pesanan, kode unik tidak bisa dibuat, jadi pesanan tidak dikirim.
+	async function submit(): Promise<void> {
+		if (cart.empty || !checkoutAvailable || isSubmitting) return;
+		sendError = '';
 		isSubmitting = true;
 
 		const base = getOutlet(cart.outletId);
@@ -73,15 +80,16 @@
 			isSubmitting = false;
 			return;
 		}
-
-		const formattedWa = normalizeWhatsapp(whatsapp);
 		const live = { ...base, load: outlet.getLoad(base.id), acceptsWebOrders: true };
+		const choice = PICKUP_CHOICES.find((c) => c.id === pickupId) ?? PICKUP_CHOICES[0];
+		const slotId = `${live.id}-${choice.id}`;
 
-		const input = {
+		errors = validateCheckout({
 			name: name.trim(),
-			whatsapp: formattedWa,
+			whatsapp: '',
 			outlet: live,
 			pickupSlotId: slotId,
+			paymentMode: 'CASHIER',
 			cart: cart.lines.map((l) => ({
 				menuItemId: l.menuItemId,
 				qty: l.qty,
@@ -89,27 +97,76 @@
 				availability: l.availability,
 				price: l.price
 			}))
-		};
-
-		errors = validateCheckout(input);
+		});
 		if (errors.length > 0) {
 			isSubmitting = false;
 			return;
 		}
 
-		const order = createDraft({
+		const label = pickupText(choice, new Date());
+		const draft = createDraft({
 			outletId: live.id,
 			name: name.trim(),
-			whatsapp: formattedWa,
+			whatsapp: '',
 			slotId,
 			lines: cart.lines,
+			paymentMode: 'CASHIER',
+			pickupNote: label,
+			note,
 			existingIds: listOrders().map((o) => o.id)
 		});
 
-		saveOrder(order);
-		track('payment_created', { outlet: live.id, value: order.total, slot: slotId });
-		cart.clear();
-		goto(`/order/${order.id}`);
+		try {
+			const res = await fetch('/api/orders', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({
+					outletId: live.id,
+					name: name.trim(),
+					pickupChoiceId: choice.id,
+					note,
+					items: cart.lines.map((l) => ({
+						slug: l.menuItemId,
+						qty: l.qty,
+						size: l.size,
+						sweet: l.sweet,
+						ice: l.ice
+					}))
+				})
+			});
+			if (!res.ok) {
+				const e = await res.json().catch(() => ({}));
+				sendError =
+					res.status === 429
+						? 'Terlalu banyak pesanan sekaligus. Coba lagi sebentar lagi.'
+						: res.status === 503
+							? 'Pemesanan online sedang tidak tersedia. Coba lagi sebentar atau pesan langsung di outlet.'
+							: e.error === 'item_sold_out'
+								? 'Ada item yang habis di outlet ini. Periksa keranjang.'
+								: 'Pesanan belum bisa dikirim. Periksa data lalu coba lagi.';
+				isSubmitting = false;
+				return;
+			}
+			// Pakai kode, harga, dan nominal QRIS dari server.
+			const s = await res.json();
+			saveOrder({
+				...draft,
+				id: s.id,
+				total: s.total,
+				items: s.items,
+				pickupNote: s.pickupNote,
+				state: 'AWAITING_CASHIER',
+				uniqueCode: s.uniqueCode,
+				payTotal: s.payTotal,
+				expiresAt: s.expiresAt
+			});
+			track('order_placed_qris', { outlet: live.id, value: s.total, pickup: choice.id });
+			cart.clear();
+			goto(`/order/${s.id}`);
+		} catch {
+			sendError = 'Tidak ada koneksi ke server pesanan. Periksa internet lalu coba lagi.';
+			isSubmitting = false;
+		}
 	}
 </script>
 
@@ -198,8 +255,12 @@
 				<span class="eyebrow">Checkout sementara belum tersedia</span>
 				<h2 class="mt-2 font-display text-2xl font-bold text-ink">Pemesanan online belum aktif</h2>
 				<p class="mt-2 text-sm leading-relaxed text-neutral-600">
-					Menu tetap bisa dijelajahi. Checkout memerlukan harga dan ketersediaan terverifikasi serta
-					sistem pembayaran yang siap digunakan.
+					{#if gate.reason === 'no_whatsapp_number'}
+						Menu tetap bisa dijelajahi. Nomor WhatsApp pesanan outlet ini belum tersambung.
+					{:else}
+						Menu tetap bisa dijelajahi. Checkout dibuka setelah harga dan ketersediaan outlet
+						terverifikasi.
+					{/if}
 				</p>
 				<a
 					href="/menu"
@@ -220,7 +281,7 @@
 							>
 								1
 							</span>
-							<h2 class="text-base font-bold text-ink">Informasi Pengambil</h2>
+							<h2 class="text-base font-bold text-ink">Nama pemesan</h2>
 						</div>
 
 						<div class="mt-5 space-y-4">
@@ -229,7 +290,7 @@
 									for="cust-name"
 									class="block text-xs font-bold tracking-wider text-neutral-600 uppercase"
 								>
-									Nama Lengkap / Panggilan <span class="text-brand">*</span>
+									Nama atau panggilan <span class="text-brand">*</span>
 								</label>
 								<input
 									id="cust-name"
@@ -240,25 +301,6 @@
 								/>
 								<p class="mt-1 text-[11px] text-neutral-500">
 									Untuk dipanggil kasir saat jus sudah siap.
-								</p>
-							</div>
-
-							<div>
-								<label
-									for="cust-wa"
-									class="block text-xs font-bold tracking-wider text-neutral-600 uppercase"
-								>
-									Nomor WhatsApp Aktif <span class="text-brand">*</span>
-								</label>
-								<input
-									id="cust-wa"
-									bind:value={whatsapp}
-									type="tel"
-									placeholder="08123456789 atau +62812..."
-									class="mt-1.5 w-full rounded-2xl border border-black/15 bg-neutral-50/50 px-4 py-3 text-sm text-ink placeholder:text-neutral-400 focus:border-brand focus:bg-white"
-								/>
-								<p class="mt-1 text-[11px] text-neutral-500">
-									Bukti pesanan & koordinasi staf jika ada kendala buah habis.
 								</p>
 							</div>
 						</div>
@@ -273,7 +315,7 @@
 								>
 									2
 								</span>
-								<h2 class="text-base font-bold text-ink">Waktu Pengambilan (Slot Pickup)</h2>
+								<h2 class="text-base font-bold text-ink">Diambil kapan</h2>
 							</div>
 						</div>
 
@@ -283,37 +325,63 @@
 							>:
 						</p>
 
-						<div class="mt-4 grid gap-2.5 sm:grid-cols-2">
-							{#each slots as s}
+						<div class="mt-4 grid grid-cols-2 gap-2.5">
+							{#each PICKUP_CHOICES as c}
 								<button
 									type="button"
+									aria-pressed={pickupId === c.id}
 									onclick={() => {
-										slotId = s.id;
-										track('pickup_slot_selected', { outlet: cart.outletId, slot: s.id });
+										pickupId = c.id;
+										track('pickup_slot_selected', { outlet: cart.outletId, slot: c.id });
 									}}
-									class="tap-scale flex items-center justify-between rounded-2xl border p-3.5 text-left transition {slotId ===
-									s.id
+									class="tap-scale min-h-14 rounded-2xl border p-3.5 text-left transition {pickupId ===
+									c.id
 										? 'border-brand bg-brand-soft/40 shadow-xs'
 										: 'border-black/10 bg-white hover:border-black/20'}"
 								>
-									<div>
-										<p class="text-xs font-bold text-ink">{s.label}</p>
-										<p class="text-[11px] text-neutral-500">Waktu dikonfirmasi outlet</p>
-									</div>
-									<div
-										class="flex h-5 w-5 items-center justify-center rounded-full border {slotId ===
-										s.id
-											? 'border-brand bg-brand text-white'
-											: 'border-neutral-300'}"
-									>
-										{#if slotId === s.id}
-											<div class="h-2 w-2 rounded-full bg-white"></div>
-										{/if}
-									</div>
+									<p class="text-xs font-bold text-ink">{c.label}</p>
+									<p class="text-[11px] text-neutral-500">
+										{c.minutes
+											? `sekitar ${witaClock(now, c.minutes)} WITA`
+											: 'Jam siap dikonfirmasi kasir'}
+									</p>
 								</button>
 							{/each}
 						</div>
 					</div>
+
+					<!-- CATATAN + PEMBAYARAN -->
+					<div class="rounded-3xl border border-black/10 bg-white p-6 shadow-sm sm:p-7">
+						<label
+							for="cust-note"
+							class="block text-xs font-bold tracking-wider text-neutral-600 uppercase"
+						>
+							Catatan (boleh kosong)
+						</label>
+						<input
+							id="cust-note"
+							bind:value={note}
+							type="text"
+							maxlength="120"
+							class="mt-1.5 w-full rounded-2xl border border-black/15 bg-neutral-50/50 px-4 py-3 text-sm text-ink focus:border-brand focus:bg-white"
+						/>
+						<div class="mt-5 rounded-2xl bg-neutral-50 p-4">
+							<p class="text-xs font-bold text-ink">Pembayaran</p>
+							<p class="mt-1 text-xs leading-relaxed text-neutral-600">
+								Bayar lewat QRIS setelah pesanan dibuat. Nominalnya ditambah kode unik beberapa
+								rupiah agar kasir bisa mencocokkan pembayaranmu. Tidak perlu kirim bukti bayar.
+							</p>
+						</div>
+					</div>
+
+					{#if sendError}
+						<p
+							role="alert"
+							class="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-xs font-semibold text-rose-700"
+						>
+							{sendError}
+						</p>
+					{/if}
 
 					<!-- VALIDATION ERRORS -->
 					{#if errors.length > 0}
@@ -352,12 +420,15 @@
 
 						<!-- ITEMS LIST -->
 						<div class="mt-4 max-h-56 divide-y divide-black/5 overflow-y-auto pr-1 text-xs">
-							{#each cart.lines as line}
+							{#each cart.lines as line (lineKey(line))}
 								<div class="flex items-center justify-between py-2.5">
 									<div class="flex items-center gap-2">
 										<img src={zcup} alt="" class="h-7 w-auto" />
 										<div>
 											<p class="font-bold text-ink">{line.name}</p>
+											{#if optionSummary(line)}
+												<p class="text-[11px] text-neutral-500">{optionSummary(line)}</p>
+											{/if}
 											<p class="text-[11px] text-neutral-500">
 												{line.qty} × Rp{line.price.toLocaleString('id-ID')}
 											</p>
@@ -380,7 +451,7 @@
 							<div
 								class="flex justify-between border-t border-black/10 pt-3 text-sm font-extrabold text-ink"
 							>
-								<span>Total Bayar</span>
+								<span>Total</span>
 								<span class="text-xl text-brand">Rp{cart.subtotal.toLocaleString('id-ID')}</span>
 							</div>
 						</div>
@@ -395,13 +466,13 @@
 							{#if isSubmitting}
 								<span>Memproses Pesanan...</span>
 							{:else}
-								<span>Buat Pesanan & Bayar →</span>
+								<span>Buat pesanan · {rupiah(cart.subtotal)}</span>
 							{/if}
 						</button>
 
 						<div class="mt-4 space-y-1.5 text-center text-[11px] text-neutral-500">
-							<p>Verifikasi pembayaran aman via server webhook.</p>
-							<p>Pesanan langsung diteruskan ke mesin display outlet.</p>
+							<p>Setelah pesanan dibuat, kamu mendapat nominal QRIS yang persis.</p>
+							<p>Kasir memproses pesananmu begitu pembayaran QRIS masuk.</p>
 						</div>
 					</div>
 				</div>

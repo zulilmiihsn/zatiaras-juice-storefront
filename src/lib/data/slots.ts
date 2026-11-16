@@ -1,5 +1,5 @@
 // Slot pickup. Kapasitas OPEN, configurable. MOCK jadwal.
-// ADR 2026-09-25: slot generik per outlet (5 outlet); label fallback bila belum dikonfig.
+// ADR 2026-09-25: slot generik per outlet (4 outlet); label fallback bila belum dikonfig.
 import { OUTLETS } from '$lib/core/outlets';
 
 export interface Slot {
@@ -15,10 +15,8 @@ export const SLOTS: Slot[] = [
 	{ id: 'slamet-1jam', outletId: 'slamet-riyadi', label: '+1 jam' },
 	{ id: 'merah-delima-sekarang', outletId: 'merah-delima', label: 'Secepatnya (±20 mnt)' },
 	{ id: 'merah-delima-1jam', outletId: 'merah-delima', label: '+1 jam' },
-	{ id: 'kutilang-sekarang', outletId: 'kutilang', label: 'Secepatnya (±20 mnt)' },
-	{ id: 'kutilang-1jam', outletId: 'kutilang', label: '+1 jam' },
-	{ id: 'gatot-subroto-sekarang', outletId: 'gatot-subroto', label: 'Secepatnya (±20 mnt)' },
-	{ id: 'gatot-subroto-1jam', outletId: 'gatot-subroto', label: '+1 jam' }
+	{ id: 'mt-haryono-sekarang', outletId: 'mt-haryono', label: 'Secepatnya (±20 mnt)' },
+	{ id: 'mt-haryono-1jam', outletId: 'mt-haryono', label: '+1 jam' }
 ];
 
 export function slotsFor(outletId: string): Slot[] {

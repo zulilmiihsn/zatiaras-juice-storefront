@@ -65,7 +65,7 @@ describe('cart-logic', () => {
 		expect(lines.length).toBe(0);
 	});
 
-	it('revalidasi pindah outlet: jus-naga SOLD_OUT di juanda tersedia di kutilang', () => {
+	it('revalidasi pindah outlet: jus-naga SOLD_OUT di juanda tersedia di mt-haryono', () => {
 		const lines = [
 			{
 				menuItemId: 'jus-naga',
@@ -76,7 +76,7 @@ describe('cart-logic', () => {
 				availability: 'SOLD_OUT' as const
 			}
 		];
-		const r = revalidateForOutlet(lines, 'kutilang');
+		const r = revalidateForOutlet(lines, 'mt-haryono');
 		expect(r.lines.length).toBe(1);
 		expect(r.removed.length).toBe(0);
 	});
@@ -88,7 +88,7 @@ describe('cart-logic', () => {
 				name: 'Jus Alpukat',
 				price: 22000,
 				qty: 1,
-				outletId: 'kutilang',
+				outletId: 'mt-haryono',
 				availability: 'AVAILABLE' as const
 			}
 		];
@@ -100,7 +100,7 @@ describe('cart-logic', () => {
 					name: 'X',
 					price: 1,
 					qty: 1,
-					outletId: 'kutilang',
+					outletId: 'mt-haryono',
 					availability: 'AVAILABLE' as const
 				}
 			],

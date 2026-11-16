@@ -14,9 +14,9 @@ import {
 } from '$lib/location/suggest';
 
 describe('multi-city outlets', () => {
-	it('5 outlet aktif di 3 kota', () => {
+	it('4 outlet aktif di 3 kota', () => {
 		expect(OUTLETS.map((o) => o.id).sort()).toEqual(
-			['gatot-subroto', 'juanda', 'kutilang', 'merah-delima', 'slamet-riyadi'].sort()
+			['juanda', 'merah-delima', 'mt-haryono', 'slamet-riyadi'].sort()
 		);
 		expect(CITIES.map((c) => c.id).sort()).toEqual(['balikpapan', 'berau', 'samarinda'].sort());
 	});
@@ -32,12 +32,11 @@ describe('multi-city outlets', () => {
 			getOutletsByCity('balikpapan')
 				.map((o) => o.id)
 				.sort()
-		).toEqual(['gatot-subroto', 'kutilang'].sort());
+		).toEqual(['mt-haryono']);
 	});
 
 	it('outlet tanpa verifikasi tidak fabricate alamat', () => {
-		expect(getOutlet('kutilang')?.address).toBe('VERIFY_VIA_GBP');
-		expect(getOutlet('gatot-subroto')?.address).toBe('VERIFY_VIA_GBP');
+		expect(getOutlet('mt-haryono')?.hours).toBe('VERIFY_VIA_OPS');
 		expect(getOutlet('slamet-riyadi')?.address).toBe('VERIFY_VIA_GBP');
 	});
 
@@ -48,12 +47,13 @@ describe('multi-city outlets', () => {
 		expect(md?.hours).toContain('22:00');
 		const juanda = getOutlet('juanda');
 		expect(juanda?.address).toContain('Juanda');
+		expect(juanda?.address).toContain('Air Hitam');
 	});
 
 	it('saran IP tidak lock outlet, hanya kota', () => {
 		const s = suggestFromCf({ city: 'Balikpapan' });
 		expect(s?.city?.id).toBe('balikpapan');
-		expect(s?.outlets.map((o) => o.id).sort()).toEqual(['gatot-subroto', 'kutilang'].sort());
+		expect(s?.outlets.map((o) => o.id).sort()).toEqual(['mt-haryono']);
 		expect(suggestCityFromLabel('Tanjung Redeb')).toBeDefined();
 		expect(suggestFromCf({ city: 'Jakarta' })?.outlets).toEqual([]);
 	});

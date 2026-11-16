@@ -79,17 +79,16 @@
 			<!-- CARD 2: OUTLET MULTI-KOTA -->
 			<div class="grid gap-6 sm:grid-cols-2">
 				<div class="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
-					<h3 class="font-bold text-ink">Lima Outlet, Tiga Kota</h3>
+					<h3 class="font-bold text-ink">Empat Outlet, Tiga Kota</h3>
 					<p class="mt-2 text-xs leading-relaxed text-neutral-600">
-						Samarinda (Juanda · Slamet Riyadi), Berau (Merah Delima), Balikpapan (Kutilang · Gatot
-						Subroto). Satu pesanan untuk satu outlet pickup.
+						Samarinda (Juanda · Slamet Riyadi), Berau (Merah Delima), Balikpapan (MT Haryono). Satu pesanan untuk satu outlet pickup.
 					</p>
 				</div>
 				<div class="rounded-3xl border border-black/10 bg-white p-6 shadow-sm">
 					<h3 class="font-bold text-ink">Self-Order Pickup Cepat</h3>
 					<p class="mt-2 text-xs leading-relaxed text-neutral-600">
-						Pesan dari kantor atau rumah, pilih slot pengambilan, dan bayar lewat web. Saat kamu
-						tiba di outlet, jus sudah siap tanpa antrean panjang kasir.
+						Pesan dari kantor atau rumah, pilih waktu ambil, dan bayar lewat QRIS. Kasir memproses
+						pesananmu begitu pembayaran masuk. Saat kamu tiba di outlet, jus sudah siap tanpa antrean panjang.
 					</p>
 				</div>
 			</div>
@@ -98,9 +97,9 @@
 			<div class="rounded-3xl border border-black/10 bg-white p-6 shadow-sm sm:p-8">
 				<h3 class="font-bold text-ink">Komitmen Pelayanan: Dukungan Manusia</h3>
 				<p class="mt-2 text-xs leading-relaxed text-neutral-600 sm:text-sm">
-					Jika terjadi kendala ketersediaan buah setelah pesanan kamu dibayar, sistem kami tidak
-					menyembunyikan masalah di balik bot kaku. Staf operasional manusia akan langsung terhubung
-					lewat WhatsApp untuk menawarkan solusi penggantian menu atau pengembalian dana secepatnya.
+					Jika ada kendala ketersediaan buah setelah kamu memesan, sistem kami tidak menyembunyikan
+					masalah di balik bot kaku. Staf outlet akan langsung menghubungi lewat WhatsApp untuk
+					menawarkan penggantian menu.
 				</p>
 			</div>
 		</div>

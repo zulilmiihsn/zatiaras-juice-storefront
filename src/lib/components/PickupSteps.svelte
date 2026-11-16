@@ -79,8 +79,8 @@
 			</li>
 			<li class="pickup-step">
 				<div class="pickup-step-copy">
-					<h3>Bayar online</h3>
-					<p>Selesaikan pembayaran. Tanpa perlu bikin akun.</p>
+					<h3>Bayar lewat QRIS</h3>
+					<p>Bayar sesuai nominal yang tampil. Kasir memproses begitu uang masuk. Tanpa perlu bikin akun.</p>
 				</div>
 				<svg
 					class="pickup-step-icon"
@@ -92,8 +92,8 @@
 					stroke-linejoin="round"
 					aria-hidden="true"
 				>
-					<rect x="8" y="12" width="32" height="24" rx="4" />
-					<path d="M8 20h32M14 29h7m5 0h3" />
+					<path d="M8 10h32v22H23l-9 8v-8H8Z" />
+					<path d="M15 19h18M15 25h11" />
 				</svg>
 			</li>
 			<li class="pickup-step pickup-step-final">

@@ -4,12 +4,12 @@
 
 ## Coverage matrix
 
-Order/select flows per outlet: Juanda, Slamet Riyadi, Merah Delima, Kutilang,
-Gatot Subroto; per city: Samarinda, Berau, Balikpapan.
+Order/select flows per outlet: Juanda, Slamet Riyadi, Merah Delima,
+MT Haryono; per city: Samarinda, Berau, Balikpapan.
 
 ## Required scenarios
 
-- Correct IP suggestion (Balikpapan → Kutilang/Gatot Subroto prioritized, no auto-lock).
+- Correct IP suggestion (Balikpapan → MT Haryono prioritized, no auto-lock).
 - Wrong IP / VPN-like city / unknown city → safe manual fallback.
 - Precise location granted → nearest (once coords verified); denied → fallback, no nag, no block.
 - Remembered outlet priority over IP; outlet switch warns + revalidates (price mismatch, unavailable item).

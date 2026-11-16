@@ -1,11 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { dev } from '$app/environment';
 	import { cart } from '$lib/stores/cart.svelte';
-	import { AVAILABILITY_VERIFIED, MENU_VERIFIED } from '$lib/data/menu';
+	import { MENU_VERIFIED } from '$lib/data/menu';
+	import { liveMenu } from '$lib/stores/live-menu.svelte';
 	import { isValidOutletId, getOutlet } from '$lib/core/outlets';
 	import CartRevalidationDialog from '$lib/components/CartRevalidationDialog.svelte';
-	import { revalidateForOutlet, type RevalidationResult } from '$lib/stores/cart-logic';
+	import {
+		lineKey,
+		revalidateForOutlet,
+		upsizeGain,
+		type RevalidationResult
+	} from '$lib/stores/cart-logic';
+	import { optionSummary } from '$lib/core/options';
+	import { rupiah } from '$lib/core/whatsapp-order';
+	import { checkoutGate } from '$lib/core/checkout-gate';
 	import type { OutletId } from '$lib/core/contracts';
 	import { track } from '$lib/analytics/events';
 	import { canonical, breadcrumbJsonLd, jsonLdTag } from '$lib/seo';
@@ -16,6 +24,10 @@
 	const title = 'Keranjang Pesanan | Zatiaras Juice';
 
 	const cartOutletName = $derived(getOutlet(cart.outletId)?.name ?? cart.outletId);
+
+	$effect(() => {
+		void liveMenu.ensure(cart.outletId);
+	});
 	let pendingOutletId = $state<OutletId | null>(null);
 	const emptyRevalidation: RevalidationResult = {
 		lines: [],
@@ -37,17 +49,30 @@
 	onMount(() => {
 		track('cart_view', {
 			outlet: cart.outletId,
-			...(MENU_VERIFIED && AVAILABILITY_VERIFIED ? { value: cart.subtotal } : {})
+			...(MENU_VERIFIED && liveMenu.verified(cart.outletId) ? { value: cart.subtotal } : {})
 		});
 	});
 
-	function dec(menuItemId: string, qty: number): void {
-		cart.qty(menuItemId, qty - 1);
+	const gate = $derived(
+		checkoutGate({
+			menuVerified: MENU_VERIFIED,
+			availabilityVerified: liveMenu.verified(cart.outletId),
+			hasQris: Boolean(getOutlet(cart.outletId)?.qrisImage)
+		})
+	);
+
+	function dec(key: string, menuItemId: string, qty: number): void {
+		cart.qty(key, qty - 1);
 		track('remove_from_cart', { menu: menuItemId, outlet: cart.outletId });
 	}
 
-	function inc(menuItemId: string, qty: number): void {
-		cart.qty(menuItemId, qty + 1);
+	function inc(key: string, qty: number): void {
+		cart.qty(key, qty + 1);
+	}
+
+	function upsize(key: string, menuItemId: string): void {
+		cart.upsize(key);
+		track('upsell_accepted', { kind: 'jumbo', menu: menuItemId, outlet: cart.outletId });
 	}
 
 	function handleOutletChange(newOutlet: string): void {
@@ -196,7 +221,7 @@
 
 			<!-- CART ITEMS LIST -->
 			<div class="mt-6 space-y-3">
-				{#each cart.lines as line}
+				{#each cart.lines as line (lineKey(line))}
 					<div
 						class="flex items-center justify-between rounded-2xl border border-black/10 bg-white p-4 shadow-sm transition sm:p-5"
 					>
@@ -214,10 +239,22 @@
 								>
 									{@render kerned(line.name)}
 								</h3>
-								{#if MENU_VERIFIED && AVAILABILITY_VERIFIED}
+								{#if optionSummary(line)}
+									<p class="text-xs text-neutral-500">{optionSummary(line)}</p>
+								{/if}
+								{#if MENU_VERIFIED && liveMenu.verified(cart.outletId)}
 									<p class="text-xs font-semibold text-neutral-500">
 										Rp{line.price.toLocaleString('id-ID')} / cup
 									</p>
+									{#if upsizeGain(line) > 0}
+										<button
+											type="button"
+											onclick={() => upsize(lineKey(line), line.menuItemId)}
+											class="mt-1 min-h-11 text-xs font-bold text-brand underline underline-offset-4"
+										>
+											Jadikan Jumbo +{rupiah(upsizeGain(line))}
+										</button>
+									{/if}
 								{/if}
 							</div>
 						</div>
@@ -227,7 +264,7 @@
 							<div class="flex items-center rounded-xl border border-black/15 bg-neutral-50 p-1">
 								<button
 									type="button"
-									onclick={() => dec(line.menuItemId, line.qty)}
+									onclick={() => dec(lineKey(line), line.menuItemId, line.qty)}
 									class="tap-scale flex h-8 w-8 items-center justify-center rounded-lg bg-white font-bold text-ink shadow-xs hover:bg-neutral-100"
 									aria-label="Kurangi"
 								>
@@ -236,7 +273,7 @@
 								<span class="w-9 text-center text-xs font-bold text-ink">{line.qty}</span>
 								<button
 									type="button"
-									onclick={() => inc(line.menuItemId, line.qty)}
+									onclick={() => inc(lineKey(line), line.qty)}
 									class="tap-scale flex h-8 w-8 items-center justify-center rounded-lg bg-white font-bold text-ink shadow-xs hover:bg-neutral-100"
 									aria-label="Tambah"
 								>
@@ -246,7 +283,7 @@
 
 							<!-- LINE TOTAL -->
 							<div class="w-24 text-right">
-								{#if MENU_VERIFIED && AVAILABILITY_VERIFIED}
+								{#if MENU_VERIFIED && liveMenu.verified(cart.outletId)}
 									<span class="text-sm font-bold text-ink sm:text-base">
 										Rp{(line.price * line.qty).toLocaleString('id-ID')}
 									</span>
@@ -261,7 +298,7 @@
 			<div class="mt-8 rounded-3xl border border-black/10 bg-white p-6 shadow-sm sm:p-8">
 				<h2 class="text-base font-bold text-ink">Ringkasan Pesanan</h2>
 
-				{#if MENU_VERIFIED && AVAILABILITY_VERIFIED}
+				{#if MENU_VERIFIED && liveMenu.verified(cart.outletId)}
 					<div class="mt-4 space-y-2.5 text-sm">
 						<div class="flex justify-between text-neutral-600">
 							<span>Subtotal ({cart.count} cup)</span>
@@ -284,7 +321,7 @@
 				{/if}
 
 				<div class="mt-8 flex flex-col gap-3 sm:flex-row">
-					{#if dev && MENU_VERIFIED && AVAILABILITY_VERIFIED}
+					{#if gate.open}
 						<a
 							href="/checkout"
 							class="tap-scale flex-1 rounded-full bg-brand px-8 py-4 text-center font-bold text-white shadow-xl shadow-brand/25 transition hover:bg-brand-dark"

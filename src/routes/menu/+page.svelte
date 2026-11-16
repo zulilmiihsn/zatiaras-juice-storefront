@@ -1,21 +1,16 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import {
-		CATEGORIES,
-		MENU,
-		MENU_VERIFIED,
-		AVAILABILITY_VERIFIED,
-		priceFor,
-		availabilityFor,
-		type PublicMenuItem
-	} from '$lib/data/menu';
+	import { CATEGORIES, MENU, MENU_VERIFIED, type PublicMenuItem } from '$lib/data/menu';
+	import { liveMenu } from '$lib/stores/live-menu.svelte';
 	import { canonical, breadcrumbJsonLd, jsonLdTag } from '$lib/seo';
 	import { track } from '$lib/analytics/events';
 	import { cart } from '$lib/stores/cart.svelte';
 	import { getCity, getOutlet, isValidOutletId, suggestCityFromLabel } from '$lib/core/outlets';
 	import OutletSelector from '$lib/components/OutletSelector.svelte';
 	import CartRevalidationDialog from '$lib/components/CartRevalidationDialog.svelte';
+	import ItemOptionsSheet from '$lib/components/ItemOptionsSheet.svelte';
+	import { optionSummary, type ItemOptions } from '$lib/core/options';
 	import type { OutletId } from '$lib/core/contracts';
 	import { revalidateForOutlet, type RevalidationResult } from '$lib/stores/cart-logic';
 	import { scrollStagger } from '$lib/motion/scroll';
@@ -28,6 +23,10 @@
 
 	const initial = isValidOutletId(cart.outletId) ? (cart.outletId as OutletId) : 'juanda';
 	let activeOutlet = $state<OutletId>(initial as OutletId);
+
+	$effect(() => {
+		void liveMenu.ensure(activeOutlet);
+	});
 	let selectorOpen = $state(false);
 	let pendingOutletId = $state<OutletId | null>(null);
 	let toastMessage = $state<string | null>(null);
@@ -121,28 +120,42 @@
 		showToast(`Outlet beralih ke ${getOutlet(targetOutlet)?.name ?? targetOutlet}`);
 	}
 
-	function quickAdd(item: PublicMenuItem) {
-		if (!MENU_VERIFIED || !AVAILABILITY_VERIFIED) return;
-		const status = availabilityFor(item, activeOutlet);
-		if (status === 'SOLD_OUT') return;
+	// Ketukan "+ Order" membuka lembar pilihan (ukuran, manis, es); baris masuk keranjang saat "Tambah".
+	let sheetItem = $state<PublicMenuItem | null>(null);
 
+	function quickAdd(item: PublicMenuItem) {
+		if (!MENU_VERIFIED || !liveMenu.verified(activeOutlet)) return;
+		if (liveMenu.availabilityFor(item, activeOutlet) === 'SOLD_OUT') return;
+		sheetItem = item;
+	}
+
+	function addFromSheet(opts: ItemOptions, qty: number, unit: number) {
+		const item = sheetItem;
+		sheetItem = null;
+		if (!item) return;
+		const status = liveMenu.availabilityFor(item, activeOutlet);
 		cart.setOutlet(activeOutlet);
 		cart.add({
 			menuItemId: item.slug,
 			name: item.name,
-			price: priceFor(item, activeOutlet),
-			qty: 1,
+			price: unit,
+			basePrice: liveMenu.priceFor(item, activeOutlet),
+			category: item.category,
+			size: opts.size,
+			sweet: opts.sweet,
+			ice: opts.ice,
+			qty,
 			outletId: activeOutlet,
 			availability: status
 		});
-
 		track('add_to_cart', {
 			menu: item.slug,
 			outlet: activeOutlet,
-			qty: 1,
-			value: priceFor(item, activeOutlet)
+			qty,
+			value: unit * qty,
+			jumbo: opts.size === 'JUMBO'
 		});
-		showToast(`${item.name} berhasil ditambah ke keranjang`);
+		showToast(`${item.name} (${optionSummary(opts)}) masuk keranjang`);
 	}
 
 	function showToast(msg: string) {
@@ -161,7 +174,7 @@
 	);
 
 	function getStatusBadge(status: string) {
-		if (!AVAILABILITY_VERIFIED) {
+		if (!liveMenu.verified(activeOutlet)) {
 			return {
 				label: 'Cek di outlet',
 				class: 'border-neutral-200 bg-neutral-50 text-neutral-600'
@@ -301,14 +314,14 @@
 					Menu untuk <strong class="text-ink"
 						>Zatiaras {activeOutletInfo?.name ?? activeOutlet}</strong
 					>.
-					{#if MENU_VERIFIED && AVAILABILITY_VERIFIED}
-						Pickup setelah pembayaran tervalidasi.
+					{#if MENU_VERIFIED && liveMenu.verified(activeOutlet)}
+						Pesan di sini, bayar lewat QRIS.
 					{:else}
 						Harga dan ketersediaan dikonfirmasi sebelum order tersedia.
 					{/if}
 				</span>
 			</div>
-			{#if MENU_VERIFIED && AVAILABILITY_VERIFIED}
+			{#if MENU_VERIFIED && liveMenu.verified(activeOutlet)}
 				<span class="rounded-md bg-neutral-100 px-2 py-1 text-[11px] font-semibold text-neutral-600"
 					>Data menu outlet terverifikasi</span
 				>
@@ -340,9 +353,9 @@
 		<!-- MENU GRID -->
 		<div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
 			{#each visibleMenu as item}
-				{@const status = availabilityFor(item, activeOutlet)}
+				{@const status = liveMenu.availabilityFor(item, activeOutlet)}
 				{@const badge = getStatusBadge(status)}
-				{@const isSoldOut = AVAILABILITY_VERIFIED && status === 'SOLD_OUT'}
+				{@const isSoldOut = liveMenu.verified(activeOutlet) && status === 'SOLD_OUT'}
 
 				<div
 					class="group flex flex-col justify-between overflow-hidden rounded-3xl border border-black/10 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-xl"
@@ -403,7 +416,7 @@
 								>
 								<p class="text-sm font-bold text-ink sm:text-lg">
 									{MENU_VERIFIED
-										? `Rp${priceFor(item, activeOutlet).toLocaleString('id-ID')}`
+										? `Rp${liveMenu.priceFor(item, activeOutlet).toLocaleString('id-ID')}`
 										: 'Belum dikonfirmasi'}
 								</p>
 							</div>
@@ -415,7 +428,7 @@
 								>
 									Habis
 								</button>
-							{:else if !MENU_VERIFIED || !AVAILABILITY_VERIFIED}
+							{:else if !MENU_VERIFIED || !liveMenu.verified(activeOutlet)}
 								<a
 									href={`/menu/${item.slug}`}
 									class="tap-scale rounded-full border border-black/15 bg-white px-3 py-2.5 text-xs font-bold text-ink transition hover:border-brand/40 hover:text-brand"
@@ -482,7 +495,8 @@
 					<div>
 						<h3 class="font-bold text-ink">Pilih waktu pickup</h3>
 						<p class="mt-1 text-xs leading-relaxed text-neutral-600">
-							Pilihan waktu mengikuti outlet yang kamu pilih dan dikonfirmasi sebelum pembayaran.
+							Pilihan waktu mengikuti outlet yang kamu pilih dan dikonfirmasi kasir setelah
+							pembayaran masuk.
 						</p>
 					</div>
 				</div>
@@ -503,3 +517,10 @@
 		</div>
 	</div>
 </div>
+
+<ItemOptionsSheet
+	item={sheetItem}
+	basePrice={sheetItem ? liveMenu.priceFor(sheetItem, activeOutlet) : 0}
+	onadd={addFromSheet}
+	onclose={() => (sheetItem = null)}
+/>

@@ -47,8 +47,7 @@ const OPEN: OutletAvailabilityMap = {
 	juanda: 'AVAILABLE',
 	'slamet-riyadi': 'AVAILABLE',
 	'merah-delima': 'AVAILABLE',
-	kutilang: 'AVAILABLE',
-	'gatot-subroto': 'AVAILABLE'
+	'mt-haryono': 'AVAILABLE'
 };
 
 export const MENU: PublicMenuItem[] = [
